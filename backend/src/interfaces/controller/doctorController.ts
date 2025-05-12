@@ -1,0 +1,133 @@
+import { Request, Response } from 'express';
+import { GetDept } from '../../application/usecase/dept/getDept';
+import {DocRegister} from '../../application/usecase/reg/docsignup'
+import {DoctorLogin} from '../../application/usecase/reg/doclogin'
+import {OtpdocVerify} from '../../application/usecase/otp/otpdocverify'
+import {Docprofile} from "../../application/usecase/doctor/docProfile"
+import {DocPassrest} from '../../application/usecase/reg/resetdocter'
+export class DoctorController {
+  constructor(private getDept: GetDept,private docsignup:DocRegister,private doclogin:DoctorLogin,private otpdocverify:OtpdocVerify,private docprofile:Docprofile,private docPassrest:DocPassrest) {}
+  
+
+
+  async signup(req: Request, res: Response): Promise<void> {
+   try{
+    const { firstname, lastname, email, phone, specialisation, experience, password, fee, additionalInfo, profilePicture, medicalLicence } = req.body;
+    console.log(req.body)
+     const result = await this.docsignup.signup({
+      firstname,
+      lastname,
+      email,
+      phone,
+      specialisation,
+      experience,
+      password,
+      fee,
+      additionalInfo,
+      profilePicture,
+      medicalLicence})
+      console.log(result)
+      res.status(201).json(result);
+   }
+
+   catch(error)
+   {
+    if (error instanceof Error) {
+       console.log(error.message)
+      res.status(400).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: 'Internal server error' });
+    }
+   
+   }
+  }
+
+
+  async login(req: Request, res: Response): Promise<void> {
+    try {
+      const { email, password } = req.body;
+      const response = await this.doclogin.login(email, password);
+       res.cookie("refreshtokendoctor", response.refreshToken, {
+        httpOnly: true, 
+        secure: false,
+        maxAge: 7 * 24 * 60 * 60 * 1000, 
+      });
+      res.cookie("accesstokendoctor", response.accessToken, {
+      httpOnly: true,     
+      secure: false,     
+      maxAge: 15 * 60 * 1000, 
+    });
+
+      res.status(200).json({message:response.message,doctor:response.doctor, accessToken:response.accessToken});
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: 'Internal server error' });
+      }
+    }
+  }
+
+   async verifyOtp(req: Request, res: Response): Promise<void> {
+    try {
+       const { email, otp } = req.body;
+       const isValid = await this.otpdocverify.verifyOtp(email, otp);
+        res.status(200).json({ message: 'OTP verified successfully' });
+     
+    } catch (error) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
+    }
+  }
+
+  async updatedocprofile(req: Request, res: Response): Promise<void> {
+    try {
+       const {firstname,lastname,experience,fee,image,email,phone} = req.body;
+         await this.docprofile.updateprofile(firstname,lastname,experience,fee,image,email,phone)
+        res.status(200).json({ message: 'Profile updated suceesfully' });
+     
+    } catch (error) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
+    }
+  }
+
+
+
+
+
+  async getAllDept(req: Request, res: Response): Promise<void> {
+    try {
+      const result = await this.getDept.getAllDept();
+      res.status(200).json(result);
+    } catch (error) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
+    }
+  }
+
+   async resetPassword(req: Request, res: Response):Promise<void>{
+     try{
+          const { email, password } = req.body
+          const response =await this.docPassrest.passwordrest(email,password)
+          res.status(200).json(response)
+     }
+     catch(error)
+     {
+        if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error("Unexpected error occurred during user registration");
+     }
+  }
+
+
+
+
+}
