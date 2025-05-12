@@ -1,37 +1,65 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { TokenExpiredError } from "jsonwebtoken";
 
 export const verifyDoctorToken = (req: Request, res: Response, next: NextFunction): void => {
   const accessToken = req.cookies.accesstokendoctor;
+  const refreshToken = req.cookies.refreshtokendoctor;
 
   if (!accessToken) {
-    res.status(401).json({ message: "No access token" });
+    if (!refreshToken) {
+      res.status(401).json({ message: "No refresh token" });
+      return;
+    }
+
+    try {
+      const refreshDecoded = jwt.verify(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET!
+      ) as { id: string };
+
+      const newAccessToken = jwt.sign(
+        { id: refreshDecoded.id },
+        process.env.JWT_SECRET!,
+        { expiresIn: "15m" }
+      );
+
+      res.cookie("accesstokendoctor", newAccessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 15 * 60 * 1000,
+      });
+
+      req.body.doctorId = refreshDecoded.id;
+      next();
+    } catch (refreshErr) {
+      res.status(403).json({ message: "Invalid refresh token" });
+    }
     return;
   }
 
-  jwt.verify(accessToken, process.env.JWT_SECRET!, (err: any, decoded: any) => {
-    if (err && err.name === "TokenExpiredError") {
-      // Access token expired, try refresh
-      const refreshToken = req.cookies.refreshtokendoctor;
+  try {
+    const decoded = jwt.verify(accessToken, process.env.JWT_SECRET!) as { id: string };
+    req.body.doctorId = decoded.id;
+    next();
+  } catch (err) {
+    if (err instanceof TokenExpiredError) {
       if (!refreshToken) {
         res.status(401).json({ message: "No refresh token" });
         return;
       }
 
-      jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!, (refreshErr: any, refreshDecoded: any) => {
-        if (refreshErr) {
-          res.status(403).json({ message: "Invalid refresh token" });
-          return;
-        }
+      try {
+        const refreshDecoded = jwt.verify(
+          refreshToken,
+          process.env.JWT_REFRESH_SECRET!
+        ) as { id: string };
 
-        // Create new access token
         const newAccessToken = jwt.sign(
           { id: refreshDecoded.id },
           process.env.JWT_SECRET!,
           { expiresIn: "15m" }
         );
 
-        // Set new token and continue
         res.cookie("accesstokendoctor", newAccessToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
@@ -40,15 +68,11 @@ export const verifyDoctorToken = (req: Request, res: Response, next: NextFunctio
 
         req.body.doctorId = refreshDecoded.id;
         next();
-      });
-
-    } else if (err) {
-      res.status(401).json({ message: "Invalid access token" });
-      return;
+      } catch (refreshErr) {
+        res.status(403).json({ message: "Invalid refresh token" });
+      }
     } else {
-      // Token is valid
-      req.body.doctorId = decoded.id;
-      next();
+      res.status(401).json({ message: "Invalid access token" });
     }
-  });
+  }
 };

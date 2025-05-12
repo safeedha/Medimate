@@ -1,27 +1,60 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { TokenExpiredError } from "jsonwebtoken";
 
 export const verifyUserAuth = (req: Request, res: Response, next: NextFunction): void => {
   const accessToken = req.cookies.accessusertoken;
   const refreshToken = req.cookies.refreshusertoken;
 
+  // No access token
   if (!accessToken) {
-    res.status(401).json({ message: "No access token" });
+    if (!refreshToken) {
+      res.status(401).json({ message: "No refresh token" });
+      return;
+    }
+
+    try {
+      const refreshDecoded = jwt.verify(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET!
+      ) as { id: string };
+
+      const newAccessToken = jwt.sign(
+        { id: refreshDecoded.id },
+        process.env.JWT_SECRET!,
+        { expiresIn: "15m" }
+      );
+
+      res.cookie("accessusertoken", newAccessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 15 * 60 * 1000,
+      });
+
+      (req as any).userId = refreshDecoded.id;
+      next();
+    } catch (refreshErr) {
+      res.status(403).json({ message: "Invalid refresh token" });
+    }
     return;
   }
 
-  jwt.verify(accessToken, process.env.JWT_SECRET!, (err: any, decoded: any) => {
-    if (err && err.name === "TokenExpiredError") {
+  // Try verifying access token
+  try {
+    const decoded = jwt.verify(accessToken, process.env.JWT_SECRET!) as { id: string };
+    (req as any).userId = decoded.id;
+    next();
+  } catch (err) {
+    if (err instanceof TokenExpiredError) {
       if (!refreshToken) {
         res.status(401).json({ message: "No refresh token" });
         return;
       }
 
-      jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!, (refreshErr: any, refreshDecoded: any) => {
-        if (refreshErr) {
-          res.status(403).json({ message: "Invalid refresh token" });
-          return;
-        }
+      try {
+        const refreshDecoded = jwt.verify(
+          refreshToken,
+          process.env.JWT_REFRESH_SECRET!
+        ) as { id: string };
 
         const newAccessToken = jwt.sign(
           { id: refreshDecoded.id },
@@ -31,19 +64,17 @@ export const verifyUserAuth = (req: Request, res: Response, next: NextFunction):
 
         res.cookie("accessusertoken", newAccessToken, {
           httpOnly: true,
-          secure: true,
+          secure: process.env.NODE_ENV === "production",
           maxAge: 15 * 60 * 1000,
         });
 
         (req as any).userId = refreshDecoded.id;
         next();
-      });
-    } else if (err) {
-      res.status(401).json({ message: "Invalid access token" });
-      return;
+      } catch (refreshErr) {
+        res.status(403).json({ message: "Invalid refresh token" });
+      }
     } else {
-      (req as any).userId = decoded.id;
-      next();
+      res.status(401).json({ message: "Invalid access token" });
     }
-  });
+  }
 };
