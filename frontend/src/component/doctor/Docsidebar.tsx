@@ -5,17 +5,16 @@ function DoctorSidebar() {
 
   const handleLogout = () => {
     console.log("Logging out...");
-    navigate('/login');
+    navigate('/doctor/login');
   };
 
   return (
     <aside className="w-64 h-screen bg-gradient-to-b from-teal-600 to-cyan-600 text-white fixed top-0 left-0 shadow-lg flex flex-col">
-      {/* Logo and App Name */}
+      
       <div className="h-20 flex items-center justify-center border-b border-cyan-500">
         <h1 className="text-2xl font-bold">🩺 MediMate</h1>
       </div>
 
-      {/* Navigation Links */}
       <nav className="flex-1 py-6 px-4 space-y-4 text-lg font-medium">
         <Link to="/doctor/home" className="block hover:text-cyan-200">
           🏠 Dashboard
@@ -28,7 +27,7 @@ function DoctorSidebar() {
         </Link>
       </nav>
 
-      {/* Logout */}
+      
       <div className="px-4 py-6 border-t border-cyan-500">
         <button
           onClick={handleLogout}

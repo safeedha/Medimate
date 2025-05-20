@@ -19,6 +19,7 @@ const DoctorSchema: Schema<Idoctor> = new Schema(
     },
     isBlocked: { type: Boolean, default: false },
     googleVerified:{type: Boolean, default: false},
+    qualification:{type:String,default:false},
     additionalInfo: { type: String },
     profilePicture: { type: String },
     medicalLicence: { type: String },

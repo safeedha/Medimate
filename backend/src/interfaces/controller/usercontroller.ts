@@ -9,11 +9,16 @@ import {OtpVerify} from '../../application/usecase/otp/otpverify'
 import {UserPassrest} from '../../application/usecase/reg/resetuser';
 import {Getverified} from '../../application/usecase/doctor/getverified'
 import {Googleuser} from '../../application/usecase/reg/ugoogle'
-
+import {GetsingleUser} from '../../application/usecase/user/getSingleUser'
+import {updatesingleUser } from '../../application/usecase/user/updateUser'
+interface CustomRequest extends Request {
+  id: string;
+}
 
 export class UserController {
   constructor(private getDept: GetDept,private userreg:UserReg,private userlog:UserLog,private otpcration:OtpCretion,private otpverify:OtpVerify,
-    private userpasssrest:UserPassrest,private getverified:Getverified,private googleuser:Googleuser
+    private userpasssrest:UserPassrest,private getverified:Getverified,private googleuser:Googleuser,private getsingleuser:GetsingleUser,
+    private updatesingleUser:updatesingleUser
   ) {}
 
   // ← Make sure this method is *inside* the class body
@@ -164,8 +169,21 @@ async login(req: Request, res: Response): Promise<void> {
      try{
           const {credential} = req.body
           console.log(credential)
-          const response =await this.googleuser.login(credential)
-          res.status(200).json(response)
+          const result =await this.googleuser.login(credential)
+           res.cookie("accessusertoken", result.accessToken, {
+            httpOnly: true,
+            secure: false, // true in production
+            maxAge: 15 * 60 * 1000, // 15 minutes
+          });
+
+  
+          res.cookie("refreshusertoken", result.refreshToken, {
+            httpOnly: true,
+            secure: false, // true in production
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+          });
+
+          res.status(200).json({ message: 'Login successful', user: result.user });
      }
      catch(error)
      {
@@ -176,5 +194,43 @@ async login(req: Request, res: Response): Promise<void> {
      }
   }
 
+
+  async getUserdetail(req:CustomRequest, res: Response):Promise<void>{
+    try{
+        const id=req.id
+        console.log("hell")
+        console.log(id)
+        const result=await this.getsingleuser.getsingleUser(id)
+        console.log(result)
+        res.status(200).json({ message: 'get single user', user: result})
+    }
+    catch(error)
+    {
+          if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error("Unexpected error occurred during getting single user");
+    }
+  }
+
+
+  async updateUserdetail(req:CustomRequest, res: Response):Promise<void>{
+    try{
+        const id=req.id
+       const {firstname,lastname,phone,age,gender}=req.body
+       const result=await this.updatesingleUser.updatesingleUser(id,firstname,lastname,phone,age,gender)
+       res.status(200).json({message:"updation successfull"})
+    }
+    catch(error)
+    {
+          if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error("Unexpected error occurred during getting single user");
+    }
+  }
+
+
+  
 
 }

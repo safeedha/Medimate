@@ -29,7 +29,7 @@ function Plogin() {
       navigate("/home")
      
     } else if (result === 'this account is not verified') {
-      toast.error('This account is not verified, please check your mail');
+      toast.error('This account is not verified, please check your mail for otp verification');
       setTimeout(() => {
         navigate('/otp', { state: { email, role: 'user' } });
       }, 1000);
@@ -114,13 +114,17 @@ function Plogin() {
           >
             Login
           </button>
-            <GoogleLogin
+          <br />
+          <div className='ml-14'>
+             <GoogleLogin
             onSuccess={responseMessage}
             onError={errorMessage}
             useOneTap={false}
             promptMomentNotification={() => {}}
             containerProps={{ className: "w-full" }}
           />
+          </div>
+           
                     
 
           {/* Signup Prompt */}

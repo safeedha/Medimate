@@ -10,6 +10,10 @@ const departmentSchema = new Schema<Department>({
     type: String,
     required: true,
   },
+  isblocked: {
+    type: Boolean,
+    default: false,
+  },
 },{
   timestamps: true,
 });

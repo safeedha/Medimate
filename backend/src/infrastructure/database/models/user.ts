@@ -16,6 +16,9 @@ const UserSchema: Schema<Iuser> = new Schema(
       type: String,
       enum: ['male', 'female', 'other'],
     },
+     age: {
+      type: Number,
+    },
   },
   {
     timestamps: true, 

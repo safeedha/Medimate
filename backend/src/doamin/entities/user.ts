@@ -8,5 +8,6 @@ export interface Iuser{
   googleIds?:string|null,
   isBlocked:boolean,
   googleVerified?:boolean,
-  gender?:"male"|"female"|"other"
+  gender?:"male"|"female"|"other",
+  age?:number
 }

@@ -13,6 +13,7 @@ export interface Idoctor {
   status: "Approved" | "Rejected" | "Pending";
   isBlocked: boolean;
   googleVerified?: boolean;
+  qualification?:string;
   additionalInfo?: string;
   profilePicture?: string;
   medicalLicence?: string;

@@ -16,7 +16,10 @@ export class MongoDocRepository implements DoctorRepository {
   }
   async getAllverified(): Promise<Idoctor[]> {
     try {
-      const doctors = await Doctor.find({ status: 'Approved' }).populate('specialisation');
+          const doctors = await Doctor.find({ status: 'Approved' ,isBlocked:false}).populate({
+          path: 'specialisation',
+          match: { isblocked: false } 
+        });
       return doctors;
     } catch (error) {
       console.error('Error fetching verified doctors:', error);
@@ -68,7 +71,9 @@ export class MongoDocRepository implements DoctorRepository {
   fee: number,
   image: string,
   email: string,
-  phone: string
+  phone: string,
+ specialisation:string,
+ qualification:string
 ): Promise<{ message: string }> {
   try {
     const doctor = await Doctor.findOne({ email });
@@ -94,6 +99,8 @@ export class MongoDocRepository implements DoctorRepository {
     doctor.fee = fee;
     doctor.phone = phone;
     doctor.profilePicture = image;
+    doctor.qualification=qualification,
+    doctor.specialisation=specialisation
 
     await doctor.save();
 

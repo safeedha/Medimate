@@ -1,5 +1,5 @@
 import adminInstance from './instance';
-
+import axios from "axios";
 export const getDepartment = async () => {
   try {
     const response = await adminInstance.get("/department");
@@ -29,5 +29,41 @@ export const createDepartment = async (deptname: string, description: string) =>
     } else {
       return { success: false, message: "Something went wrong." };
     }
+  }
+};
+
+
+export const Editdepartnemt = async (id:string,deptname: string, description: string) => {
+  try {
+    console.log(id,deptname,description)
+    const response = await adminInstance.put(`/department/${id}`, { deptname, description });
+  return response.data.message;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+    console.log(error.response?.data?.message);
+    return error.response?.data?.message || error.message;
+  } else if (error instanceof Error) {
+    return error.message;
+  } else {
+    return 'Internal server error';
+  }
+  }
+};
+
+
+export const blockdepartnemt = async (id:string) => {
+  try {
+
+    const response = await adminInstance.patch(`/department/${id}`);
+  return response.data.message;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+    console.log(error.response?.data?.message);
+    return error.response?.data?.message || error.message;
+  } else if (error instanceof Error) {
+    return error.message;
+  } else {
+    return 'Internal server error';
+  }
   }
 };

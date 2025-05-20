@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { TokenExpiredError } from "jsonwebtoken";
 
+interface CustomRequest extends Request {
+  id?: string;
+}
 export const verifyUserAuth = (req: Request, res: Response, next: NextFunction): void => {
   const accessToken = req.cookies.accessusertoken;
   const refreshToken = req.cookies.refreshusertoken;
@@ -17,6 +20,8 @@ export const verifyUserAuth = (req: Request, res: Response, next: NextFunction):
         refreshToken,
         process.env.JWT_REFRESH_SECRET!
       ) as { id: string };
+      
+       (req as CustomRequest).id = refreshDecoded.id;
 
       const newAccessToken = jwt.sign(
         { id: refreshDecoded.id },
@@ -30,7 +35,7 @@ export const verifyUserAuth = (req: Request, res: Response, next: NextFunction):
         maxAge: 15 * 60 * 1000,
       });
 
-      (req as any).userId = refreshDecoded.id;
+     
       next();
     } catch (refreshErr) {
       res.status(403).json({ message: "Invalid refresh token" });
@@ -41,7 +46,7 @@ export const verifyUserAuth = (req: Request, res: Response, next: NextFunction):
   // Try verifying access token
   try {
     const decoded = jwt.verify(accessToken, process.env.JWT_SECRET!) as { id: string };
-    (req as any).userId = decoded.id;
+     (req as CustomRequest).id = decoded.id;
     next();
   } catch (err) {
     if (err instanceof TokenExpiredError) {
@@ -68,7 +73,7 @@ export const verifyUserAuth = (req: Request, res: Response, next: NextFunction):
           maxAge: 15 * 60 * 1000,
         });
 
-        (req as any).userId = refreshDecoded.id;
+         
         next();
       } catch (refreshErr) {
         res.status(403).json({ message: "Invalid refresh token" });

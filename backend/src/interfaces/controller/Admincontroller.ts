@@ -8,12 +8,12 @@ import {GetUser} from "../../application/usecase/user/getUser"
 import {ChangeStatus} from "../../application/usecase/user/changestatus"
 import {ChangeDocStatus} from "../../application/usecase/doctor/changestatus"
 import {VerifyDoctor} from "../../application/usecase/doctor/verify"
-
-
+import {EditDept} from "../../application/usecase/dept/editdept"
+import {BlockDept} from "../../application/usecase/dept/blockdept"
 
 export class AdminController{
     constructor(private login:Login,private addDept:AddDept,private getDept:GetDept,private getUnverified:GetUnverified,private getverified:Getverified,private getUser:GetUser,private changestatus:ChangeStatus,private changedocstat:ChangeDocStatus,
-      private verifyDoctor:VerifyDoctor
+      private verifyDoctor:VerifyDoctor,private editDept:EditDept,private blockDept:BlockDept
     )
     {
 
@@ -61,6 +61,32 @@ async createDepartment(req: Request, res: Response): Promise<void> {
 async getDepartment(req: Request, res: Response): Promise<void> {
   try {
     const result = await this.getDept.getAllDept();
+    res.status(200).json(result);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Internal server error";
+    res.status(400).json({ message: errorMessage });
+  }
+}
+
+async editDepartment(req: Request, res: Response): Promise<void> {
+  try {
+    const { id } = req.params;
+    console.log(id)
+    const { deptname, description } = req.body;
+    const data = {_id:id ,deptname, description };
+    console.log(data)
+    const result = await this.editDept.editDept(data);
+    res.status(200).json(result);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Internal server error";
+    res.status(400).json({ message: errorMessage });
+  }
+}
+
+async blockDepartment(req: Request, res: Response): Promise<void> {
+  try {
+    const { id } = req.params;
+    const result = await this.blockDept.blockDept(id);
     res.status(200).json(result);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Internal server error";

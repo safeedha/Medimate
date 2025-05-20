@@ -79,6 +79,11 @@ function Signup() {
       toast.error("Number should have 10 digits and only contain numbers.");
       return;
     }
+     const regex = /^(?=.*[A-Za-z])(?=.*\d).{5,}$/;
+      if (!regex.test(password)) {
+        toast.error('Password must be at least 5 characters long and contain letters and numbers');
+        return;
+      }
 
     if(password!==confirmPassword)
     {
@@ -133,9 +138,9 @@ function Signup() {
         setConfirmPassword('')
         setTimeout(() => {
           navigate('/doctor/login')
-        }, 1000);
+        }, 2000);
       }
-      else if(result==="Email already exists")
+      else if(result==="Doctor with this email already exists")
       {
         toast.error("Email already exists")
       }
@@ -302,6 +307,7 @@ function Signup() {
                 id="experience"
                 className="w-full p-2 mt-1 border border-gray-300 rounded text-sm"
                 placeholder="Enter your years of experience"
+                min="0"
                 value={experience}
                 onChange={(e) => setExperience(Number(e.target.value))}
               />
@@ -318,6 +324,7 @@ function Signup() {
                 id="fee"
                 className="w-full p-2 mt-1 border border-gray-300 rounded text-sm"
                 placeholder="Enter your consultation fee"
+                 min="0"
                 value={fee}
                 onChange={(e) => setFee(Number(e.target.value))}
               />

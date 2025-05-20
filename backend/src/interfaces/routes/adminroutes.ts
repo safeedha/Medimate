@@ -13,6 +13,8 @@ import {ChangeStatus} from '../../application/usecase/user/changestatus'
 import {ChangeDocStatus} from '../../application/usecase/doctor/changestatus'
 import {VerifyDoctor} from '../../application/usecase/doctor/verify'
 import {verifyAdminAuth} from '../../infrastructure/middleware/verifyAdminToken'
+import {EditDept} from "../../application/usecase/dept/editdept"
+import {BlockDept} from "../../application/usecase/dept/blockdept"
 const router=express.Router()
 
 const mongouserrepository=new MongoUserRepository()
@@ -24,22 +26,25 @@ const getverified=new Getverified(mongodocrepository)
 const changedocstat=new ChangeDocStatus(mongodocrepository)
 const verifyDoctor=new VerifyDoctor(mongodocrepository)
 const mongodeotrepository=new MongoDeptRepository()
+const blockDept=new BlockDept(mongodeotrepository)
+const editDept=new EditDept(mongodeotrepository)
 const addDept=new AddDept(mongodeotrepository)
 const getDept=new GetDept(mongodeotrepository)
 
 
 const login=new Login()
 const admin=new AdminController(login,addDept,getDept,getUnverified,getverified
-,getUser,changestatus,changedocstat,verifyDoctor)
+,getUser,changestatus,changedocstat,verifyDoctor,editDept,blockDept)
 
 
 
 
 router.post("/login",(req, res) => admin.adminLogin(req, res))
 
-router.post("/department",verifyAdminAuth,(req, res) => admin.createDepartment(req, res))
+router.put("/department/:id",verifyAdminAuth,(req, res) => admin.editDepartment(req, res))
+router.patch("/department/:id",verifyAdminAuth,(req, res) => admin.blockDepartment(req, res))
 router.get("/department",verifyAdminAuth,(req, res) => admin.getDepartment(req, res))
-
+router.post("/department",verifyAdminAuth,(req, res) => admin.createDepartment(req, res))
 
 
 router.get("/doctor/unverified",verifyAdminAuth, (req, res) => admin.getAllunVerfiedDoctors(req, res))

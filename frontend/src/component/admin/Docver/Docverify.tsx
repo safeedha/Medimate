@@ -6,7 +6,14 @@ import { changeStatus } from '../../../api/adminapi/doctor'
 
 import Modal from 'react-modal'
 import Swal from 'sweetalert2'
-
+interface DepartmentProps {
+  _id: string;
+  deptname: string;
+  description: string;
+  isblocked: boolean;
+  createdAt: string;   
+  updatedAt: string; 
+}
 interface Idoctor {
   _id?: string
   firstname: string
@@ -14,7 +21,7 @@ interface Idoctor {
   email: string
   password: string
   phone: string
-  specialisation: string | null
+  specialisation: DepartmentProps
   experience: number
   fee: number
   status: 'Approved' | 'Rejected'
@@ -202,7 +209,7 @@ function Docverify() {
                   </div>
                   <div>
                     <span className="font-medium">Specialisation:</span>{' '}
-                    {selectedDoctor.specialisation ?? 'N/A'}
+                    {selectedDoctor?.specialisation?.deptname ?? 'N/A'}
                   </div>
                   <div>
                     <span className="font-medium">Experience:</span>{' '}

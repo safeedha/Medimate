@@ -3,6 +3,7 @@ import bgImage from '../../../assets/patient.jpg';
 import { Toaster, toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import {register} from '../../../api/userapi/register';
+import {useNavigate} from 'react-router-dom'
 function Psignup() {
   const [firstname, setFirstname] = useState<string>('');
   const [lastname, setLastname] = useState<string>('');
@@ -11,44 +12,66 @@ function Psignup() {
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [gender, setGender] = useState<'male' | 'female' | 'other' | ''>('');
+  const navigate=useNavigate()
   
-  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
 
-   
-    if (!firstname || !email || !gender) {
-      toast.error('Please fill all required fields');
-      return;
-    }
-    if( password !== confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
-    }
+  // Basic required fields check
+  if (!firstname || !email || !gender || !password || !confirmPassword || !contact) {
+    toast.error('Please fill all required fields');
+    return;
+  }
 
-     const response = await register(
-      firstname,
-      lastname,
-      email,  
-      contact,
-      password,
-      gender)
-    if (response==="Registration successful") {
-      toast.success('User registered successfully');
-      setFirstname('');
-      setLastname('');
-      setEmail('');
-      setContact('');
-      setPassword('');
-      setConfirmPassword('');
-      setGender('');
-    }
-    else{
-      toast.error(response);
-    }
+  // Email format validation using regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    toast.error('Please enter a valid email address');
+    return;
+  }
 
-    
-    
-    };
+  // Phone number validation: only digits and 10 characters
+  const phoneRegex = /^\d{10}$/;
+  if (!phoneRegex.test(contact)) {
+    toast.error('Please enter a valid 10-digit phone number');
+    return;
+  }
+
+  const regex = /^(?=.*[A-Za-z])(?=.*\d).{5,}$/;
+  if (!regex.test(password)) {
+    toast.error('Password must be at least 5 characters long and contain letters and numbers');
+    return;
+  }
+  if (password !== confirmPassword) {
+    toast.error('Passwords do not match');
+    return;
+  }
+
+  // Proceed with registration
+  const response = await register(
+    firstname,
+    lastname,
+    email,
+    contact,
+    password,
+    gender
+  );
+
+  if (response === "Registration successful") {
+    toast.success('User registered successfully');
+    setFirstname('');
+    setLastname('');
+    setEmail('');
+    setContact('');
+    setPassword('');
+    setConfirmPassword('');
+    setGender('');
+    navigate('/login')
+  } else {
+    toast.error(response);
+  }
+};
+
 
 
 

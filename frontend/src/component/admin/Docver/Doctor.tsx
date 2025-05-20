@@ -6,6 +6,14 @@ import Modal from 'react-modal'
 import Swal from 'sweetalert2'
 import Pagination from '../../../component/common/Pgination'
 
+interface DepartmentProps {
+  _id: string;
+  deptname: string;
+  description: string;
+  isblocked: boolean;
+  createdAt: string;   
+  updatedAt: string; 
+}
 interface Idoctor {
   _id?: string
   firstname: string
@@ -13,7 +21,7 @@ interface Idoctor {
   email: string
   password: string
   phone: string
-  specialisation: string | null
+  specialisation: DepartmentProps
   experience: number
   fee: number
   isBlocked: boolean
@@ -51,7 +59,7 @@ function Doctor() {
   const subtitleRef = useRef<HTMLHeadingElement>(null)
 
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const itemsPerPage = 5
+  const itemsPerPage = 4
 
   useEffect(() => {
     (async () => {
@@ -163,7 +171,7 @@ function Doctor() {
           <div className="mt-6 flex justify-center">
             <Pagination
               currentPage={currentPage}
-              totalPages={doctors.length}
+              totalPages={Math.ceil(doctors.length/itemsPerPage)}
               onPageChange={(page: number) => setCurrentPage(page)}
             />
           </div>
@@ -187,7 +195,7 @@ function Doctor() {
                   <div><strong>Name:</strong> {selectedDoctor.firstname} {selectedDoctor.lastname}</div>
                   <div><strong>Email:</strong> {selectedDoctor.email}</div>
                   <div><strong>Phone:</strong> {selectedDoctor.phone}</div>
-                  <div><strong>Specialisation:</strong> {selectedDoctor.specialisation ?? 'N/A'}</div>
+                  <div><strong>Specialisation:</strong> {selectedDoctor.specialisation.deptname ?? 'N/A'}</div>
                   <div><strong>Experience:</strong> {selectedDoctor.experience} years</div>
                   <div><strong>Fee:</strong> ₹{selectedDoctor.fee}</div>
                   {selectedDoctor.additionalInfo && (

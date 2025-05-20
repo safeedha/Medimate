@@ -65,7 +65,7 @@ function Otp() {
          toast.success("OTP verified successfully,Now you can login"); 
          
             setTimeout(() => {
-            navigate("/");
+            navigate("/login");
            }, 2000);
       }
       else{
@@ -79,7 +79,7 @@ function Otp() {
          toast.success("OTP verified successfully,Now you can login"); 
          
             setTimeout(() => {
-            navigate("/");
+            navigate("/doctor/login");
            }, 2000);
       }
       else{

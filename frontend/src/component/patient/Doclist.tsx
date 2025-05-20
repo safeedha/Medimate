@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import { getAlldoctors } from '../../api/userapi/doctor';
+import {getDepartnment} from '../../api/userapi/doctor'
 
 export interface IDepartment {
   _id: string;
   deptname: string;
   description?: string;
   createdAt?: Date;
-  updatedAt?: Date;
+  isblocked?: boolean;
+   updatedAt?: Date;
 }
 
 interface Idoctor {
@@ -30,30 +32,47 @@ interface Idoctor {
 
 function Doclist() {
   const [doctors, setDoctors] = useState<Idoctor[] | null>(null);
+  const [department, setDepartment] = useState<IDepartment[]>([]);
 
   useEffect(() => {
     const fetchDoctors = async () => {
       const doctorData = await getAlldoctors();
-      console.log(doctorData)
       setDoctors(doctorData);
     };
 
     fetchDoctors();
   }, []);
+  useEffect(() => {
+    const fetchDepartnment = async () => {
+      const response = await getDepartnment();
+      setDepartment(response)
+    };
+
+    fetchDepartnment ();
+  }, []);
+   const deptdetails=department.map((dept)=>(
+    <div className='hover:bg-slate-200' key={dept._id} >
+      <p >{dept.deptname}</p>
+    </div>
+   ))
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100">
+    <div className="min-h-screen bg-teal-50">
       <Navbar />
+      <div className='flex flex-row'>
+       <div className='fixed h-screen  w-48 top-0 shadow-lg py-20 flex flex-col gap-7 items-center'>
+        {deptdetails}
+      </div>
 
-      <section className="py-12 px-6 md:px-20">
-        <h2 className="text-4xl font-bold text-center text-indigo-700 mb-10">Our Amazing Doctors</h2>
+      <section className="py-12 px-6 md:px-64">
+       
 
         {!doctors ? (
           <p className="text-center text-gray-600 text-lg">Loading doctors...</p>
         ) : doctors.length === 0 ? (
           <p className="text-center text-gray-600 text-lg">No doctors found.</p>
         ) : (
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {doctors.map((doctor, index) => (
               <div
                 key={index}
@@ -67,14 +86,26 @@ function Doclist() {
                 <h4 className="text-xl font-semibold text-teal-700 text-center">
                   Dr. {doctor.firstname} {doctor.lastname}
                 </h4>
-                <p className="text-gray-600 text-center mt-1">
-                  {doctor.specialisation.deptname|| 'General Practitioner'}
+                <p className="text-black text-center mt-1 font-semibold">
+                  {doctor?.specialisation?.deptname|| 'General Practitioner'}
                 </p>
+                <p className="text-black text-center mt-1 font-semibold">
+                  Consultation fee:{doctor?.fee}
+                </p>
+                 <p className="text-black text-center mt-1 font-semibold">
+                  Experience:{doctor?.experience}
+                </p>
+                <button className="bg-slate-900 text-white px-4 py-2 rounded-xl mt-4 mx-auto block hover:bg-slate-800 transition duration-200">
+                Book Appointment
+              </button>
+
+
               </div>
             ))}
           </div>
         )}
       </section>
+      </div>
     </div>
   );
 }
