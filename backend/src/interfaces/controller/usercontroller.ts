@@ -36,7 +36,8 @@ export class UserController {
 
   async getAllDoct(req: Request, res: Response):Promise<void>{
      try {
-      const result = await this.getverified.getAllVerifiedDoctors();
+      const department = req.query.department as string | undefined;
+      const result = await this.getverified.getAllVerifiedDoctors(department);
       res.status(200).json(result);
     } catch (error) {
       const errorMessage = error instanceof Error

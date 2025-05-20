@@ -14,12 +14,26 @@ export class MongoDocRepository implements DoctorRepository {
       throw new Error('Database error');
     }
   }
-  async getAllverified(): Promise<Idoctor[]> {
+  async getAllverified(department?: string): Promise<Idoctor[]> {
     try {
-          const doctors = await Doctor.find({ status: 'Approved' ,isBlocked:false}).populate({
+          let doctors = await Doctor.find({ status: 'Approved' ,isBlocked:false}).populate({
           path: 'specialisation',
           match: { isblocked: false } 
         });
+        
+        if(department==="All doctor")
+        {
+          console.log()
+          return doctors
+        }
+        else{
+        doctors = doctors.filter((doc: Idoctor) => 
+          typeof doc.specialisation === 'object' &&
+          doc?.specialisation?.deptname === department
+        );
+      }
+      
+
       return doctors;
     } catch (error) {
       console.error('Error fetching verified doctors:', error);

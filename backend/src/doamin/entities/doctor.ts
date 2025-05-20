@@ -1,3 +1,6 @@
+import {Department} from './departnment'
+
+
 export interface Idoctor{
   _id?:string,
   firstname:string,
@@ -5,7 +8,7 @@ export interface Idoctor{
   email:string,
   password:string,
   phone:string,
-  specialisation:string|null,
+  specialisation:string|Department|null,
   experience:number,
   fee:number,
   status:"Approved"|"Rejected"|"Pending",

@@ -33,15 +33,17 @@ interface Idoctor {
 function Doclist() {
   const [doctors, setDoctors] = useState<Idoctor[] | null>(null);
   const [department, setDepartment] = useState<IDepartment[]>([]);
+  const [singledepartment,setSingledepartment]=useState<string>("")
 
   useEffect(() => {
     const fetchDoctors = async () => {
-      const doctorData = await getAlldoctors();
+      const doctorData = await getAlldoctors(singledepartment);
       setDoctors(doctorData);
     };
 
     fetchDoctors();
-  }, []);
+  }, [singledepartment]);
+  
   useEffect(() => {
     const fetchDepartnment = async () => {
       const response = await getDepartnment();
@@ -50,21 +52,38 @@ function Doclist() {
 
     fetchDepartnment ();
   }, []);
-   const deptdetails=department.map((dept)=>(
-    <div className='hover:bg-slate-200' key={dept._id} >
-      <p >{dept.deptname}</p>
-    </div>
-   ))
+
+ const deptdetails = department.map((dept) => (
+  <div
+    key={dept._id}
+    className="hover:bg-slate-200 cursor-pointer p-2 rounded"
+    onClick={() =>
+      setSingledepartment(dept.deptname)
+    }
+  >
+    <p>{dept.deptname}</p>
+  </div>
+));
+
 
   return (
     <div className="min-h-screen bg-teal-50">
       <Navbar />
       <div className='flex flex-row'>
        <div className='fixed h-screen  w-48 top-0 shadow-lg py-20 flex flex-col gap-7 items-center'>
+        <div
+        
+        className="hover:bg-slate-200 cursor-pointer p-2 rounded"
+        onClick={() =>
+          setSingledepartment("All doctor")
+        }
+      >
+        <p>All doctor</p>
+      </div>
         {deptdetails}
       </div>
 
-      <section className="py-12 px-6 md:px-64">
+      <section className="py-12  md:px-64">
        
 
         {!doctors ? (
@@ -72,7 +91,7 @@ function Doclist() {
         ) : doctors.length === 0 ? (
           <p className="text-center text-gray-600 text-lg">No doctors found.</p>
         ) : (
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {doctors.map((doctor, index) => (
               <div
                 key={index}
