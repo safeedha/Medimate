@@ -128,7 +128,8 @@ async verification(req: Request, res: Response): Promise<void> {
   try {
     const { id } = req.params;
     const { status } = req.body; // 'Approved' or 'Rejected'
-    const result = await this.verifyDoctor.verifyStatus(id,status);
+   const reason = req.query.reason as string;
+    const result = await this.verifyDoctor.verifyStatus(id,status,reason);
     res.status(200).json(result);
   }
   catch(error)

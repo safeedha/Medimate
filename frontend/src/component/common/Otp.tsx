@@ -47,6 +47,7 @@ function Otp() {
     if (email) {
       const result = await otpsend(email);
       console.log(result);
+      toast.success("Otp resended")
       setTimer(60);
       setResendVisible(false);
     }

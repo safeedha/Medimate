@@ -8,6 +8,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import { Toaster, toast } from 'react-hot-toast';
+import Navbar from './Navbar';
 
 function Pprofile() {
   const [firstname,setFirstname]=useState<string>('')
@@ -16,6 +17,7 @@ function Pprofile() {
   const [age,setAge]=useState<number>()
   const [gender,setGender]=useState<"male"|"female"|"other">("other")
  const [update,setUpdate]=useState<boolean>(false)
+ const [disabled,setDisabled]=useState<boolean>(true)
   useEffect(() => {
   async function getUserDetails() {
     try {
@@ -38,11 +40,17 @@ function Pprofile() {
   const handleSubmit=async(e:React.FormEvent<HTMLFormElement>)=>{
   e.preventDefault()
   try{
+
+     if (!/^\d{10}$/.test(phone)) {
+          toast.error("Phone number must be exactly 10 digits");
+          return 
+        }
      const response=await setUserdetail(firstname,lastname,phone,age,gender)
      if(response==="updation successfull")
      {
       toast.success("Your profile updated sucessfully")
        setUpdate((prev)=>!prev)
+       setDisabled(true)
      }
      else{
         toast.error(response)
@@ -57,7 +65,10 @@ function Pprofile() {
   }
 
   return (
-   <div className="flex min-h-screen bg-slate-100">
+  <div className="min-h-screen">
+  <Navbar />
+ 
+   <div className="flex min-h-screen  bg-teal-50">
   <UserSidebar />
   <div className="ml-64 flex-1 overflow-auto p-10">
     <Box
@@ -89,6 +100,8 @@ function Pprofile() {
           label="First Name"
           type="text"
           fullWidth
+           required
+           disabled={disabled}
           value={firstname}
           onChange={(e) => setFirstname(e.target.value)}
         />
@@ -96,13 +109,17 @@ function Pprofile() {
           label="Last Name"
           type="text"
           fullWidth
+           required
+           disabled={disabled}
           value={lastname}
           onChange={(e) => setLastname(e.target.value)}
         />
         <TextField
           label="Phone Number"
           type="text"
+           required
           fullWidth
+           disabled={disabled}
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
@@ -112,8 +129,10 @@ function Pprofile() {
             labelId="gender-label"
             id="gender"
             value={gender}
+             required
             label="Gender"
             onChange={(e) => setGender(e.target.value)}
+             disabled={disabled}
           >
             <MenuItem value="male">Male</MenuItem>
             <MenuItem value="female">Female</MenuItem>
@@ -121,23 +140,36 @@ function Pprofile() {
           </Select>
         </FormControl>
         <TextField
-          label="Age"
-          type="number"
-          fullWidth
-          value={age}
-          onChange={(e) => setAge(Number(e.target.value))}
-       
-        />
-      </Box>
+        label="Age"
+        type="number"
+         required
+        fullWidth
+        value={age}
+        disabled={disabled}
+        onChange={(e) => setAge(Number(e.target.value))}
+        inputProps={{ min: 5 }} // still works, but marked deprecated in newer versions
+      />
 
+
+      </Box>
+      {disabled?(
+        <p
+          onClick={() => setDisabled(false)}
+          className="mt-4 bg-red-500 text-white px-6 py-2 rounded-xl hover:bg-red-600 transition-colors inline-block"
+        >
+          Update Profile
+        </p>
+      ):(
       <button
         type="submit"
         className="mt-6 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-200"
       >
         Submit
       </button>
+      )}
     </Box>
   </div>
+</div>
 </div>
 
   );

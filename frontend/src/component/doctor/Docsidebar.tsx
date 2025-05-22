@@ -25,6 +25,14 @@ function DoctorSidebar() {
         <Link to="/doctor/appointments" className="block hover:text-cyan-200">
           📅 Appointments
         </Link>
+        <Link to="/doctor/appointments" className="flex items-center gap-2 hover:text-cyan-200">
+          ⏰ <span>Current Schedules</span>
+        </Link>
+
+        <Link to="/doctor/wallet" className="flex items-center gap-2 hover:text-cyan-200">
+          💰 <span>Wallet</span>
+        </Link>
+
       </nav>
 
       

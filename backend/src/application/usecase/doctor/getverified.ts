@@ -5,9 +5,9 @@ import {Idoctor} from '../../../doamin/entities/doctor';
 export class Getverified {
 
   constructor(private doctorRepository: DoctorRepository) {}
-  async getAllVerifiedDoctors(department?: string): Promise<Idoctor[]> {
+  async getAllVerifiedDoctors(department?: string,search?:string): Promise<Idoctor[]> {
     try {
-      const unverifiedDoctors = await this.doctorRepository.getAllverified(department);
+      const unverifiedDoctors = await this.doctorRepository.getAllverified(department,search);
       return unverifiedDoctors;
     } catch (error) {
       if (error instanceof Error) {

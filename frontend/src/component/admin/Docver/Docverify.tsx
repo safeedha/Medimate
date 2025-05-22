@@ -39,18 +39,20 @@ const customStyles = {
     bottom: 'auto',
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
-    padding: '0',
+    padding: '0', // Tailwind padding handled in form
     border: 'none',
-    borderRadius: '0.5rem',
-    overflow: 'hidden',
-    width: '90%',
+    borderRadius: '0.75rem', // matches Tailwind's rounded-xl
+    overflow: 'visible',
+    width: '100%',
     maxWidth: '500px',
+    backgroundColor: 'transparent', // let Tailwind handle form background
   },
   overlay: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    zIndex: 1000,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 50, // Tailwind default is 50+ for modals
   },
 }
+
 
 Modal.setAppElement('#root') // or whatever your root ID is
 
@@ -58,6 +60,9 @@ function Docverify() {
   const [doctors, setDoctors] = useState<Idoctor[]>([])
   const [selectedDoctor, setSelectedDoctor] = useState<Idoctor | null>(null)
   const [modalIsOpen, setIsOpen] = useState(false)
+  const [reason,setReason]=useState<string>("")
+  const [submodalIsOpen, setSubIsOpen] = useState(false)
+  const [selected,setSelected]=useState("")
 
   const subtitleRef = useRef<HTMLHeadingElement>(null)
   function afterOpenModal() {
@@ -86,7 +91,7 @@ function Docverify() {
     setIsOpen(true)
   }
 
-  const RejectHandler = async (id: string) => {
+  const RejectHandler = async (id: string,reason:string) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
       text: 'Do you want to reject this request?',
@@ -99,10 +104,15 @@ function Docverify() {
 
     if (result.isConfirmed) {
       let status: 'Approved' | 'Rejected' = 'Rejected'
-      const response = await changeStatus(id, status)
-      setDoctors(response)
-      setIsOpen(false)
-      toast.success('Doctor Rejected successfully')
+      
+      
+        const response = await changeStatus(id, status,reason)
+        setDoctors(response)
+        setIsOpen(false)
+        setSubIsOpen(false)
+        toast.success('Doctor Rejected successfully')
+      
+      
     }
   }
 
@@ -180,6 +190,7 @@ function Docverify() {
             </table>
           </div>
         )}
+        
 
         <Modal
           isOpen={modalIsOpen}
@@ -188,10 +199,40 @@ function Docverify() {
           style={customStyles}
           contentLabel="Doctor Details"
         >
-          <div className="bg-white p-6">
+          <div className="bg-white p-6 relative">
             <h2 ref={subtitleRef} className="text-xl font-semibold mb-4">
               Doctor Details
             </h2>
+            
+            <Modal
+            isOpen={submodalIsOpen}
+            style={customStyles}
+            contentLabel="Reason for doctor rejection"
+          >
+            <div className="bg-white border-2 border-gray-300 rounded-xl p-6 max-w-md mx-auto shadow-lg">
+              <p className="text-lg font-semibold mb-4">
+                Please write reason for Rejection:
+              </p>
+              <textarea
+                className="w-full h-28 p-3 border border-gray-400 rounded-md text-sm resize-none focus:outline-none focus:ring-2 focus:ring-red-400"
+                placeholder="Enter reason here..."
+                value={reason}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>)=>setReason(e.target.value)}
+              />
+              <div className="mt-4 text-right">
+                <button
+                  type="button"
+                  onClick={()=>RejectHandler(selected,reason)}
+                  className="bg-red-500 text-white px-5 py-2 rounded-md hover:bg-red-600 transition"
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </Modal>
+
+         
+           
 
             {selectedDoctor ? (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -264,7 +305,10 @@ function Docverify() {
               <div className="mt-6 flex justify-end space-x-4">
                 <button
                   className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
-                  onClick={() => RejectHandler(selectedDoctor?._id!)}
+                   onClick={() => {
+                    setSubIsOpen(true)
+                    setSelected(selectedDoctor?._id!)
+                  }}
                 >
                   Reject
                 </button>

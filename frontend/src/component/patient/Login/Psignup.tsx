@@ -87,7 +87,7 @@ function Psignup() {
           className="bg-slate-200 p-6 rounded-2xl shadow-lg w-full max-w-lg max-h-screen overflow-y-auto"
         >
           <h3 className="font-semibold text-center mb-6 text-gray-800 underline text-lg">
-            Patient Signup
+            User Signup
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">

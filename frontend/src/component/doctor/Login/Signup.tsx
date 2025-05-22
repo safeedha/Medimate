@@ -119,7 +119,7 @@ function Signup() {
         const uploadedUrl2:string = response2.data.secure_url;
          console.log(uploadedUrl,uploadedUrl2)
     
-    
+   
       const result=await signup(firstname,lastname,email,contact,specialisation,experience,password,fee,additionalInfo,uploadedUrl,uploadedUrl2)
       if(result.message==="Doctor registered successfully")
       {

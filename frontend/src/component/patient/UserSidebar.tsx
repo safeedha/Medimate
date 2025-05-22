@@ -6,10 +6,10 @@ function UserSidebar() {
 
 
   return (
-  <aside className="w-64 h-screen bg-gradient-to-b from-teal-200 to-cyan-100 fixed top-0 left-0 shadow-xl flex flex-col p-6">
+  <aside className="w-64 h-screen bg-gradient-to-b from-teal-200 to-cyan-100 fixed top-0 py-16 left-0 shadow-xl flex flex-col p-6">
 
   <div className="mb-4 text-center">
-    <h1 className="text-2xl font-bold text-gray-800">🩺 MediMate</h1>
+    <h1 className="text-2xl font-bold text-gray-800"></h1>
   </div>
 
   <nav className="flex flex-col gap-4 text-lg font-medium text-gray-700">

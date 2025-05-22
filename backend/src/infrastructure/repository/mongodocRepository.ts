@@ -14,25 +14,37 @@ export class MongoDocRepository implements DoctorRepository {
       throw new Error('Database error');
     }
   }
-  async getAllverified(department?: string): Promise<Idoctor[]> {
+  async getAllverified(department?: string,search?:string): Promise<Idoctor[]> {
     try {
           let doctors = await Doctor.find({ status: 'Approved' ,isBlocked:false}).populate({
           path: 'specialisation',
           match: { isblocked: false } 
         });
         
-        if(department==="All doctor")
-        {
-          console.log()
-          return doctors
+        if(department)
+        {  
+          
+          if(department==="All doctor")
+          {
+          
+             doctors=doctors
+          }
+          else{
+            console.log(department,"hi")
+            doctors = doctors.filter((doc: Idoctor) => 
+            typeof doc.specialisation === 'object' &&
+            doc?.specialisation?.deptname === department
+          );
+          console.log(doctors)
         }
-        else{
-        doctors = doctors.filter((doc: Idoctor) => 
-          typeof doc.specialisation === 'object' &&
-          doc?.specialisation?.deptname === department
-        );
-      }
-      
+    }
+
+     if(search)
+        {
+           doctors = doctors.filter((doc: Idoctor) => 
+           doc.firstname.toLowerCase().includes(search.toLowerCase())
+          )
+        }
 
       return doctors;
     } catch (error) {
@@ -40,6 +52,24 @@ export class MongoDocRepository implements DoctorRepository {
       throw new Error('Database error');
     }
   }
+  async getSingleDoctor(id:string):Promise<Idoctor>{
+       try{
+         const doctor = await Doctor.findById(id);
+          if (!doctor) {
+            throw new Error('Doctor not found');
+          }
+          return doctor
+       }
+       catch(error)
+       {
+         if (error instanceof Error) {
+            throw new Error(error.message);
+          }
+           throw new Error('Unknown error occurred');
+       }
+  }
+
+
 
   async changeStatus(id: string): Promise<Idoctor[]> {
     try {

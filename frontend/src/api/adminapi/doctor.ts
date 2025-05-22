@@ -34,9 +34,16 @@ export const changeblockStatus = async (id: string) => {
   }
 }
 
-export const changeStatus= async (id: string,status:"Approved"|"Rejected") => {
+export const changeStatus= async (id: string,status:"Approved"|"Rejected",reason?:string) => {
   try {
-    const response = await adminInstance.patch(`/doctor/verify/${id}`,{status});
+
+    const response = await adminInstance.patch(`/doctor/verify/${id}`,{status},
+       {
+        params: {               // query parameters here
+          reason: reason
+        }
+      }
+    );
     
     
     return response.data;

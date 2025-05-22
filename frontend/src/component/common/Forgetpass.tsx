@@ -35,6 +35,12 @@ function Forgetpass() {
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      if(!email)
+      {
+        toast.error("Please enter the email")
+         return
+      }
+
       const result = await otpsend(email);
       toast.success(result);
       setStage('otp');
@@ -83,6 +89,11 @@ function Forgetpass() {
       toast.error('Please fill in both fields');
       return;
     }
+      const regex = /^(?=.*[A-Za-z])(?=.*\d).{5,}$/;
+      if (!regex.test(newPassword )) {
+        toast.error('Password must be at least 5 characters long and contain letters and numbers');
+        return;
+      }
     if (newPassword !== confirmPassword) {
       toast.error('Passwords do not match');
       return;

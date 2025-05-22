@@ -85,6 +85,11 @@ function DoctorProfile() {
           toast.error("Valid consultation fee is required");
           return
         }
+        if(!formData.qualification)
+        {
+           toast.error("To update qualifiaction compulsory");
+          return
+        }
         if (!/^\d{10}$/.test(formData.phone)) {
           toast.error("Phone number must be exactly 10 digits");
           return 
@@ -139,179 +144,175 @@ function DoctorProfile() {
       }
    }
   return (
-    <div className="flex min-h-screen overflow-hidden">
-     <Toaster/>
-      <DoctorSidebar />
+  <div className="flex min-h-screen overflow-hidden font-sans">
+  <Toaster />
+  <DoctorSidebar />
 
+  <div className="ml-64 flex-1 bg-gradient-to-br from-white via-blue-50 to-indigo-100">
+    <header className="text-center py-6 px-6">
+      <h1 className="text-4xl md:text-5xl font-semibold text-indigo-700 mb-2">
+        Dr. {doctor?.firstname || 'Doctor'}
+      </h1>
+      <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        Manage your personal and professional details. Keep your profile up to date.
+      </p>
+    </header>
 
-      <div className="ml-64 flex-1 bg-gradient-to-br from-white via-blue-50 to-indigo-100">
-        <header className="text-center py-3 px-6">
-          <h1 className="text-4xl md:text-5xl font-medium text-indigo-700 mb-4">
-            Dr. {doctor?.firstname || 'Doctor'}
-          </h1>
+    <main className="px-6 md:px-20 py-4 flex-grow flex justify-center items-start">
+      <div className="w-full max-w-2xl bg-white rounded-2xl p-8 shadow-lg border border-indigo-200 transition hover:shadow-xl">
+        {/* Profile Picture Upload */}
+        <div className="mb-6 text-center">
+          <img
+            src={profilePicture || '/default-profile.png'}
+            alt="Profile"
+            className="w-20 h-20 mx-auto rounded-full border-2 border-indigo-300 cursor-pointer"
+            onClick={() => document.getElementById('fileInput')?.click()}
+          />
+          <input
+            type="file"
+            id="fileInput"
+            accept="image/*"
+            className="hidden"
+            disabled={disabled}
+            onChange={handleImageChange}
+          />
+        </div>
 
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-            Manage your personal and professional details, and update your information as needed.
-          </p>
-        </header>
+        <h3 className="text-2xl font-semibold text-indigo-600 text-center mb-2">
+          Personal Information
+        </h3>
+        <p className="text-center text-gray-500 mb-6 text-sm">
+          View and update your contact, specialty, and professional details.
+        </p>
 
-        <main className="px-6 md:px-20 py-1 flex-grow">
-          <div className=" sm:grid-cols-1 md:grid-cols-1 gap-8 flex justify-center items-center">
-   
-            <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-xl border-2 border-indigo-300 transition-transform transform hover:-translate-y-1 text-center w-full max-w-md ml-40">
-      
-              <div className="mb-4">
-                <img
-                  src={profilePicture || '/default-profile.png'} // Use a default profile image if no image is available
-                  alt="Profile"
-                  className="w-16 h-16 mx-auto rounded-full cursor-pointer"
-                  onClick={() => document.getElementById('fileInput')?.click()} // Trigger file input when the image is clicked
-                />
-                <input
-                  type="file"
-                  id="fileInput"
-                  accept="image/*"
-                  className="hidden"
-                  disabled={disabled}
-                  onChange={handleImageChange} // Handle image selection
-                />
-              </div>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* First & Last Name */}
+          <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+            <div className="flex-1">
+              <label className="text-sm text-gray-700">First Name</label>
+              <input
+                type="text"
+                name="firstname"
+                value={formData.firstname}
+                onChange={handleChange}
+                disabled={disabled}
+                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="text-sm text-gray-700">Last Name</label>
+              <input
+                type="text"
+                name="lastname"
+                value={formData.lastname}
+                onChange={handleChange}
+                disabled={disabled}
+                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              />
+            </div>
+          </div>
 
-              <h3 className="text-xl font-semibold text-indigo-600 mb-1">Personal Information</h3>
-              <p className="text-gray-600 text-sm">View and update your personal information, including your contact details, specialty, experience, and fee.</p>
+          {/* Phone & Specialisation */}
+          <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+            <div className="flex-1">
+              <label className="text-sm text-gray-700">Phone Number</label>
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                disabled={disabled}
+                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                placeholder="e.g., 9876543210"
+                pattern="[0-9]{10}"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="text-sm text-gray-700">Specialisation</label>
+              <select
+                name="specialisation"
+                value={formData.specialisation}
+                onChange={handleChange}
+                disabled={disabled}
+                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              >
+                <option value="" disabled>Select Department</option>
+                {departments.map((department) => (
+                  <option key={department._id} value={department._id}>
+                    {department.deptname}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-            
-            <form className="mt-4" onSubmit={handleSubmit}>
-            <div className="space-y-4">
-              {/* First Name and Last Name on the same line */}
-              <div className="flex space-x-4">
-                <div className="w-1/2">
-                  <label className="block text-left text-gray-700">First Name</label>
-                  <input
-                    type="text"
-                    name="firstname"
-                    value={formData.firstname}
-                    onChange={handleChange}
-                    disabled={disabled}
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-                <div className="w-1/2">
-                  <label className="block text-left text-gray-700">Last Name</label>
-                  <input
-                    type="text"
-                    name="lastname"
-                    value={formData.lastname}
-                    onChange={handleChange}
-                    disabled={disabled}
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-              </div>
+          {/* Qualification */}
+          <div>
+            <label className="text-sm text-gray-700">Qualification</label>
+            <textarea
+              name="qualification"
+              value={formData.qualification === "false" ? "" : formData.qualification}
+              onChange={handleChange}
+              disabled={disabled}
+              className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              rows={3}
+              placeholder="e.g., MBBS - AIIMS, New Delhi (2015)"
+            />
+          </div>
 
-              {/* Phone Number and Specialisation */}
-              <div className="flex space-x-4">
-                <div className="w-1/2">
-                  <label className="block text-left text-gray-700">Phone Number</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    disabled={disabled}
-                    className="w-full p-2 border rounded-md"
-                    placeholder="e.g., 9876543210"
-                    pattern="[0-9]{10}"
-                  />
-                </div>
-                <div className="w-1/2">
-                  <label className="block text-left text-gray-700">Specialisation</label>
-                  <select
-                    name="specialisation"
-                    value={formData.specialisation}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded-md"
-                    disabled={disabled}
-                  >
-                    <option value="" disabled>Select Department</option>
-                    {departments.map((department) => (
-                      <option key={department._id} value={department._id}>
-                        {department.deptname}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+          {/* Experience & Fee */}
+          <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+            <div className="flex-1">
+              <label className="text-sm text-gray-700">Experience (years)</label>
+              <input
+                type="number"
+                name="experience"
+                value={formData.experience}
+                onChange={handleChange}
+                disabled={disabled}
+                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                min="0"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="text-sm text-gray-700">Consultation Fee</label>
+              <input
+                type="number"
+                name="fee"
+                value={formData.fee}
+                onChange={handleChange}
+                disabled={disabled}
+                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                min="0"
+              />
+            </div>
+          </div>
 
-              {/* Qualification Details */}
-              <div>
-                <label className="block text-left text-gray-700">Qualification Details</label>
-                <textarea
-                  name="qualification"
-                  disabled={disabled}
-                  value={formData.qualification}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md"
-                  placeholder="e.g., MBBS - AIIMS, New Delhi (2015)"
-                  rows={3}
-                />
-              </div>
-
-              {/* Experience and Fee on the same line */}
-              <div className="flex space-x-4">
-                <div className="w-1/2">
-                  <label className="block text-left text-gray-700">Experience (years)</label>
-                  <input
-                    type="number"
-                    name="experience"
-                    value={formData.experience}
-                    onChange={handleChange}
-                    min="0"
-                    disabled={disabled}
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-                <div className="w-1/2">
-                  <label className="block text-left text-gray-700">Consultation Fee</label>
-                  <input
-                    type="number"
-                    name="fee"
-                    value={formData.fee}
-                    onChange={handleChange}
-                    min="0"
-                    disabled={disabled}
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              {disabled?(
+          {/* Button */}
+          <div className="text-center">
+            {disabled ? (
               <p
                 onClick={update}
-                className="mt-4 bg-red-500 text-white px-6 py-2 rounded-xl hover:bg-red-600 transition-colors inline-block"
+                className="inline-block mt-4 bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-full cursor-pointer"
               >
                 Update Profile
               </p>
-              ):(
+            ) : (
               <button
                 type="submit"
-                className="mt-4 bg-green-600 text-white px-6 py-2 rounded-xl hover:bg-green-600 transition-colors"
+                className="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full transition duration-300"
               >
-                Save changes
+                Save Changes
               </button>
-              )
-             }
-              
-            </div>
-          </form>
-
-
-            </div>
+            )}
           </div>
-        </main>
+        </form>
       </div>
-    </div>
+    </main>
+  </div>
+</div>
+
   );
 }
 

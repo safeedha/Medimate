@@ -1,10 +1,11 @@
 import userInstance from "./instance";
 
-export const getAlldoctors = async (singledepartment:string) => {
+export const getAlldoctors = async (singledepartment:string,search:string) => {
   try {
    const response = await userInstance.get("/doctors", {
     params: {
-      department: singledepartment
+      department: singledepartment,
+      search:search
     }
   });
     console.log(response.data)

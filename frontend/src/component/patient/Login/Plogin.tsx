@@ -32,7 +32,7 @@ function Plogin() {
       toast.error('This account is not verified, please check your mail for otp verification');
       setTimeout(() => {
         navigate('/otp', { state: { email, role: 'user' } });
-      }, 1000);
+      }, 2000);
     } else {
       toast.error(result);
     }
@@ -71,7 +71,7 @@ function Plogin() {
           onSubmit={handleLogin}
         >
           <h3 className="font-semibold text-center mb-6 text-gray-800 text-lg">
-            Patient Login
+            User Login
           </h3>
 
           {/* Email Field */}
@@ -115,6 +115,7 @@ function Plogin() {
             Login
           </button>
           <br />
+          <br></br>
           <div className='ml-14'>
              <GoogleLogin
             onSuccess={responseMessage}

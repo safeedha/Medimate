@@ -37,7 +37,8 @@ export class UserController {
   async getAllDoct(req: Request, res: Response):Promise<void>{
      try {
       const department = req.query.department as string | undefined;
-      const result = await this.getverified.getAllVerifiedDoctors(department);
+      const search=req.query.search as string | undefined
+      const result = await this.getverified.getAllVerifiedDoctors(department,search);
       res.status(200).json(result);
     } catch (error) {
       const errorMessage = error instanceof Error
@@ -118,8 +119,8 @@ async login(req: Request, res: Response): Promise<void> {
       const { email } = req.body;
       const otp = generateOtp();
       await this.otpcration.createOtp(email, otp);
-
-      await sendMail(email, otp);
+       let subject:string="Otp verification"
+      await sendMail(email, otp,subject);
        
       res.status(200).json({ message: 'OTP sent successfully' });
     } catch (error) {

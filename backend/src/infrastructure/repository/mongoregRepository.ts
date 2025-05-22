@@ -59,19 +59,19 @@ export class MongoRegRepository implements RegRepository {
         
         if(!doctor)
         {
-          throw new Error("this email not registered")
+          throw new Error("This email is not registered")
         }
         if(doctor.password!==password)
         {
-          throw new Error("invalid credential")
+          throw new Error("Invalid credential")
         }
         if(doctor.status==="Rejected")
         {
-          throw new Error("your account is Rejected by admin")
+          throw new Error("Your account is Rejected by admin")
         }
         if(doctor.status==="Pending")
         {
-          throw new Error("your account is not approved yet")
+          throw new Error("Your account is not approved yet,please contact admin")
         }
         if(doctor.googleVerified===false)
         {
@@ -79,7 +79,7 @@ export class MongoRegRepository implements RegRepository {
         }
          if(doctor.isBlocked===true)
         {
-          throw new Error("this account is blocked")
+          throw new Error("This account is blocked by admin,Please contact admin")
         }
         return doctor;
       }

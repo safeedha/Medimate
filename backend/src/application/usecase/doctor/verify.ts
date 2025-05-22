@@ -1,12 +1,23 @@
 import {DoctorRepository} from '../../../doamin/repository/doctor-repository';
 import {Idoctor} from '../../../doamin/entities/doctor';
+import {sendMail} from '../../../application/service/emailservice'
 
 
 export class VerifyDoctor {
   constructor(private docRepository: DoctorRepository) {}
 
- async verifyStatus(id: string, status: 'Approved' | 'Rejected'): Promise<Idoctor[]> {
+ async verifyStatus(id: string, status: 'Approved' | 'Rejected',reason?:string): Promise<Idoctor[]> {
    try{
+       if(reason)
+       {
+        await sendMail(
+        email,  
+        undefined,          
+        'Application Rejected', 
+        reason
+      );
+
+       }
       const users = await this.docRepository.verification(id, status);
       return users;
    }

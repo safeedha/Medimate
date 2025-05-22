@@ -61,6 +61,7 @@ export const login = async (email:string,password:string,dispatch: AppDispatch )
 export const otpsend = async (email:string) => {
   try {
     const response = await userInstance.post("/sendotp", {email});
+    console.log(response)
     return response.data.message; 
   } catch (error) {
     if (axios.isAxiosError(error)) {
