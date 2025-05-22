@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import {Idoctor} from '../../../doamin/entities/doctor'
+import {Idoctor} from '../../../domain/entities/doctor'
 
 
 const DoctorSchema: Schema<Idoctor> = new Schema(

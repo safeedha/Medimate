@@ -1,5 +1,5 @@
-import {DoctorRepository} from '../../../doamin/repository/doctor-repository';
-import {Idoctor} from '../../../doamin/entities/doctor';
+import {DoctorRepository} from '../../../domain/repository/doctor-repository';
+import {Idoctor} from '../../../domain/entities/doctor';
 
 export class Docprofile {
 

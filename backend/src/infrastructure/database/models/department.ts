@@ -1,5 +1,5 @@
 import{Schema, model} from 'mongoose';
-import {Department} from '../../../doamin/entities/departnment';
+import {Department} from '../../../domain/entities/departnment';
 
 const departmentSchema = new Schema<Department>({
   deptname: {

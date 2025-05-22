@@ -1,5 +1,5 @@
-import {RegRepository } from "../../../doamin/repository/reg-repository";
-import { Idoctor } from "../../../doamin/entities/doctor";
+import {RegRepository } from "../../../domain/repository/reg-repository";
+import { Idoctor } from "../../../domain/entities/doctor";
 export class DocRegister{
 
  constructor(private regRepository:RegRepository){}

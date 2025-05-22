@@ -1,5 +1,5 @@
-import {DepartmentRepository} from '../../../doamin/repository/department-repository'
-import {Department} from '../../../doamin/entities/departnment'
+import {DepartmentRepository} from '../../../domain/repository/department-repository'
+import {Department} from '../../../domain/entities/departnment'
 
 export class GetDept {
  constructor(private deptRepository: DepartmentRepository) {}

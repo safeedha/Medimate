@@ -1,6 +1,6 @@
 
-import {Department} from '../../../doamin/entities/departnment'
-import {DepartmentRepository} from '../../../doamin/repository/department-repository'
+import {Department} from '../../../domain/entities/departnment'
+import {DepartmentRepository} from '../../../domain/repository/department-repository'
 
 
 export class AddDept {

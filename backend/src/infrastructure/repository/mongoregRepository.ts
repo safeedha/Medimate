@@ -1,10 +1,10 @@
-import { RegRepository } from '../../doamin/repository/reg-repository';
-import { Idoctor } from '../../doamin/entities/doctor';
+import { RegRepository } from '../../domain/repository/reg-repository';
+import { Idoctor } from '../../domain/entities/doctor';
 import { Doctor } from '../database/models/docter';
-import { Iuser } from '../../doamin/entities/user';
+import { Iuser } from '../../domain/entities/user';
 import { User } from '../database/models/user';
 import { Otp } from '../database/models/otp';
-import { IOtp } from '../../doamin/entities/otp';
+import { IOtp } from '../../domain/entities/otp';
 import { jwtDecode } from "jwt-decode";
 interface DecodedGoogleToken {
   iss: string;

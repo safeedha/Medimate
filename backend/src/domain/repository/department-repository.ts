@@ -1,4 +1,4 @@
-import {Department} from '../../doamin/entities/departnment'
+import {Department} from '../entities/departnment'
 
 export interface DepartmentRepository {
   add(deptData: Department): Promise<Department>;

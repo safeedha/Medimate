@@ -1,4 +1,4 @@
-import {RegRepository} from "../../../doamin/repository/reg-repository";
+import {RegRepository} from "../../../domain/repository/reg-repository";
 
 
 

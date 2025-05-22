@@ -1,5 +1,5 @@
-import {DoctorRepository} from '../../../doamin/repository/doctor-repository';
-import {Idoctor} from '../../../doamin/entities/doctor';
+import {DoctorRepository} from '../../../domain/repository/doctor-repository';
+import {Idoctor} from '../../../domain/entities/doctor';
 import {sendMail} from '../../../application/service/emailservice'
 
 
@@ -8,14 +8,13 @@ export class VerifyDoctor {
 
  async verifyStatus(id: string, status: 'Approved' | 'Rejected',reason?:string): Promise<Idoctor[]> {
    try{
+
        if(reason)
        {
-        await sendMail(
-        email,  
-        undefined,          
-        'Application Rejected', 
-        reason
-      );
+       const doctor = await this.docRepository.getSingleDoctor(id);
+        console.log(doctor)
+       await sendMail(doctor.email, undefined, 'Application Rejected', reason);
+
 
        }
       const users = await this.docRepository.verification(id, status);

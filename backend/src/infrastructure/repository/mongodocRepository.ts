@@ -1,6 +1,6 @@
-import {DoctorRepository} from '../../doamin/repository/doctor-repository';
+import {DoctorRepository} from '../../domain/repository/doctor-repository';
 import {Doctor} from '../database/models/docter';
-import {Idoctor} from '../../doamin/entities/doctor';
+import {Idoctor} from '../../domain/entities/doctor';
 
 
 export class MongoDocRepository implements DoctorRepository {

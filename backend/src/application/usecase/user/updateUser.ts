@@ -1,5 +1,5 @@
-import {UserRepository} from '../../../doamin/repository/user-repository';
-import {Iuser} from '../../../doamin/entities/user';
+import {UserRepository} from '../../../domain/repository/user-repository';
+import {Iuser} from '../../../domain/entities/user';
 
 export class updatesingleUser {
 

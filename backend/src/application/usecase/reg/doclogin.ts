@@ -1,6 +1,6 @@
-import {RegRepository} from "../../../doamin/repository/reg-repository";
+import {RegRepository} from "../../../domain/repository/reg-repository";
 import jwt from 'jsonwebtoken'
-import { Idoctor } from '../../../doamin/entities/doctor';
+import { Idoctor } from '../../../domain/entities/doctor';
 
 export class DoctorLogin{
  constructor(private regRepository:RegRepository){}

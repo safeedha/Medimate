@@ -1,5 +1,5 @@
-import { RegRepository  } from "../../../doamin/repository/reg-repository"
-import { Iuser } from '../../../doamin/entities/user';
+import { RegRepository  } from "../../../domain/repository/reg-repository"
+import { Iuser } from '../../../domain/entities/user';
 import jwt from 'jsonwebtoken'
 
 

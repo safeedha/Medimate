@@ -120,7 +120,7 @@ async login(req: Request, res: Response): Promise<void> {
       const otp = generateOtp();
       await this.otpcration.createOtp(email, otp);
        let subject:string="Otp verification"
-      await sendMail(email, otp,subject);
+      await sendMail(email, otp,subject,undefined);
        
       res.status(200).json({ message: 'OTP sent successfully' });
     } catch (error) {
