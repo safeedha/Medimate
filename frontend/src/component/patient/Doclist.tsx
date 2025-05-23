@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Navbar from './Navbar';
+import {useNavigate} from 'react-router-dom'
 import { getAlldoctors } from '../../api/userapi/doctor';
 import {getDepartnment} from '../../api/userapi/doctor'
 
@@ -36,6 +37,8 @@ function Doclist() {
   const [singledepartment,setSingledepartment]=useState<string>("")
   const [search,setSearch]=useState<string>("")
 
+  const navigate=useNavigate()
+
   useEffect(() => {
     const fetchDoctors = async () => {
       const doctorData = await getAlldoctors(singledepartment,search);
@@ -53,6 +56,11 @@ function Doclist() {
 
     fetchDepartnment ();
   }, []);
+
+  const appoinmenHandle=(id:string)=>{
+     navigate(`/doctor/${id}`)
+
+  }
 
  const deptdetails = department.map((dept) => (
   <div
@@ -118,7 +126,7 @@ function Doclist() {
               <p className="text-black text-center mt-1 font-semibold">
                 Experience: {doctor?.experience}
               </p>
-              <button className="bg-slate-900 text-white px-4 py-2 rounded-xl mt-4 mx-auto block hover:bg-slate-800 transition duration-200">
+              <button className="bg-slate-900 text-white px-4 py-2 rounded-xl mt-4 mx-auto block hover:bg-slate-800 transition duration-200" onClick={()=>appoinmenHandle(doctor._id)}>
                 Book Appointment
               </button>
             </div>

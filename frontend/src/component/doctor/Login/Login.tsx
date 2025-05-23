@@ -8,6 +8,7 @@ import {useDispatch} from "react-redux"
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [reaply,setReaply]=useState<boolean>(false)
   const dispatch=useDispatch()
   const navigate = useNavigate();
 
@@ -25,7 +26,13 @@ function Login() {
       navigate("/doctor/home")
     } else if (result === 'Your account not verified') {
       navigate('/otp', { state: { email, role: 'doctor' } });
-    } else {
+    } 
+    else if(result==='Your account is Rejected by admin')
+    {
+      toast.error("Your account is rejected by admin,Please check Your mail to know Reason")
+      setReaply(true)
+    }
+    else {
       toast.error(result);
     }
   };
@@ -86,6 +93,16 @@ function Login() {
               Forgot Password?
             </Link>
             </div>
+            {reaply&&(
+            <div className="text-right mt-1">
+              <Link
+              to="/doctor/reapply"
+              className="text-xs text-blue-500 hover:underline"
+            >
+              Reapply
+            </Link>
+            </div>
+            )}
           </div>
 
           {/* Login Button */}

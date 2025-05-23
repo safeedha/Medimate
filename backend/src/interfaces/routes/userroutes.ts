@@ -17,6 +17,7 @@ import {verifyUserAuth} from '../../infrastructure/middleware/verifyUserToken'
 import {GetsingleUser} from '../../application/usecase/user/getSingleUser'
 import {MongoUserRepository } from '../../infrastructure/repository/mongouserRepository'
 import {updatesingleUser} from '../../application/usecase/user/updateUser'
+import {GetSingledoc } from '../../application/usecase/doctor/getSingledoc'
 export interface CustomRequest extends Request {
   id: string;
 }
@@ -26,6 +27,8 @@ const mongouserRepository=new MongoUserRepository()
 
 const usergoogle=new Googleuser(mongoregRepository)
 const userdoc=new Getverified(mongodocRepository)
+const getsingledoc=new GetSingledoc(mongodocRepository)
+
 const userreg=new UserReg(mongoregRepository)
 const userlog=new UserLog(mongoregRepository)
 const userrest=new UserPassrest(mongoregRepository)
@@ -38,7 +41,7 @@ const getDept=new GetDept(mongodeotrepository)
 
 const getsingleUser=new GetsingleUser(mongouserRepository)
 const updateuser=new updatesingleUser(mongouserRepository)
-const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser)
+const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc)
 
 
 
@@ -51,6 +54,7 @@ router.post("/reset",(req, res) => user.resetPassword(req, res))
 router.post("/googlelogin",(req, res) => user.googleLogin(req, res))
 
 router.get("/doctors",verifyUserAuth, (req, res) => user.getAllDoct(req, res)) 
+router.get("/doctor/:id",verifyUserAuth, (req, res) => user.getSingleDoct(req, res)) 
 router.get("/department",verifyUserAuth, (req, res) => user.getAllDept(req, res)) 
 router.get("/profile", verifyUserAuth, (req, res) => {
   user.getUserdetail(req as CustomRequest, res);

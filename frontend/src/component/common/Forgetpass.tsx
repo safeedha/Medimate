@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { otpsend, verifyuserotp } from '../../api/userapi/register'; // adjust path as needed
+import { otpsend, verifyuserotp } from '../../api/userapi/register'; 
+import {otpsendfordoctor} from '../../api/doctorapi/doclogin'// adjust path as needed
 import { useLocation } from 'react-router-dom';
 import {userpasswordRest} from '../../api/userapi/register';
 import {docpasswordRest} from "../../api/doctorapi/doclogin";
@@ -40,12 +41,22 @@ function Forgetpass() {
         toast.error("Please enter the email")
          return
       }
-
+     if(role==='user')
+     {
       const result = await otpsend(email);
       toast.success(result);
       setStage('otp');
       setTimer(60);
       setResendVisible(false);
+     }
+     if(role==='doctor')
+     {
+      const result=await otpsendfordoctor(email)
+      toast.success(result);
+      setStage('otp');
+      setTimer(60);
+      setResendVisible(false);
+     }
     } catch (error) {
       toast.error('Failed to send OTP');
       console.log(error);

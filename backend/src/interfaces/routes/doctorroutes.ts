@@ -11,20 +11,27 @@ import {Docprofile} from '../../application/usecase/doctor/docProfile'
 import { MongoDocRepository } from '../../infrastructure/repository/mongodocRepository'
 import {DocPassrest} from '../../application/usecase/reg/resetdocter'
 import {verifyDoctorToken } from '../../infrastructure/middleware/verifyDoctorToke'
+import {DocReapply} from '../../application/usecase/reg/reapply'
+import {OtpdocCretion} from '../../application/usecase/otp/otpdoccreation'
+
 const mongoregrepository=new MongoRegRepository()
 const docsignup=new DocRegister(mongoregrepository)
 const doclogin=new DoctorLogin(mongoregrepository)
 const docpassreset=new DocPassrest(mongoregrepository)
 const docotpverify=new OtpdocVerify(mongoregrepository)
+const docreapply=new DocReapply(mongoregrepository)
+const otpdoccreation=new OtpdocCretion(mongoregrepository)
 const mongodeotrepository=new MongoDeptRepository()
 const getDept=new GetDept(mongodeotrepository)
 
 const mongodocrepository=new MongoDocRepository()
 const docprofile=new Docprofile(mongodocrepository)
-const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset)
+const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation)
 
  router.post("/signup", (req, res) => doctor.signup(req, res)) 
- router.post("/login", (req, res) => doctor.login(req, res)) 
+ router.post("/login", (req, res) => doctor.login(req, res))
+ router.put("/reapply",(req, res) => doctor.reapplication(req, res)) 
+ router.post("/sendotp", (req, res) => doctor.sendOtp(req, res))
  router.post("/verifyotp", (req, res) => doctor.verifyOtp(req, res)) 
 router.post("/update",verifyDoctorToken, (req, res) => doctor.updatedocprofile(req, res)) 
 router.post("/reset", (req, res) => doctor.resetPassword(req, res)) 

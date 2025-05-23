@@ -11,6 +11,7 @@ import {Getverified} from '../../application/usecase/doctor/getverified'
 import {Googleuser} from '../../application/usecase/reg/ugoogle'
 import {GetsingleUser} from '../../application/usecase/user/getSingleUser'
 import {updatesingleUser } from '../../application/usecase/user/updateUser'
+import {GetSingledoc } from '../../application/usecase/doctor/getSingledoc'
 interface CustomRequest extends Request {
   id: string;
 }
@@ -18,7 +19,7 @@ interface CustomRequest extends Request {
 export class UserController {
   constructor(private getDept: GetDept,private userreg:UserReg,private userlog:UserLog,private otpcration:OtpCretion,private otpverify:OtpVerify,
     private userpasssrest:UserPassrest,private getverified:Getverified,private googleuser:Googleuser,private getsingleuser:GetsingleUser,
-    private updatesingleUser:updatesingleUser
+    private updatesingleUser:updatesingleUser,private getsingledoc:GetSingledoc
   ) {}
 
   // ← Make sure this method is *inside* the class body
@@ -41,6 +42,21 @@ export class UserController {
       const result = await this.getverified.getAllVerifiedDoctors(department,search);
       res.status(200).json(result);
     } catch (error) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
+    }
+  }
+
+  async getSingleDoct(req: Request, res: Response):Promise<void>{
+    try{
+      const { id } = req.params;
+      const doctor=await this.getsingledoc.getsingledoc(id)
+      res.status(200).json(doctor);
+    }
+    catch(error)
+    {
       const errorMessage = error instanceof Error
         ? error.message
         : 'Internal server error';

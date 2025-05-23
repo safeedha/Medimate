@@ -157,3 +157,42 @@ export const profileUpdate=async(data:{firstname:string,lastname:string,experien
     }
   }
 }
+
+
+export const reappliction=async(email:string,specialisation:string,experience:number,fee:number,medicalLicence:string)=>
+{
+  try{
+         const response = await doctorInstance.put("/reapply",{email,specialisation,experience,fee,medicalLicence});
+         return response.data.message
+  }
+  catch(error)
+  {
+      if (axios.isAxiosError(error)) {
+      console.log(error.response?.data?.message);
+      return error.response?.data?.message || error.message;
+    } else if (error instanceof Error) {
+      return error.message;
+    } else {
+      return 'Internal server error';
+    }
+  }
+}
+
+
+
+export const otpsendfordoctor = async (email:string) => {
+  try {
+    const response = await doctorInstance.post("/sendotp", {email});
+    console.log(response)
+    return response.data.message; 
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log(error.response?.data?.message);
+      return error.response?.data?.message || error.message;
+    } else if (error instanceof Error) {
+      return error.message;
+    } else {
+      return 'Internal server error';
+    }
+  }
+}

@@ -61,12 +61,15 @@ function Psignup() {
     toast.success('User registered successfully');
     setFirstname('');
     setLastname('');
-    setEmail('');
     setContact('');
     setPassword('');
     setConfirmPassword('');
     setGender('');
-    navigate('/login')
+     toast('This account is not verified, please check your mail for otp verification');
+          setTimeout(() => {
+            navigate('/otp', { state: { email, role: 'user' } });
+          }, 2000);
+      setEmail('');
   } else {
     toast.error(response);
   }

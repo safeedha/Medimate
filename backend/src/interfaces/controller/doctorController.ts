@@ -5,8 +5,15 @@ import {DoctorLogin} from '../../application/usecase/reg/doclogin'
 import {OtpdocVerify} from '../../application/usecase/otp/otpdocverify'
 import {Docprofile} from "../../application/usecase/doctor/docProfile"
 import {DocPassrest} from '../../application/usecase/reg/resetdocter'
+import {DocReapply} from '../../application/usecase/reg/reapply'
+import {generateOtp} from '../../application/service/otpservice'
+import {OtpdocCretion} from '../../application/usecase/otp/otpdoccreation'
+import {sendMail} from '../../application/service/emailservice'
+
 export class DoctorController {
-  constructor(private getDept: GetDept,private docsignup:DocRegister,private doclogin:DoctorLogin,private otpdocverify:OtpdocVerify,private docprofile:Docprofile,private docPassrest:DocPassrest) {}
+  constructor(private getDept: GetDept,private docsignup:DocRegister,private doclogin:DoctorLogin,private otpdocverify:OtpdocVerify,private docprofile:Docprofile,private docPassrest:DocPassrest,
+       private docreapply:DocReapply,private otpdoccreation:OtpdocCretion
+  ) {}
   
 
 
@@ -57,8 +64,7 @@ export class DoctorController {
       secure: false,     
       maxAge: 15 * 60 * 1000, 
     });
-
-      res.status(200).json({message:response.message,doctor:response.doctor, accessToken:response.accessToken});
+         res.status(200).json({message:response.message,doctor:response.doctor, accessToken:response.accessToken});
     } catch (error) {
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
@@ -67,6 +73,41 @@ export class DoctorController {
       }
     }
   }
+   
+   async reapplication(req: Request, res: Response): Promise<void> {
+    try{
+          const{email,specialisation,experience,fee,medicalLicence}=req.body
+          const result=await this.docreapply.docreapply(email,specialisation,experience,fee,medicalLicence)
+          res.status(200).json(result)
+      }  
+    catch(error)
+    {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage })
+    }
+   }
+   
+   async sendOtp(req: Request, res: Response): Promise<void> {
+       try {
+         const { email } = req.body;
+         const otp = generateOtp();
+         await this.otpdoccreation.createOtp(email, otp);
+          let subject:string="Otp verification"
+         await sendMail(email, otp,subject,undefined);
+          
+         res.status(200).json({ message: 'OTP sent successfully' });
+       } catch (error) {
+         
+         const errorMessage = error instanceof Error
+           ? error.message
+           : 'Internal server error';
+          console.log(errorMessage)
+         res.status(400).json({ message: errorMessage });
+       }
+     }
+
 
    async verifyOtp(req: Request, res: Response): Promise<void> {
     try {
@@ -87,8 +128,7 @@ export class DoctorController {
        const {firstname,lastname,experience,fee,image,email,phone,specialisation,qualification} = req.body;
          await this.docprofile.updateprofile(firstname,lastname,experience,fee,image,email,phone,specialisation,qualification)
         res.status(200).json({ message: 'Profile updated suceesfully' });
-     
-    } catch (error) {
+      } catch (error) {
       const errorMessage = error instanceof Error
         ? error.message
         : 'Internal server error';

@@ -1,6 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { otpsend } from '../../api/userapi/register';
+import {otpsendfordoctor} from '../../api/doctorapi/doclogin'
 import {verifyuserotp} from '../../api/userapi/register';
 import {verifydoctorotp} from '../../api/doctorapi/doclogin'
 import { Toaster, toast } from 'react-hot-toast';
@@ -22,9 +23,14 @@ function Otp() {
 
   useEffect(() => {
     const otpcreation = async () => {
-      if (email) {
-        const result = await otpsend(email);
-        console.log(result);
+      if (email&&role==='user') {
+         await otpsend(email);       
+      } else {
+        console.log("Email not found in location state");
+      }
+
+      if (email&&role==='doctor') {
+        await otpsendfordoctor(email);       
       } else {
         console.log("Email not found in location state");
       }

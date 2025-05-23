@@ -178,6 +178,39 @@ export class MongoRegRepository implements RegRepository {
   async craeteOtp(data:IOtp): Promise<void> {
     try{
       const mail = data.email;
+      const user=await User.findOne({email:mail})
+      if(!user)
+      {
+        throw new Error("his email not exist")
+      }
+      const existOtp = await Otp.findOne({ email: mail });
+       if (existOtp) {
+         throw new Error('Otp already exists for this email')
+        }
+       const otp = new Otp(data)
+       await otp.save()
+    }
+    catch(error)
+    {
+      if (error instanceof Error) {
+        throw new Error(error.message); 
+      }
+      throw new Error('Unexpected error occurred during otp creation');
+    }
+  }
+
+
+
+
+  
+  async craetedocOtp(data:IOtp): Promise<void> {
+    try{
+      const mail = data.email;
+      const doctor=await Doctor.findOne({email:mail})
+      if(!doctor)
+      {
+        throw new Error("This email not exist")
+      }
       const existOtp = await Otp.findOne({ email: mail });
        if (existOtp) {
          throw new Error('Otp already exists for this email')
@@ -259,7 +292,6 @@ async reset(email:string,password:string):Promise<void>{
       }
       user.password=password
       await user.save()
-
   }
   catch(error)
   {
@@ -288,6 +320,35 @@ async reset(email:string,password:string):Promise<void>{
     }
     throw new Error('Unexpected error occurred during otp verification');
   }
+  }
+
+
+  async docReaplly(email:string,specialisation:string,experience:number,fee:number,medicalLicence:string):Promise<void>
+  {
+    try{
+           const doctor= await Doctor.findOne({ email: email})
+           if(!doctor)
+           {
+            throw new Error("This email not registered")
+           }
+           if(doctor.status!=='Rejected')
+           {
+             throw new Error("Only rejected mail can reapply")
+           }
+           doctor.status='Pending'
+           doctor.specialisation=specialisation
+           doctor.experience=experience
+           doctor.fee=fee
+           doctor.medicalLicence=medicalLicence
+           await doctor.save()
+    }
+    catch(error)
+    {
+       if (error instanceof Error) {
+         throw new Error(error.message); 
+    }
+       throw new Error('Unexpected error occurred during otp verification');
+    }
   }
 }
 
