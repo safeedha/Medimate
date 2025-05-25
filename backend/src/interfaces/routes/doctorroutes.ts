@@ -15,7 +15,7 @@ import {DocReapply} from '../../application/usecase/reg/reapply'
 import {OtpdocCretion} from '../../application/usecase/otp/otpdoccreation'
 import {CreateSlot} from '../../application/usecase/slot/createslot'
 import{MongoSlotRepostory} from'../../infrastructure/repository/mongoslotrep'
-import {GetRecurringSlot} from '../../application/usecase/slot/getAllslot'
+import {GetRecurringSlot} from '../../application/usecase/slot/getAllrecslot'
 
 const mongoregrepository=new MongoRegRepository()
 const mongoslotrepository=new MongoSlotRepostory()

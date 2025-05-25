@@ -3,6 +3,7 @@ import { GetDept } from '../../application/usecase/dept/getDept';
 import {UserReg} from '../../application/usecase/reg/userreg'
 import {UserLog} from '../../application/usecase/reg/userlog'
 import {generateOtp} from '../../application/service/otpservice'
+import {createPayment} from '../../application/service/createpayment'
 import {sendMail} from '../../application/service/emailservice'
 import {OtpCretion} from '../../application/usecase/otp/otpcre'
 import {OtpVerify} from '../../application/usecase/otp/otpverify'
@@ -12,6 +13,7 @@ import {Googleuser} from '../../application/usecase/reg/ugoogle'
 import {GetsingleUser} from '../../application/usecase/user/getSingleUser'
 import {updatesingleUser } from '../../application/usecase/user/updateUser'
 import {GetSingledoc } from '../../application/usecase/doctor/getSingledoc'
+import {GetSlotByDate} from '../../application/usecase/slot/getslotbydate'
 interface CustomRequest extends Request {
   id: string;
 }
@@ -19,7 +21,7 @@ interface CustomRequest extends Request {
 export class UserController {
   constructor(private getDept: GetDept,private userreg:UserReg,private userlog:UserLog,private otpcration:OtpCretion,private otpverify:OtpVerify,
     private userpasssrest:UserPassrest,private getverified:Getverified,private googleuser:Googleuser,private getsingleuser:GetsingleUser,
-    private updatesingleUser:updatesingleUser,private getsingledoc:GetSingledoc
+    private updatesingleUser:updatesingleUser,private getsingledoc:GetSingledoc,private getslotbydate:GetSlotByDate
   ) {}
 
   // ← Make sure this method is *inside* the class body
@@ -64,6 +66,22 @@ export class UserController {
     }
   }
 
+  async getSlotedoctor(req: Request, res: Response):Promise<void>{
+    try {
+      const { id } = req.params;
+      const date = req.query.date as Date| undefined;
+      if (!date) {
+        throw new Error('Date is required');
+      }
+      const result = await this.getslotbydate.getSlotsByDate(id, new Date(date));
+      res.status(200).json(result);
+    } catch (error) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
+    }
+  }
 
 
   async register(req: Request, res: Response): Promise<void> {
@@ -245,6 +263,19 @@ async login(req: Request, res: Response): Promise<void> {
         throw new Error(error.message);
       }
       throw new Error("Unexpected error occurred during getting single user");
+    }
+  }
+
+  async createPayment(req: CustomRequest, res: Response): Promise<void> {
+    try {
+      const { amount } = req.body;
+      const order = await createPayment(amount);
+      res.status(200).json(order);
+    } catch (error) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
     }
   }
 

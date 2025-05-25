@@ -18,12 +18,15 @@ import {GetsingleUser} from '../../application/usecase/user/getSingleUser'
 import {MongoUserRepository } from '../../infrastructure/repository/mongouserRepository'
 import {updatesingleUser} from '../../application/usecase/user/updateUser'
 import {GetSingledoc } from '../../application/usecase/doctor/getSingledoc'
+import {GetSlotByDate} from '../../application/usecase/slot/getslotbydate'
+import {MongoSlotRepostory}from '../../infrastructure/repository/mongoslotrep'
 export interface CustomRequest extends Request {
   id: string;
 }
 const mongoregRepository=new MongoRegRepository()
 const mongodocRepository=new MongoDocRepository()
 const mongouserRepository=new MongoUserRepository()
+const mongoslotRepository=new MongoSlotRepostory()
 
 const usergoogle=new Googleuser(mongoregRepository)
 const userdoc=new Getverified(mongodocRepository)
@@ -39,9 +42,11 @@ const otpverify=new OtpVerify(mongoregRepository)
 const mongodeotrepository=new MongoDeptRepository()
 const getDept=new GetDept(mongodeotrepository)
 
+const getslotbydate=new GetSlotByDate(mongoslotRepository)
+
 const getsingleUser=new GetsingleUser(mongouserRepository)
 const updateuser=new updatesingleUser(mongouserRepository)
-const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc)
+const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc,getslotbydate)
 
 
 
@@ -54,7 +59,8 @@ router.post("/reset",(req, res) => user.resetPassword(req, res))
 router.post("/googlelogin",(req, res) => user.googleLogin(req, res))
 
 router.get("/doctors",verifyUserAuth, (req, res) => user.getAllDoct(req, res)) 
-router.get("/doctor/:id",verifyUserAuth, (req, res) => user.getSingleDoct(req, res)) 
+router.get("/doctor/:id",verifyUserAuth, (req, res) => user.getSingleDoct(req, res))
+router.get("/doctor/slot/:id",verifyUserAuth, (req, res) => user.getSlotedoctor(req, res)) 
 router.get("/department",verifyUserAuth, (req, res) => user.getAllDept(req, res)) 
 router.get("/profile", verifyUserAuth, (req, res) => {
   user.getUserdetail(req as CustomRequest, res);
@@ -65,6 +71,10 @@ router.post("/profile", verifyUserAuth, (req, res) => {
   user.updateUserdetail(req as CustomRequest, res);
 });
 
+
+router.post("/create-order", verifyUserAuth, (req, res) => {
+  user.createPayment(req as CustomRequest, res);
+})
 
 
 export { router as userRouter };

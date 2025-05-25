@@ -10,7 +10,7 @@ import {generateOtp} from '../../application/service/otpservice'
 import {OtpdocCretion} from '../../application/usecase/otp/otpdoccreation'
 import {sendMail} from '../../application/service/emailservice'
 import {CreateSlot} from '../../application/usecase/slot/createslot'
-import {GetRecurringSlot} from '../../application/usecase/slot/getAllslot'
+import {GetRecurringSlot} from '../../application/usecase/slot/getAllrecslot'
 
 export class DoctorController {
   constructor(private getDept: GetDept,private docsignup:DocRegister,private doclogin:DoctorLogin,private otpdocverify:OtpdocVerify,private docprofile:Docprofile,private docPassrest:DocPassrest,

@@ -6,4 +6,5 @@
   createSlot(data:IndividualSlot):Promise<IndividualSlot>
   checkSlot(id:string,date:Date,satrtingtime:string,endingTime:string):Promise<{message:string}>
   getAllreccslots(id:string):Promise<IRecurring[]>
+  getSlotsByDate(id:string, date:Date): Promise<IndividualSlot[]>
  }

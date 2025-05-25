@@ -24,6 +24,7 @@
     "mongoose": "^8.14.1",
     "nodemailer": "^7.0.3",
     "otp-generator": "^4.0.1",
+    "razorpay": "^2.9.6",
     "rrule": "^2.8.1"
   },
   "devDependencies": {

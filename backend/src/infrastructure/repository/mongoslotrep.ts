@@ -58,4 +58,23 @@ if (isOverlap) {
       throw Error("Somethin happend")
     }
    }
+
+ async getSlotsByDate(id:string, date:Date): Promise<IndividualSlot[]>{
+  try{
+    const slots = await Slot.find({ doctorId: id, date: date }).sort({ startingTime: 1 });
+    return slots;
+    
+  }
+  catch(error)
+  {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("An unknown error occurred");
+    }
+  }
+
+ }
+
+
 }
