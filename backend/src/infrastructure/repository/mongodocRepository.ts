@@ -54,7 +54,7 @@ export class MongoDocRepository implements DoctorRepository {
   }
   async getSingleDoctor(id:string):Promise<Idoctor>{
        try{
-         const doctor = await Doctor.findById(id);
+         const doctor = await Doctor.findById(id).populate('specialisation');
           if (!doctor) {
             throw new Error('Doctor not found');
           }

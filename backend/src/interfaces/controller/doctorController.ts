@@ -9,10 +9,12 @@ import {DocReapply} from '../../application/usecase/reg/reapply'
 import {generateOtp} from '../../application/service/otpservice'
 import {OtpdocCretion} from '../../application/usecase/otp/otpdoccreation'
 import {sendMail} from '../../application/service/emailservice'
+import {CreateSlot} from '../../application/usecase/slot/createslot'
+import {GetRecurringSlot} from '../../application/usecase/slot/getAllslot'
 
 export class DoctorController {
   constructor(private getDept: GetDept,private docsignup:DocRegister,private doclogin:DoctorLogin,private otpdocverify:OtpdocVerify,private docprofile:Docprofile,private docPassrest:DocPassrest,
-       private docreapply:DocReapply,private otpdoccreation:OtpdocCretion
+     private docreapply:DocReapply,private otpdoccreation:OtpdocCretion, private createslot:CreateSlot,private getallrecslot:GetRecurringSlot
   ) {}
   
 
@@ -160,14 +162,49 @@ export class DoctorController {
      }
      catch(error)
      {
-        if (error instanceof Error) {
-        throw new Error(error.message);
-      }
-      throw new Error("Unexpected error occurred during user registration");
+        const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
      }
   }
 
 
+  async createAppoinment(req: Request, res: Response):Promise<void>{
+    try{
+       const {doctorId}=req.body
+        const {startDate,endDate,selectedDays,startTime,endTime,interval,frequency}=req.body
+        const result=await this.createslot.createSlots(doctorId,startDate,endDate,selectedDays,startTime,endTime,interval,frequency)
+        console.log(result)
+      res.status(201).json(result)
+    }
+    catch(error)
+    {
+         const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
+
+    }
+  }
+
+  async getAllrecurringslots(req:Request,res:Response):Promise<void>{
+    try{
+    
+          const {id}=req.params
+          const result=await this.getallrecslot.getSlots(id)
+          console.log(result)
+          res.status(200).json({result})
+    }
+    catch(error)
+    {
+      console.log(error)
+       const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
+    }
+  }
 
 
 }

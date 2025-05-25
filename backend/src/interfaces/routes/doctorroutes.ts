@@ -13,8 +13,12 @@ import {DocPassrest} from '../../application/usecase/reg/resetdocter'
 import {verifyDoctorToken } from '../../infrastructure/middleware/verifyDoctorToke'
 import {DocReapply} from '../../application/usecase/reg/reapply'
 import {OtpdocCretion} from '../../application/usecase/otp/otpdoccreation'
+import {CreateSlot} from '../../application/usecase/slot/createslot'
+import{MongoSlotRepostory} from'../../infrastructure/repository/mongoslotrep'
+import {GetRecurringSlot} from '../../application/usecase/slot/getAllslot'
 
 const mongoregrepository=new MongoRegRepository()
+const mongoslotrepository=new MongoSlotRepostory()
 const docsignup=new DocRegister(mongoregrepository)
 const doclogin=new DoctorLogin(mongoregrepository)
 const docpassreset=new DocPassrest(mongoregrepository)
@@ -23,10 +27,12 @@ const docreapply=new DocReapply(mongoregrepository)
 const otpdoccreation=new OtpdocCretion(mongoregrepository)
 const mongodeotrepository=new MongoDeptRepository()
 const getDept=new GetDept(mongodeotrepository)
-
+const createslot=new CreateSlot(mongoslotrepository)
+const getrecSlot=new GetRecurringSlot(mongoslotrepository)
 const mongodocrepository=new MongoDocRepository()
 const docprofile=new Docprofile(mongodocrepository)
-const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation)
+
+const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation,createslot,getrecSlot)
 
  router.post("/signup", (req, res) => doctor.signup(req, res)) 
  router.post("/login", (req, res) => doctor.login(req, res))
@@ -39,8 +45,10 @@ router.post("/reset", (req, res) => doctor.resetPassword(req, res))
 router.get("/department", (req, res) => doctor.getAllDept(req, res)) 
  
 
+router.post("/slot/recurring",verifyDoctorToken, (req, res) => doctor.createAppoinment(req, res)) 
 
 
+router.get("/slots/recurring/:id",(req, res) => doctor.getAllrecurringslots(req, res)) 
 
 
 export { router as doctorRouter };

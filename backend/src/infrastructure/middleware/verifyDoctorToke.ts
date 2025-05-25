@@ -16,7 +16,7 @@ export const verifyDoctorToken = (req: Request, res: Response, next: NextFunctio
         refreshToken,
         process.env.JWT_REFRESH_SECRET!
       ) as { id: string };
-
+     
       const newAccessToken = jwt.sign(
         { id: refreshDecoded.id },
         process.env.JWT_SECRET!,
@@ -30,7 +30,9 @@ export const verifyDoctorToken = (req: Request, res: Response, next: NextFunctio
       });
 
       req.body.doctorId = refreshDecoded.id;
+       console.log("hello")
       next();
+
     } catch (refreshErr) {
       res.status(403).json({ message: "Invalid refresh token" });
     }
