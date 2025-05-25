@@ -13,7 +13,8 @@ export async function createPayment(amount: number) {
     currency: 'INR',
     receipt: 'receipt_' + Math.random().toString(36).substring(7),
   };
-
+  
   const order = await razorpay.orders.create(options);
+     
   return order;
 }

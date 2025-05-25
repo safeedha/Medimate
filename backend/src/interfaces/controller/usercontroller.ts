@@ -4,6 +4,7 @@ import {UserReg} from '../../application/usecase/reg/userreg'
 import {UserLog} from '../../application/usecase/reg/userlog'
 import {generateOtp} from '../../application/service/otpservice'
 import {createPayment} from '../../application/service/createpayment'
+import {verifypayment} from '../../application/service/verfypayment'
 import {sendMail} from '../../application/service/emailservice'
 import {OtpCretion} from '../../application/usecase/otp/otpcre'
 import {OtpVerify} from '../../application/usecase/otp/otpverify'
@@ -269,17 +270,39 @@ async login(req: Request, res: Response): Promise<void> {
   async createPayment(req: CustomRequest, res: Response): Promise<void> {
     try {
       const { amount } = req.body;
+      console.log("hello")
       const order = await createPayment(amount);
+
       res.status(200).json(order);
     } catch (error) {
       const errorMessage = error instanceof Error
         ? error.message
         : 'Internal server error';
+        console.log(errorMessage)
       res.status(400).json({ message: errorMessage });
     }
+
+  }
+
+async verifyPayment(req: CustomRequest, res: Response): Promise<void> {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const result = await verifypayment(razorpay_order_id, razorpay_payment_id, razorpay_signature);
+    res.status(200).json({ message: result.message });
+    
+  } catch (error) {
+    const errorMessage = error instanceof Error
+      ? error.message
+      : 'Internal server error';
+    res.status(400).json({ message: errorMessage });
+  }
   }
 
 
-  
+
+
+
+
+
 
 }

@@ -110,7 +110,13 @@ function Docdetails() {
       toast.error('Please fill all fields')
       return
     }
-     await handlePayment(Razorpay,doctor?.fee! );
+    const result= await handlePayment(Razorpay,doctor?.fee! );
+   if (result === "success") {
+      toast.success("Payment successful! Booking confirmed");
+      closeModal();
+    } else {
+      toast.error("Payment failed or not verified.");
+    }
 
     closeModal()
   }

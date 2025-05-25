@@ -72,9 +72,11 @@ router.post("/profile", verifyUserAuth, (req, res) => {
 });
 
 
-router.post("/create-order", verifyUserAuth, (req, res) => {
+router.post("/bookappoinment", verifyUserAuth, (req, res) => {
   user.createPayment(req as CustomRequest, res);
 })
-
+router.post("/verify-payment", verifyUserAuth, (req, res) => {
+  user.verifyPayment(req as CustomRequest, res);
+})
 
 export { router as userRouter };
