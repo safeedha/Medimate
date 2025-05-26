@@ -1,4 +1,4 @@
-import express from 'express'
+import express,{Request} from 'express'
 const router=express.Router()
 import {DoctorController} from '../../interfaces/controller/doctorController'
 import {GetDept} from '../../application/usecase/dept/getDept'
@@ -11,6 +11,7 @@ import {Docprofile} from '../../application/usecase/doctor/docProfile'
 import { MongoDocRepository } from '../../infrastructure/repository/mongodocRepository'
 import {DocPassrest} from '../../application/usecase/reg/resetdocter'
 import {verifyDoctorToken } from '../../infrastructure/middleware/verifyDoctorToke'
+import {verifyDoctor} from '../../infrastructure/middleware/verifyDoctor'
 import {DocReapply} from '../../application/usecase/reg/reapply'
 import {OtpdocCretion} from '../../application/usecase/otp/otpdoccreation'
 import {CreateSlot} from '../../application/usecase/slot/createslot'
@@ -33,7 +34,9 @@ const mongodocrepository=new MongoDocRepository()
 const docprofile=new Docprofile(mongodocrepository)
 
 const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation,createslot,getrecSlot)
-
+interface CustomRequest extends Request {
+  id: string;
+}
  router.post("/signup", (req, res) => doctor.signup(req, res)) 
  router.post("/login", (req, res) => doctor.login(req, res))
  router.put("/reapply",(req, res) => doctor.reapplication(req, res)) 
@@ -49,6 +52,7 @@ router.post("/slot/recurring",verifyDoctorToken, (req, res) => doctor.createAppo
 
 
 router.get("/slots/recurring/:id",(req, res) => doctor.getAllrecurringslots(req, res)) 
+router.get("/doctor/appoinment",verifyDoctor,(req, res) => doctor.getAllappoinment(req as CustomRequest, res)) 
 
 
 export { router as doctorRouter };

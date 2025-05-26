@@ -12,6 +12,11 @@ import {sendMail} from '../../application/service/emailservice'
 import {CreateSlot} from '../../application/usecase/slot/createslot'
 import {GetRecurringSlot} from '../../application/usecase/slot/getAllrecslot'
 
+
+interface CustomRequest extends Request {
+  id?: string;
+}
+
 export class DoctorController {
   constructor(private getDept: GetDept,private docsignup:DocRegister,private doclogin:DoctorLogin,private otpdocverify:OtpdocVerify,private docprofile:Docprofile,private docPassrest:DocPassrest,
      private docreapply:DocReapply,private otpdoccreation:OtpdocCretion, private createslot:CreateSlot,private getallrecslot:GetRecurringSlot
@@ -205,6 +210,27 @@ export class DoctorController {
       res.status(400).json({ message: errorMessage });
     }
   }
+ 
+ async getAllappoinment(req: CustomRequest, res: Response): Promise<void> {
+  try {
+    const { id } = req;
 
+    if (!id) {
+      res.status(401).json({ message: "Unauthorized access: No doctor ID" });
+      return;
+    }
+
+
+    const appointments = await this.appointmentService.getAppointmentsByDoctorId(id);
+
+    res.status(200).json({ appointments });
+
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal server error";
+    res.status(500).json({ message: errorMessage });
+  }
+}
 
 }

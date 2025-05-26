@@ -37,3 +37,19 @@ export const getrecurring=async(id:string)=>{
   }
 
 }
+
+export const getallappoinment=async()=>{
+  try{
+    const response=await doctorInstance.get('/doctor/appoinment')
+    console.log(response)
+  }
+  catch(error)
+  {
+    if (axios.isAxiosError(error)) {
+      console.log(error)
+      return error.response?.data?.message || error.message;
+    } else {
+      console.error(error);
+    }
+  }
+}
