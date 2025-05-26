@@ -15,9 +15,13 @@ import {VerifyDoctor} from '../../application/usecase/doctor/verify'
 import {verifyAdminAuth} from '../../infrastructure/middleware/verifyAdminToken'
 import {EditDept} from "../../application/usecase/dept/editdept"
 import {BlockDept} from "../../application/usecase/dept/blockdept"
+import{GetdoctorAppointmentByid}  from "../../application/usecase/appoinment/getappoinfordoc"
+import{MongoAppointmentRepository} from '../../infrastructure/repository/mongoappRep'
 const router=express.Router()
 
 const mongouserrepository=new MongoUserRepository()
+const mongoAppointmentRepository=new MongoAppointmentRepository()
+const getdoctorAppointmentByid=new GetdoctorAppointmentByid(mongoAppointmentRepository)
 const getUser=new GetUser(mongouserrepository)
 const changestatus=new ChangeStatus(mongouserrepository)
 const mongodocrepository=new MongoDocRepository()
@@ -34,7 +38,7 @@ const getDept=new GetDept(mongodeotrepository)
 
 const login=new Login()
 const admin=new AdminController(login,addDept,getDept,getUnverified,getverified
-,getUser,changestatus,changedocstat,verifyDoctor,editDept,blockDept)
+,getUser,changestatus,changedocstat,verifyDoctor,editDept,blockDept,getdoctorAppointmentByid)
 
 
 
@@ -55,4 +59,6 @@ router.patch("/doctor/verify/:id", verifyAdminAuth,(req, res) => admin.verificat
 
 router.get("/user",verifyAdminAuth, (req, res) => admin.getAllUser(req, res))
 router.patch("/user/status/:id",verifyAdminAuth,(req, res) => admin.changeUserblockstatus(req, res))
+
+router.get("/appoinment/doctor/:id",verifyAdminAuth,(req, res) => admin.getAllappoinmentbydoctor(req, res))
 export { router as adminRouter };

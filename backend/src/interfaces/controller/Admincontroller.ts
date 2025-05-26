@@ -10,10 +10,10 @@ import {ChangeDocStatus} from "../../application/usecase/doctor/changestatus"
 import {VerifyDoctor} from "../../application/usecase/doctor/verify"
 import {EditDept} from "../../application/usecase/dept/editdept"
 import {BlockDept} from "../../application/usecase/dept/blockdept"
-
+import{GetdoctorAppointmentByid}  from "../../application/usecase/appoinment/getappoinfordoc"
 export class AdminController{
     constructor(private login:Login,private addDept:AddDept,private getDept:GetDept,private getUnverified:GetUnverified,private getverified:Getverified,private getUser:GetUser,private changestatus:ChangeStatus,private changedocstat:ChangeDocStatus,
-      private verifyDoctor:VerifyDoctor,private editDept:EditDept,private blockDept:BlockDept
+      private verifyDoctor:VerifyDoctor,private editDept:EditDept,private blockDept:BlockDept,private getdoctorAppointmentByid:GetdoctorAppointmentByid
     )
     {
 
@@ -162,4 +162,17 @@ async changeUserblockstatus(req: Request, res: Response): Promise<void> {
     res.status(400).json({ message: errorMessage });
   }
 }
+
+async getAllappoinmentbydoctor(req: Request, res: Response): Promise<void> {
+  try {
+    const { id } = req.params;
+    console.log(id)
+    const result = await this.getdoctorAppointmentByid.getallappoinment(id);
+    res.status(200).json(result);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Internal server error";
+    res.status(400).json({ message: errorMessage });
+  }
+}
+
 }

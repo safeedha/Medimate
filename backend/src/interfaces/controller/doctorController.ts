@@ -11,7 +11,7 @@ import {OtpdocCretion} from '../../application/usecase/otp/otpdoccreation'
 import {sendMail} from '../../application/service/emailservice'
 import {CreateSlot} from '../../application/usecase/slot/createslot'
 import {GetRecurringSlot} from '../../application/usecase/slot/getAllrecslot'
-
+import {GetdoctorAppointment} from  '../../application/usecase/appoinment/getdoctorappoi'
 
 interface CustomRequest extends Request {
   id?: string;
@@ -19,7 +19,7 @@ interface CustomRequest extends Request {
 
 export class DoctorController {
   constructor(private getDept: GetDept,private docsignup:DocRegister,private doclogin:DoctorLogin,private otpdocverify:OtpdocVerify,private docprofile:Docprofile,private docPassrest:DocPassrest,
-     private docreapply:DocReapply,private otpdoccreation:OtpdocCretion, private createslot:CreateSlot,private getallrecslot:GetRecurringSlot
+     private docreapply:DocReapply,private otpdoccreation:OtpdocCretion, private createslot:CreateSlot,private getallrecslot:GetRecurringSlot,private getdoctorAppointment:GetdoctorAppointment,
   ) {}
   
 
@@ -214,16 +214,16 @@ export class DoctorController {
  async getAllappoinment(req: CustomRequest, res: Response): Promise<void> {
   try {
     const { id } = req;
-
+      console.log(id)
     if (!id) {
       res.status(401).json({ message: "Unauthorized access: No doctor ID" });
       return;
     }
 
 
-    const appointments = await this.appointmentService.getAppointmentsByDoctorId(id);
+    const appointments = await this.getdoctorAppointment.getallappoinment(id)
 
-    res.status(200).json({ appointments });
+    res.status(200).json({appoi: appointments} );
 
   } catch (error) {
     console.error("Error fetching appointments:", error);

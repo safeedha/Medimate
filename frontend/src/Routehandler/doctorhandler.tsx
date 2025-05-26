@@ -6,6 +6,7 @@ import Schedules from '../component/doctor/Schedules'
 import Signup from '../component/doctor/Login/Signup'
 import Reapplication from '../component/doctor/Login/Reapplication'
 import Docappoinment from '../component/doctor/Docappoinment'
+
 function Doctorhandler() {
   return (
     <>

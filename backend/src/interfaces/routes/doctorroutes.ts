@@ -17,9 +17,12 @@ import {OtpdocCretion} from '../../application/usecase/otp/otpdoccreation'
 import {CreateSlot} from '../../application/usecase/slot/createslot'
 import{MongoSlotRepostory} from'../../infrastructure/repository/mongoslotrep'
 import {GetRecurringSlot} from '../../application/usecase/slot/getAllrecslot'
+import {GetdoctorAppointment} from  '../../application/usecase/appoinment/getdoctorappoi'
+import{MongoAppointmentRepository} from '../../infrastructure/repository/mongoappRep'
 
 const mongoregrepository=new MongoRegRepository()
 const mongoslotrepository=new MongoSlotRepostory()
+const  mongoapporespository=new MongoAppointmentRepository()
 const docsignup=new DocRegister(mongoregrepository)
 const doclogin=new DoctorLogin(mongoregrepository)
 const docpassreset=new DocPassrest(mongoregrepository)
@@ -32,8 +35,8 @@ const createslot=new CreateSlot(mongoslotrepository)
 const getrecSlot=new GetRecurringSlot(mongoslotrepository)
 const mongodocrepository=new MongoDocRepository()
 const docprofile=new Docprofile(mongodocrepository)
-
-const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation,createslot,getrecSlot)
+const getdoctorAppointment=new GetdoctorAppointment(mongoapporespository)
+const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation,createslot,getrecSlot,getdoctorAppointment)
 interface CustomRequest extends Request {
   id: string;
 }

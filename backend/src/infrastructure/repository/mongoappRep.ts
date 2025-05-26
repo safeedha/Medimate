@@ -1,6 +1,7 @@
 import { appointmentRepository  } from '../../domain/repository/appoinment-rep';
 import { Appointment } from '../../domain/entities/appoinment';
 import { AppointmentModel} from '../database/models/appoinment';
+import mongoose from "mongoose";
 
 export class MongoAppointmentRepository implements appointmentRepository {
   async createappoinment(data: Appointment): Promise<Appointment> {
@@ -78,5 +79,61 @@ async changestatus(id:string,status:'pending' |  'cancelled' | 'completed'):Prom
          throw Error("error in updating")
   }
 }
+
+async  getappinmentbydoctor(doctorid: string): Promise<Appointment[]> {
+  try {
+    const doctorObjectId = new mongoose.Types.ObjectId(doctorid);
+
+    const appointments = await AppointmentModel.aggregate([
+      {
+        $match: {
+          doctor_id: doctorObjectId,
+          status: "pending"
+        }
+      },
+      {
+         $lookup: {
+        from: "slots", // collection name of schedule_id
+        localField: "schedule_id",
+        foreignField: "_id",
+        as: "schedule"
+       }
+    },
+    {$unwind:"$schedule"},
+    {
+    $sort: {
+      "schedule.date": 1 // sort by schedule.date ascending
+    }
+  }
+
+    ]);
+    console.log(appointments)
+    return appointments;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error("Error in updating");
+  }
+}
+
+async getallappinmentfordoctor(doctorid:string):Promise<Appointment[]>{
+  try{
+    console.log("hi"+doctorid)
+    const appointments = await AppointmentModel.find({doctor_id:doctorid}) .populate({
+        path: 'schedule_id'})
+        console.log(appointments)
+    return appointments
+  }
+    catch(error)
+  {
+    if (error instanceof Error)
+         {
+          throw Error(error.message)
+         }
+         throw Error("error in updating")
+  }
+}
+
 
 }

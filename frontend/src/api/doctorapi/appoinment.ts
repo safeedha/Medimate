@@ -41,7 +41,7 @@ export const getrecurring=async(id:string)=>{
 export const getallappoinment=async()=>{
   try{
     const response=await doctorInstance.get('/doctor/appoinment')
-    console.log(response)
+     return response.data.appoi
   }
   catch(error)
   {
