@@ -35,7 +35,7 @@ export const getSingledoctor = async (id:string) => {
     console.log(error);
   }
 }
-export const  getSlotedoctor=async(id:string,date:Date,toast)=>{
+export const  getSlotedoctor=async(id:string,date:Date)=>{
   try {
     const response = await userInstance.get(`/doctor/slot/${id}`, {
       params: { date: date }
@@ -126,7 +126,7 @@ export const  getSlotedoctor=async(id:string,date:Date,toast)=>{
 
 
 export const handlePayment = async (Razorpay: any, amount: number): Promise<string> => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve,reject) => {
     try {
       const RAZORPAY_KEY_ID = "rzp_test_RmHsQLbeIzESnC";
 

@@ -1,3 +1,17 @@
+export interface Iuser{
+  _id?:string,
+  firstname:string,
+  lastname?:string,
+  email:string,
+  password?:string,
+  phone:string|null,
+  googleIds?:string|null,
+  isBlocked:boolean,
+  googleVerified?:boolean,
+  gender?:"male"|"female"|"other",
+  age?:number
+}
+
 export interface IDepartment {
   _id: string;
   deptname: string;
@@ -50,4 +64,27 @@ export interface IndividualSlot {
   endTime:string             // date and time of the individual slot
   status: SlotStatus;           
                
+}
+
+
+
+export interface Appointment {
+  _id?: string; 
+  user_id: string| Iuser; // User who booked the appointment
+  doctor_id: string| Idoctor; // Doctor for the appointment
+  schedule_id: string| IndividualSlot; // Schedule details for the appointment
+  
+
+ 
+  patient_name: string;
+  patient_email: string;
+  patient_age: number;
+  patient_gender: 'male' | 'female' | 'other';
+  reason: string;
+
+  status: 'pending' |  'cancelled' | 'completed';
+  payment_status: 'paid' | 'unpaid';
+
+  created_at?: Date;
+  updated_at?: Date;
 }

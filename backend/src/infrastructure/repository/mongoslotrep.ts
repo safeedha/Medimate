@@ -59,22 +59,91 @@ if (isOverlap) {
     }
    }
 
- async getSlotsByDate(id:string, date:Date): Promise<IndividualSlot[]>{
-  try{
-    const slots = await Slot.find({ doctorId: id, date: date }).sort({ startingTime: 1 });
+ async getSlotsByDate(id: string, date: Date): Promise<IndividualSlot[]> {
+  try {
+    const now = new Date();
+
+    const startOfDay = new Date(date);
+    startOfDay.setUTCHours(0, 0, 0, 0); // 00:00:00 UTC
+
+    const endOfDay = new Date(date);
+    endOfDay.setUTCHours(23, 59, 59, 999); // 23:59:59.999 UTC
+
+    const isToday =
+      now.getUTCFullYear() === startOfDay.getUTCFullYear() &&
+      now.getUTCMonth() === startOfDay.getUTCMonth() &&
+      now.getUTCDate() === startOfDay.getUTCDate();
+
+    const baseQuery: any = {
+      doctorId: id,
+      date: { $gte: startOfDay, $lte: endOfDay },
+    };
+
+    if (isToday) {
+   
+      const currentTime = now.toISOString().split('T')[1]?.slice(0, 5); // e.g., "14:30"
+      baseQuery.startingTime = { $gt: currentTime };
+    }
+
+    const slots = await Slot.find(baseQuery).sort({ startingTime: 1 });
+
     return slots;
-    
-  }
-  catch(error)
-  {
+  } catch (error) {
     if (error instanceof Error) {
       throw new Error(error.message);
     } else {
       throw new Error("An unknown error occurred");
     }
   }
+}
 
- }
+ async changeStatus(id:string):Promise<{message:string}>{
+    try{
+      const slot=await Slot.findById(id)
+      if(!slot)
+      {
+        throw new Error("Slot not found")
+      }
+      if(slot.status==="booked")
+      {
+        throw new Error("Slot already booked")
+      }
+      slot.status="booked"
+      await slot.save()
+      return {message:"Slot status changed to booked"}
+    }
+    catch(error)
+    {
+      if(error instanceof Error)
+      {
+        throw Error(error.message)
+      }
+      throw Error("Somethin happend")
+    }
+   }
+
 
 
 }
+// async getSlotsByDate(id: string, date: Date): Promise<IndividualSlot[]> {
+//   try {
+//     const startOfDay = new Date(date);
+//     startOfDay.setUTCHours(0, 0, 0, 0); // 00:00:00.000 UTC
+
+//     const endOfDay = new Date(date);
+//     endOfDay.setUTCHours(23, 59, 59, 999); // 23:59:59.999 UTC
+
+//     const slots = await Slot.find({
+//       doctorId: id,
+//       date: { $gte: startOfDay, $lte: endOfDay }
+//     }).sort({ startingTime: 1 });
+
+//     return slots;
+//   } catch (error) {
+//     if (error instanceof Error) {
+//       throw new Error(error.message);
+//     } else {
+//       throw new Error("An unknown error occurred");
+//     }
+//   }
+// }

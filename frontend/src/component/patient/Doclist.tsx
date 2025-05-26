@@ -87,7 +87,7 @@ function Doclist() {
       {deptdetails}
     </div>
 
-    <section className="py-4 px-4 md:px-12 lg:px-20 ml-48 w-full">
+    <section className="py-4 px-4 md:px-12 lg:px-20 ml-48 w-full mt-20">
       <div >
        <input
         type="text"

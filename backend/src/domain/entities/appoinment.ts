@@ -3,7 +3,7 @@ import {Idoctor} from './doctor';
 import {IndividualSlot} from './slot';
 
 export interface Appointment {
-  _id: string; 
+  _id?: string; 
   user_id: string| Iuser; // User who booked the appointment
   doctor_id: string| Idoctor; // Doctor for the appointment
   schedule_id: string| IndividualSlot; // Schedule details for the appointment
@@ -19,6 +19,6 @@ export interface Appointment {
   status: 'pending' |  'cancelled' | 'completed';
   payment_status: 'paid' | 'unpaid';
 
-  created_at: Date;
-  updated_at: Date;
+  created_at?: Date;
+  updated_at?: Date;
 }

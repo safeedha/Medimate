@@ -70,7 +70,7 @@ function Pprofile() {
  
    <div className="flex min-h-screen  bg-teal-50">
   <UserSidebar />
-  <div className="ml-64 flex-1 overflow-auto p-10">
+  <div className="ml-64 flex-1 overflow-auto mt-32">
     <Box
       component="form"
       onSubmit={handleSubmit} // Add your form submit function here

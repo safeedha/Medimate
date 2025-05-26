@@ -14,7 +14,7 @@ const AppointmentSchema = new Schema<Appointment>({
   },
   schedule_id: {
     type: Schema.Types.ObjectId,
-    ref: 'Schedule',
+    ref: 'Slot',
     required: true,
   },
 
@@ -53,5 +53,5 @@ const AppointmentSchema = new Schema<Appointment>({
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 });
 
-const AppointmentModel = model<Appointment>('Appointment', AppointmentSchema);
-export default AppointmentModel;
+export const AppointmentModel = model<Appointment>('Appointment', AppointmentSchema);
+

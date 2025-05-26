@@ -13,11 +13,11 @@ function UserSidebar() {
   </div>
 
   <nav className="flex flex-col gap-4 text-lg font-medium text-gray-700">
-    <Link to="" className="hover:text-teal-600 transition-colors">
+    <Link to="/profile" className="hover:text-teal-600 transition-colors">
       📋 Update Details
     </Link>
-    <Link to="" className="hover:text-teal-600 transition-colors">
-      📅 See Bookings
+    <Link to="/booking_details" className="hover:text-teal-600 transition-colors">
+      📅 Bookings
     </Link>
     <Link to="" className="hover:text-teal-600 transition-colors">
       💊 Prescription

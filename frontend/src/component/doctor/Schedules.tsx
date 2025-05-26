@@ -203,7 +203,7 @@ const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
                       onChange={(e) => setFrequency(e.target.value)}
                     >
                       <MenuItem value="DAILY">Daily</MenuItem>
-                      <MenuItem value="WEEKILY">Weekly</MenuItem>
+                      <MenuItem value="WEEKLY">Weekly</MenuItem>
                     </Select>
                     <Typography variant="caption" color="text.secondary">
                       How often the event repeats.

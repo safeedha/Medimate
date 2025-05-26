@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import { useParams } from 'react-router-dom'
 import { getSingledoctor, getSlotedoctor,handlePayment } from '../../api/userapi/doctor'
+import{creatAppoinment} from '../../api/userapi/appoinment'
 import type { Idoctor, IndividualSlot } from '../../Interface/interface'
 import toast, { Toaster } from 'react-hot-toast'
 import Modal from 'react-modal';
@@ -25,6 +26,15 @@ const customStyles = {
   },
 };
 
+type formData= {
+    fullName: string;
+    age: string;
+    gender: "male"|"female"|"other";
+    email: string;
+    phone: string;
+    reason: string;
+    paymentMethod: string;
+}
 function Docdetails() {
   let subtitle: any;
   Modal.setAppElement('body');
@@ -35,11 +45,11 @@ function Docdetails() {
   const [slot, setSlot] = useState<IndividualSlot[]>([])
   const [modalIsOpen, setIsOpen] = useState<boolean>(false);
   const [selectedSlot, setSelectedSlot] = useState<IndividualSlot | null>(null);
-
-  const [formData, setFormData] = useState({
+  const [render, setRender] = useState<boolean>(false);
+  const [formData, setFormData] = useState<formData>({
     fullName: '',
     age: '',
-    gender: '',
+    gender: "female",
     email: '',
     phone: '',
     reason: '',
@@ -65,7 +75,7 @@ function Docdetails() {
       setSlot(slots)
     }
     fetchSlotDoctor()
-  }, [date, id])
+  }, [date, id,render])
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedDate = new Date(e.target.value)
@@ -90,7 +100,7 @@ function Docdetails() {
     setFormData({
       fullName: '',
       age: '',
-      gender: '',
+      gender: 'male',
       email: '',
       phone: '',
       reason: '',
@@ -112,7 +122,11 @@ function Docdetails() {
     }
     const result= await handlePayment(Razorpay,doctor?.fee! );
    if (result === "success") {
-      toast.success("Payment successful! Booking confirmed");
+    const response =await creatAppoinment(id!, selectedSlot?._id!,formData.fullName ,formData.email, Number(formData.age),formData.gender,formData.reason)
+      if(response==="Appointment created successfully"){
+        toast.success("Payment successful! Booking confirmed");
+        setRender(!render);
+        }
       closeModal();
     } else {
       toast.error("Payment failed or not verified.");
@@ -209,7 +223,7 @@ function Docdetails() {
       <div>
         <label className="block text-xs font-medium mb-1">Gender</label>
         <div className="flex items-center gap-2">
-          {["Male", "Female", "Other"].map((g) => (
+          {["male", "female", "other"].map((g) => (
             <label key={g} className="flex items-center gap-1 text-xs">
               <input
                 type="radio"

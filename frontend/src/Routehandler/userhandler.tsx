@@ -6,6 +6,7 @@ import PatientHomePage from '../component/patient/Phome'
 import Doclist from '../component/patient/Doclist'
 import Pprofile from '../component/patient/Pprofile'
 import Docdetails from '../component/patient/Docdetails'
+import Booking from '../component/patient/Booking'
 
 function Userhandler() {
   return (
@@ -16,7 +17,9 @@ function Userhandler() {
     <Route path="/home" element={< PatientHomePage />} />
     <Route path="/doctor" element={< Doclist />} />
     <Route path="/profile" element={< Pprofile />} />
-    <Route path="/doctor/:id" element={< Docdetails />} />
+    <Route path="/doctor/:id" element={<  Docdetails />} />
+     <Route path="/booking_details" element={< Booking />} />
+   
     </> 
   )
 }

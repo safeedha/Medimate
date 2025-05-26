@@ -20,6 +20,12 @@ import {updatesingleUser} from '../../application/usecase/user/updateUser'
 import {GetSingledoc } from '../../application/usecase/doctor/getSingledoc'
 import {GetSlotByDate} from '../../application/usecase/slot/getslotbydate'
 import {MongoSlotRepostory}from '../../infrastructure/repository/mongoslotrep'
+import{MongoAppointmentRepository} from '../../infrastructure/repository/mongoappRep'
+import {CreateAppointment} from '../../application/usecase/appoinment/createappoi'
+import {GetfutureAppointment} from '../../application/usecase/appoinment/getfuturappoi'
+import {GetpastAppointment} from '../../application/usecase/appoinment/getpastappoi'
+import {ChangestatusAppointment} from '../../application/usecase/appoinment/changestatus'
+
 export interface CustomRequest extends Request {
   id: string;
 }
@@ -27,6 +33,7 @@ const mongoregRepository=new MongoRegRepository()
 const mongodocRepository=new MongoDocRepository()
 const mongouserRepository=new MongoUserRepository()
 const mongoslotRepository=new MongoSlotRepostory()
+const mongoappoinmentRepository=new MongoAppointmentRepository()
 
 const usergoogle=new Googleuser(mongoregRepository)
 const userdoc=new Getverified(mongodocRepository)
@@ -43,10 +50,14 @@ const mongodeotrepository=new MongoDeptRepository()
 const getDept=new GetDept(mongodeotrepository)
 
 const getslotbydate=new GetSlotByDate(mongoslotRepository)
+const createappoinment=new CreateAppointment(mongoappoinmentRepository,mongoslotRepository)
+const getfutureAppointment=new GetfutureAppointment(mongoappoinmentRepository)
+const getpastAppointment=new GetpastAppointment(mongoappoinmentRepository)
+const changestatusAppointment=new ChangestatusAppointment(mongoappoinmentRepository)
 
 const getsingleUser=new GetsingleUser(mongouserRepository)
 const updateuser=new updatesingleUser(mongouserRepository)
-const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc,getslotbydate)
+const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc,getslotbydate,createappoinment,getfutureAppointment,getpastAppointment,changestatusAppointment)
 
 
 
@@ -77,6 +88,19 @@ router.post("/bookappoinment", verifyUserAuth, (req, res) => {
 })
 router.post("/verify-payment", verifyUserAuth, (req, res) => {
   user.verifyPayment(req as CustomRequest, res);
+})
+
+router.post("/createappoinment", verifyUserAuth, (req, res) => {
+  user.createappoinment(req as CustomRequest, res);
+})
+router.get("/appointments/future", verifyUserAuth, (req, res) => {
+  user.getfutureAppoinment(req as CustomRequest, res);
+})
+router.get("/appointments/past", verifyUserAuth, (req, res) => {
+  user.getpasteAppoinments(req as CustomRequest, res);
+})
+router.patch("/appointment", verifyUserAuth, (req, res) => {
+  user.changestatusAppoinments(req as CustomRequest, res);
 })
 
 export { router as userRouter };

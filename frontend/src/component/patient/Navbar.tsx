@@ -8,7 +8,7 @@ const Navbar = () => {
     navigate('/login');
   };
   return (
-    <nav className="bg-gradient-to-r from-blue-500 to-green-400 p-4 shadow-lg flex justify-between items-center z-50 relative">
+    <nav className="bg-gradient-to-r from-blue-500 to-green-400 p-4 shadow-lg flex justify-between items-center z-50 w-full fixed top-0 left-0">
       {/* Left: Logo and Web Name */}
       <div className="text-3xl font-bold text-white tracking-wide flex items-center gap-2">
         <span className="text-4xl">🩺</span>

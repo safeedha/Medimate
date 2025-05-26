@@ -5,6 +5,7 @@ import DoctorProfile from '../component/doctor/Docprofile'
 import Schedules from '../component/doctor/Schedules'
 import Signup from '../component/doctor/Login/Signup'
 import Reapplication from '../component/doctor/Login/Reapplication'
+import Docappoinment from '../component/doctor/Docappoinment'
 function Doctorhandler() {
   return (
     <>
@@ -14,6 +15,7 @@ function Doctorhandler() {
     <Route path="/doctor/profile" element={< DoctorProfile />} />
     <Route path="/doctor/reapply" element={< Reapplication />} />
      <Route path="/doctor/slots" element={< Schedules />} />
+     <Route path="/doctor/appointments" element={< Docappoinment />} />
     </> 
   )
 }

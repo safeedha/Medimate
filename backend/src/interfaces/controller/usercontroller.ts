@@ -15,6 +15,10 @@ import {GetsingleUser} from '../../application/usecase/user/getSingleUser'
 import {updatesingleUser } from '../../application/usecase/user/updateUser'
 import {GetSingledoc } from '../../application/usecase/doctor/getSingledoc'
 import {GetSlotByDate} from '../../application/usecase/slot/getslotbydate'
+import {CreateAppointment} from '../../application/usecase/appoinment/createappoi'
+import {GetfutureAppointment} from '../../application/usecase/appoinment/getfuturappoi'
+import {GetpastAppointment} from '../../application/usecase/appoinment/getpastappoi'
+import {ChangestatusAppointment} from '../../application/usecase/appoinment/changestatus'
 interface CustomRequest extends Request {
   id: string;
 }
@@ -22,7 +26,9 @@ interface CustomRequest extends Request {
 export class UserController {
   constructor(private getDept: GetDept,private userreg:UserReg,private userlog:UserLog,private otpcration:OtpCretion,private otpverify:OtpVerify,
     private userpasssrest:UserPassrest,private getverified:Getverified,private googleuser:Googleuser,private getsingleuser:GetsingleUser,
-    private updatesingleUser:updatesingleUser,private getsingledoc:GetSingledoc,private getslotbydate:GetSlotByDate
+    private updatesingleUser:updatesingleUser,private getsingledoc:GetSingledoc,private getslotbydate:GetSlotByDate,private createAppointment:CreateAppointment,
+    private getfutureAppointment:GetfutureAppointment,private getpastAppointment:GetpastAppointment,private changestatusAppointment:ChangestatusAppointment
+    
   ) {}
 
   // ← Make sure this method is *inside* the class body
@@ -296,6 +302,70 @@ async verifyPayment(req: CustomRequest, res: Response): Promise<void> {
       : 'Internal server error';
     res.status(400).json({ message: errorMessage });
   }
+  }
+
+  async createappoinment(req: CustomRequest, res: Response): Promise<void> {
+    try {
+      const id=req.id
+      const { doctorId, slot, name, email,age, gender, reason} = req.body;
+       const result=await this.createAppointment.createAppointment(id, doctorId, slot, name, email, age,gender, reason)
+      res.status(200).json(result);
+    }
+    catch (error) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
+    }
+  }
+
+  async getfutureAppoinment(req: CustomRequest, res: Response){
+    try{
+      const id=req.id
+      const result=await this.getfutureAppointment.getfutureappoinment(id)
+      res.status(200).json(result)
+    }
+    catch(error)
+    {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
+    }
+  }
+
+    async getpasteAppoinments(req: CustomRequest, res: Response){
+    try{
+         const id=req.id
+         const result=await this.getpastAppointment.getpastappoinment(id)
+         res.status(200).json(result)
+    }
+    catch(error)
+    {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
+    }
+  }
+
+
+  async changestatusAppoinments(req: CustomRequest, res: Response):Promise<void>{
+   try{
+         const id=req.id
+         const {appoinmentid}=req.body
+         console.log(appoinmentid)
+         const result=await this.changestatusAppointment.changestus(appoinmentid)
+         res.status(200).json(result)
+    }
+    catch(error)
+    {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
+    }
+
   }
 
 
