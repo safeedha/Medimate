@@ -44,19 +44,33 @@ function Forgetpass() {
      if(role==='user')
      {
       const result = await otpsend(email);
-      toast.success(result);
-      setStage('otp');
-      setTimer(60);
-      setResendVisible(false);
+      if(result==='This email not exist')
+      {
+        toast.error(result)
+        return
+      }
+        else{
+         toast.success(result);
+      }
+     
+    
      }
      if(role==='doctor')
      {
       const result=await otpsendfordoctor(email)
-      toast.success(result);
+        if(result==='This email not exist')
+      {
+        toast.error(result)
+        return
+      }
+      else{
+         toast.success(result);
+      }
+     
+     }
       setStage('otp');
       setTimer(60);
       setResendVisible(false);
-     }
     } catch (error) {
       toast.error('Failed to send OTP');
       console.log(error);

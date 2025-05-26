@@ -181,7 +181,7 @@ export class MongoRegRepository implements RegRepository {
       const user=await User.findOne({email:mail})
       if(!user)
       {
-        throw new Error("his email not exist")
+        throw new Error("This email not exist")
       }
       const existOtp = await Otp.findOne({ email: mail });
        if (existOtp) {
