@@ -122,7 +122,7 @@ function Docdetails() {
     }
     const result= await handlePayment(Razorpay,doctor?.fee! );
    if (result === "success") {
-    const response =await creatAppoinment(id!, selectedSlot?._id!,formData.fullName ,formData.email, Number(formData.age),formData.gender,formData.reason)
+    const response =await creatAppoinment(id!, selectedSlot?._id!,formData.fullName ,formData.email, Number(formData.age),formData.gender,formData.reason,doctor?.fee)
       if(response==="Appointment created successfully"){
         toast.success("Payment successful! Booking confirmed");
         setRender(!render);
@@ -155,7 +155,7 @@ function Docdetails() {
   }}
   contentLabel="Patient Form Modal"
 >
-  <div className="flex flex-col md:flex-row w-full p-3 gap-3">
+  <div className="flex flex-col md:flex-row w-full p-3 gap-3 ">
     {/* Doctor Info and Privacy Policy */}
     <div className="md:w-1/2 bg-gray-50 p-3 rounded shadow-sm text-xs text-gray-700">
       <div className="bg-slate-200 p-2 rounded mb-2">
@@ -311,7 +311,7 @@ function Docdetails() {
 </Modal>
 
 
-      <div className="bg-teal-100 rounded-md px-16 py-4 shadow-sm">
+      <div className="bg-teal-100 rounded-md px-16 py-4 shadow-sm mt-20">
         <div className="flex items-center space-x-4">
           <img
             src={doctor?.profilePicture}

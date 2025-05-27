@@ -7,6 +7,7 @@ import Docverify from '../component/admin/Docver/Docverify'
 import Doctor from '../component/admin/Docver/Doctor'
 import User from '../component/admin/user/User'
 import Appoinment from '../component/admin/Appoinment/Appoinment'
+import Awallet from '../component/admin/wallet/Awallet'
 
 
 
@@ -20,6 +21,7 @@ function Adminhandler() {
         <Route path="/admin/doctor" element={<Doctor />} />
         <Route path="/admin/user" element={<User/>} />
         <Route path="/admin/appointment" element={<Appoinment/>} />
+        <Route path="/admin/wallet" element={<Awallet/>} />
     </>
   )
 }

@@ -4,7 +4,7 @@ import { otpsend, verifyuserotp } from '../../api/userapi/register';
 import {otpsendfordoctor} from '../../api/doctorapi/doclogin'// adjust path as needed
 import { useLocation } from 'react-router-dom';
 import {userpasswordRest} from '../../api/userapi/register';
-import {docpasswordRest} from "../../api/doctorapi/doclogin";
+import {docpasswordRest,verifydoctorotp } from "../../api/doctorapi/doclogin";
 import {useNavigate} from 'react-router-dom'
 
 
@@ -96,13 +96,24 @@ function Forgetpass() {
       return;
     }
     try {
-      const result = await verifyuserotp(email, otp);
+      if(role==='user'){
+        const result = await verifyuserotp(email, otp);
       if (result === 'OTP verified successfully') {
         toast.success('OTP verified successfully');
         setStage('password');
       } else {
         toast.error('Invalid OTP');
       }
+      }
+      else{
+      const result = await verifydoctorotp(email, otp);
+      if (result === 'OTP verified successfully') {
+        toast.success('OTP verified successfully');
+        setStage('password');
+      } else {
+        toast.error('Invalid OTP');
+      }
+    }
     } catch (error) {
       toast.error('Verification failed');
       console.log(error);

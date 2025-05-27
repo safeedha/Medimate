@@ -7,7 +7,7 @@ export class GetsingleUser {
   async getsingleUser(id:string): Promise<Iuser> {
     try {
       const user = await this.userRepository.getsingleuser(id);
-      console.log("user",user)
+    
       return user;
     } catch (error) {
       if (error instanceof Error) {

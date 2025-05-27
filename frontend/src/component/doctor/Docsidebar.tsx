@@ -1,11 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
-
+import {  logoutDoctor} from '../../feature/doctorslice'
+import type{ AppDispatch} from '../../app/store'
+import { useDispatch } from 'react-redux';
 function DoctorSidebar() {
   const navigate = useNavigate();
-
+const dispatch=useDispatch<AppDispatch>()
   const handleLogout = () => {
-    console.log("Logging out...");
-    navigate('/doctor/login');
+  dispatch( logoutDoctor())
   };
 
   return (

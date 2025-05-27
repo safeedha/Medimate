@@ -11,9 +11,10 @@ import {VerifyDoctor} from "../../application/usecase/doctor/verify"
 import {EditDept} from "../../application/usecase/dept/editdept"
 import {BlockDept} from "../../application/usecase/dept/blockdept"
 import{GetdoctorAppointmentByid}  from "../../application/usecase/appoinment/getappoinfordoc"
+import {GetAdminWallet} from '../../application/usecase/wallet/geadminwallet'
 export class AdminController{
     constructor(private login:Login,private addDept:AddDept,private getDept:GetDept,private getUnverified:GetUnverified,private getverified:Getverified,private getUser:GetUser,private changestatus:ChangeStatus,private changedocstat:ChangeDocStatus,
-      private verifyDoctor:VerifyDoctor,private editDept:EditDept,private blockDept:BlockDept,private getdoctorAppointmentByid:GetdoctorAppointmentByid
+      private verifyDoctor:VerifyDoctor,private editDept:EditDept,private blockDept:BlockDept,private getdoctorAppointmentByid:GetdoctorAppointmentByid,private getAdminWallet:GetAdminWallet
     )
     {
 
@@ -168,6 +169,16 @@ async getAllappoinmentbydoctor(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     console.log(id)
     const result = await this.getdoctorAppointmentByid.getallappoinment(id);
+    res.status(200).json(result);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Internal server error";
+    res.status(400).json({ message: errorMessage });
+  }
+}
+
+async getWalletinformation(req: Request, res: Response): Promise<void> {
+  try {
+    const result=await this.getAdminWallet.getwallet()
     res.status(200).json(result);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Internal server error";

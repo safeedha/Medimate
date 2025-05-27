@@ -4,35 +4,39 @@ import {slotRepository} from '../../domain/repository/slot-repository'
 import {Recurring} from '../database/models/recurringslot'
 import {Slot}  from '../database/models/scedule'
 export class MongoSlotRepostory implements slotRepository{
-   async createRecurringSlot(data:IRecurring):Promise<IRecurring>{
-    try{
-    const isOverlap = await Recurring.findOne({
-  doctorId: data.doctorId,
-  startDate: { $lte: data.endDate },
-  endDate: { $gte: data.startDate },
-  starttime: { $lte: data.endttime },
-  endttime: { $gte: data.starttime }
-});
+   
 
-if (isOverlap) {
-  throw new Error(`Recurring schedule conflict: The selected date and time range overlaps with an existing schedule from ${isOverlap.startDate.toDateString()} ${isOverlap.starttime} to ${isOverlap.endDate.toDateString()} ${isOverlap.endttime}.`);
-}
-           const recurring=new Recurring(data)
-                await recurring.save()
-                return recurring
-       
-   }
-    catch(error)
-    {
-      if(error instanceof Error)
-      {
-       
-        throw Error(error.message)
+  async createRecurringSlot(data: IRecurring): Promise<IRecurring> {
+    try {
+      // Fetch existing recurring slots for the doctor with overlapping date and time
+      const existingSlots = await Recurring.find({
+        doctorId: data.doctorId,
+        startDate: { $lte: data.endDate },
+        endDate: { $gte: data.startDate },
+        starttime: { $lte: data.endttime },
+        endttime: { $gte: data.starttime }
+      });
+
+      // Check if any of the existing slots share at least one weekday with the new one
+      for (const slot of existingSlots) {
+        const sharedDays = slot.daysOfWeek.filter((day) => data.daysOfWeek.includes(day));
+        if (sharedDays.length > 0) {
+          throw new Error(
+            `Recurring schedule conflict: Overlapping with existing slot from ${slot.startDate.toDateString()} to ${slot.endDate.toDateString()} on [${sharedDays.join(", ")}] between ${slot.starttime} and ${slot.endttime}.`
+          );
+        }
       }
-      throw Error("Somethin happend")
-    }
 
-   } 
+      const recurring = new Recurring(data);
+      await recurring.save();
+      return recurring;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error("Something happened");
+    }
+  }
    async createSlot(data:IndividualSlot):Promise<IndividualSlot>
    {
      const slot=new Slot(data)
@@ -104,11 +108,14 @@ if (isOverlap) {
       {
         throw new Error("Slot not found")
       }
-      if(slot.status==="booked")
+      if(slot.status==="available")
       {
-        throw new Error("Slot already booked")
+       slot.status="booked"
       }
-      slot.status="booked"
+      else{
+        slot.status="available"
+      }
+    
       await slot.save()
       return {message:"Slot status changed to booked"}
     }
@@ -121,6 +128,32 @@ if (isOverlap) {
       throw Error("Somethin happend")
     }
    }
+
+   async cancelreccslots(id: string): Promise<string> {
+  try {
+    const slots = await Slot.find({ recurringSlotId: id });
+
+    if (slots.length === 0) {
+      throw new Error("No slots found with the given recurringSlotId");
+    }
+
+    const isAnyBooked = slots.some(slot => slot.status === "booked");
+
+    if (isAnyBooked) {
+      throw new Error("Cannot cancel because one or more slots are already booked");
+    }
+
+    await Slot.deleteMany({ recurringSlotId: id });
+    await Recurring.deleteOne({_id: id })
+
+    return "Recurring slots cancelled successfully";
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error("Something happened");
+  }
+}
 
 
 

@@ -12,7 +12,9 @@ import {sendMail} from '../../application/service/emailservice'
 import {CreateSlot} from '../../application/usecase/slot/createslot'
 import {GetRecurringSlot} from '../../application/usecase/slot/getAllrecslot'
 import {GetdoctorAppointment} from  '../../application/usecase/appoinment/getdoctorappoi'
-
+import {CancelRecurringSlot} from '../../application/usecase/slot/cancelslot'
+import {ChangestatusAppointment} from '../../application/usecase/appoinment/changestatus'
+import {GetsingleUser} from "../../application/usecase/user/getSingleUser"
 interface CustomRequest extends Request {
   id?: string;
 }
@@ -20,6 +22,7 @@ interface CustomRequest extends Request {
 export class DoctorController {
   constructor(private getDept: GetDept,private docsignup:DocRegister,private doclogin:DoctorLogin,private otpdocverify:OtpdocVerify,private docprofile:Docprofile,private docPassrest:DocPassrest,
      private docreapply:DocReapply,private otpdoccreation:OtpdocCretion, private createslot:CreateSlot,private getallrecslot:GetRecurringSlot,private getdoctorAppointment:GetdoctorAppointment,
+     private cancelRecurringSlot:CancelRecurringSlot,private changestatusAppointment:ChangestatusAppointment,private getsingleUser:GetsingleUser
   ) {}
   
 
@@ -103,7 +106,7 @@ export class DoctorController {
          await this.otpdoccreation.createOtp(email, otp);
           let subject:string="Otp verification"
          await sendMail(email, otp,subject,undefined);
-          
+     
          res.status(200).json({ message: 'OTP sent successfully' });
        } catch (error) {
          
@@ -232,5 +235,43 @@ export class DoctorController {
     res.status(500).json({ message: errorMessage });
   }
 }
+
+
+async cancelappoinment(req: CustomRequest, res: Response): Promise<void> {
+  try {
+   const {id}=req.params
+   const result=await this.cancelRecurringSlot.cancelSlots(id)
+
+    res.status(200).json({message:result});
+
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal server error";
+    res.status(500).json({ message: errorMessage });
+  }
+}
+
+async changestatusappoinment(req: CustomRequest, res: Response): Promise<void> {
+  try {
+   const {id,userid}=req.params
+   const {reason}=req.body
+    const result=await this.changestatusAppointment.changestus(id)
+    const user=await this.getsingleUser.getsingleUser(userid)
+    let subject:string="Reason for  appoinmentCancellation"
+    console.log(user.email)
+     await sendMail(user.email, 'undefined',subject,reason);
+     
+    res.status(200).json(result)
+
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal server error";
+    res.status(500).json({ message: errorMessage });
+  }
+}
+
+
 
 }

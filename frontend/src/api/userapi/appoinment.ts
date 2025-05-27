@@ -1,8 +1,8 @@
 import userInstance from "./instance";
 
-export const creatAppoinment = async (doctorId:string,slot:string,name:string,email:string,age:number,gender:"male"|"female"|"other",reason:string) => {
+export const creatAppoinment = async (doctorId:string,slot:string,name:string,email:string,age:number,gender:"male"|"female"|"other",reason:string,amount:number) => {
   try {
-    const response = await userInstance.post("/createappoinment",{doctorId, slot, name, email, age, gender, reason})
+    const response = await userInstance.post("/createappoinment",{doctorId, slot, name, email, age, gender, reason,amount})
      console.log(response.data);
     return response.data.message; 
   } catch (error) {

@@ -25,7 +25,7 @@ import {CreateAppointment} from '../../application/usecase/appoinment/createappo
 import {GetfutureAppointment} from '../../application/usecase/appoinment/getfuturappoi'
 import {GetpastAppointment} from '../../application/usecase/appoinment/getpastappoi'
 import {ChangestatusAppointment} from '../../application/usecase/appoinment/changestatus'
-
+import {MongoWalletRepository}  from '../../infrastructure/repository/mongowalletrep'
 export interface CustomRequest extends Request {
   id: string;
 }
@@ -34,7 +34,7 @@ const mongodocRepository=new MongoDocRepository()
 const mongouserRepository=new MongoUserRepository()
 const mongoslotRepository=new MongoSlotRepostory()
 const mongoappoinmentRepository=new MongoAppointmentRepository()
-
+const mongoWalletRepository=new MongoWalletRepository()
 const usergoogle=new Googleuser(mongoregRepository)
 const userdoc=new Getverified(mongodocRepository)
 const getsingledoc=new GetSingledoc(mongodocRepository)
@@ -50,10 +50,10 @@ const mongodeotrepository=new MongoDeptRepository()
 const getDept=new GetDept(mongodeotrepository)
 
 const getslotbydate=new GetSlotByDate(mongoslotRepository)
-const createappoinment=new CreateAppointment(mongoappoinmentRepository,mongoslotRepository)
+const createappoinment=new CreateAppointment(mongoappoinmentRepository,mongoslotRepository,mongoWalletRepository)
 const getfutureAppointment=new GetfutureAppointment(mongoappoinmentRepository)
 const getpastAppointment=new GetpastAppointment(mongoappoinmentRepository)
-const changestatusAppointment=new ChangestatusAppointment(mongoappoinmentRepository)
+const changestatusAppointment=new ChangestatusAppointment(mongoappoinmentRepository,mongoslotRepository)
 
 const getsingleUser=new GetsingleUser(mongouserRepository)
 const updateuser=new updatesingleUser(mongouserRepository)

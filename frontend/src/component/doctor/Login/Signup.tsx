@@ -136,9 +136,7 @@ function Signup() {
         setMedicalLicence(undefined)
         setPassword('')
         setConfirmPassword('')
-        setTimeout(() => {
-          navigate('/doctor/login')
-        }, 2000);
+        navigate('/otp', { state: { email, role: 'doctor' } });
       }
       else if(result==="Doctor with this email already exists")
       {

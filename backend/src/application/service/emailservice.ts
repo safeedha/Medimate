@@ -30,5 +30,6 @@ export async function sendMail(
     subject: subject || 'Notification', 
     text: message,
   });
+  console.log("mail send to",email)
 }
 

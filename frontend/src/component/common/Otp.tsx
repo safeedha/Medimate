@@ -51,8 +51,14 @@ function Otp() {
 
   const handleResend = async () => {
     if (email) {
-      const result = await otpsend(email);
-      console.log(result);
+      if(role==='user')
+      {
+         await otpsend(email);
+      }
+      if(role==='doctor')
+      {
+           await otpsendfordoctor(email);   
+      }
       toast.success("Otp resended")
       setTimer(60);
       setResendVisible(false);

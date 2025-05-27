@@ -163,6 +163,7 @@ export const reappliction=async(email:string,specialisation:string,experience:nu
 {
   try{
          const response = await doctorInstance.put("/reapply",{email,specialisation,experience,fee,medicalLicence});
+         console.log(response)
          return response.data.message
   }
   catch(error)

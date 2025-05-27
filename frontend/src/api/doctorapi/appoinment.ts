@@ -23,7 +23,7 @@ export const createAppoinment=async(startDate:string,endDate:string,selectedDays
 export const getrecurring=async(id:string)=>{
   try{
      const response=await doctorInstance.get(`/slots/recurring/${id}`)
-     console.log(response)
+
       return response.data.result
   }
   catch(error)
@@ -44,6 +44,42 @@ export const getallappoinment=async()=>{
      return response.data.appoi
   }
   catch(error)
+  {
+    if (axios.isAxiosError(error)) {
+      console.log(error)
+      return error.response?.data?.message || error.message;
+    } else {
+      console.error(error);
+    }
+  }
+}
+
+export const changerecurringslotStatus=async(id:string)=>{
+  try{
+    console.log(id)
+        const response=await doctorInstance.delete(`/slots/recurring/${id}`)
+        return response.data.messgae
+  }
+   catch(error)
+  {
+    if (axios.isAxiosError(error)) {
+      console.log(error)
+      return error.response?.data?.message || error.message;
+    } else {
+      console.error(error);
+    }
+  }
+}
+
+
+export const cancelAppoinment=async(id:string,reason:string,userid:string)=>{
+  try{
+  
+        const response=await doctorInstance.patch(`/doctor/appoinment/${id}/${userid}`,{reason})
+        console.log(response)
+        return response.data.message
+  }
+   catch(error)
   {
     if (axios.isAxiosError(error)) {
       console.log(error)

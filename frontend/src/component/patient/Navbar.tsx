@@ -1,12 +1,16 @@
 import { Link ,useNavigate} from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import {logoutUser} from '../../feature/userslice'
+import type{ AppDispatch} from '../../app/store'
 
 
 const Navbar = () => {
   const navigate=useNavigate();
   const handleBlock = () => {
-    console.log("Logging out...");
+     dispatch(logoutUser())
     navigate('/login');
   };
+   const dispatch=useDispatch<AppDispatch>()
   return (
     <nav className="bg-gradient-to-r from-blue-500 to-green-400 p-4 shadow-lg flex justify-between items-center z-50 w-full fixed top-0 left-0">
       {/* Left: Logo and Web Name */}

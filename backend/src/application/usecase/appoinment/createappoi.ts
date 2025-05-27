@@ -1,10 +1,11 @@
 import { appointmentRepository  } from '../../../domain/repository/appoinment-rep';
 import { slotRepository } from '../../../domain/repository/slot-repository';
 import { Appointment } from '../../../domain/entities/appoinment';
+import {WalletRepository} from '../../../domain/repository/wallet-repo';;
 export class CreateAppointment {
-  constructor(private appointmentRepo: appointmentRepository,private slotRepository:slotRepository ) {}
+  constructor(private appointmentRepo: appointmentRepository,private slotRepository:slotRepository,private walletRepository:WalletRepository ) {}
 
-  async createAppointment(id: string, doctorId: string, slot: string, name: string, email: string, age: number, gender: 'male' | 'female' | 'other', reason: string ): Promise<{ message: string}> {
+  async createAppointment(id: string, doctorId: string, slot: string, name: string, email: string, age: number, gender: 'male' | 'female' | 'other', reason: string ,amount:number): Promise<{ message: string}> {
     try {
       const data:Appointment={
         user_id: id,
@@ -20,6 +21,8 @@ export class CreateAppointment {
      }
       const appointment = await this.appointmentRepo.createappoinment(data);
       const result=await this.slotRepository.changeStatus(slot);
+      const wallet=await this.walletRepository.addmoneywallet(amount, id, doctorId,appointment._id!)
+      console.log(wallet)
       return { message: 'Appointment created successfully' };
     } catch (error) {
       console.error('Error creating appointment:', error);

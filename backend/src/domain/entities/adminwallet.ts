@@ -3,7 +3,7 @@ import {Idoctor} from './doctor';
 import {Appointment} from './appoinment';
 
 export interface AdminWalletTransaction {
-  _id: string;
+  _id?: string;
   type: 'credit' | 'debit';              // credit: incoming from user, debit: payout to doctor
   amount: number;
   from_user_id: string |Iuser;           // user who paid (for credit), null if payout

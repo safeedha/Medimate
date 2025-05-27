@@ -159,6 +159,7 @@ async login(req: Request, res: Response): Promise<void> {
     try {
       const { email } = req.body;
       const otp = generateOtp();
+      console.log(otp)
       await this.otpcration.createOtp(email, otp);
        let subject:string="Otp verification"
       await sendMail(email, otp,subject,undefined);
@@ -241,7 +242,7 @@ async login(req: Request, res: Response): Promise<void> {
   async getUserdetail(req:CustomRequest, res: Response):Promise<void>{
     try{
         const id=req.id
-        console.log("hell")
+   
         console.log(id)
         const result=await this.getsingleuser.getsingleUser(id)
         console.log(result)
@@ -307,8 +308,8 @@ async verifyPayment(req: CustomRequest, res: Response): Promise<void> {
   async createappoinment(req: CustomRequest, res: Response): Promise<void> {
     try {
       const id=req.id
-      const { doctorId, slot, name, email,age, gender, reason} = req.body;
-       const result=await this.createAppointment.createAppointment(id, doctorId, slot, name, email, age,gender, reason)
+      const { doctorId, slot, name, email,age, gender, reason, amount} = req.body;
+       const result=await this.createAppointment.createAppointment(id, doctorId, slot, name, email, age,gender, reason,amount)
       res.status(200).json(result);
     }
     catch (error) {

@@ -19,10 +19,19 @@ import{MongoSlotRepostory} from'../../infrastructure/repository/mongoslotrep'
 import {GetRecurringSlot} from '../../application/usecase/slot/getAllrecslot'
 import {GetdoctorAppointment} from  '../../application/usecase/appoinment/getdoctorappoi'
 import{MongoAppointmentRepository} from '../../infrastructure/repository/mongoappRep'
+import {CancelRecurringSlot} from '../../application/usecase/slot/cancelslot'
+import {ChangestatusAppointment} from '../../application/usecase/appoinment/changestatus'
+import {GetsingleUser} from "../../application/usecase/user/getSingleUser"
+import {MongoUserRepository } from '../../infrastructure/repository/mongouserRepository'
+
 
 const mongoregrepository=new MongoRegRepository()
 const mongoslotrepository=new MongoSlotRepostory()
 const  mongoapporespository=new MongoAppointmentRepository()
+const  mongoUserrepository=new MongoUserRepository () 
+
+const changestatusAppointment=new ChangestatusAppointment(mongoapporespository,mongoslotrepository)
+const getsingleUser=new GetsingleUser(mongoUserrepository)
 const docsignup=new DocRegister(mongoregrepository)
 const doclogin=new DoctorLogin(mongoregrepository)
 const docpassreset=new DocPassrest(mongoregrepository)
@@ -36,7 +45,8 @@ const getrecSlot=new GetRecurringSlot(mongoslotrepository)
 const mongodocrepository=new MongoDocRepository()
 const docprofile=new Docprofile(mongodocrepository)
 const getdoctorAppointment=new GetdoctorAppointment(mongoapporespository)
-const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation,createslot,getrecSlot,getdoctorAppointment)
+const cancelRecurringSlot=new CancelRecurringSlot(mongoslotrepository)
+const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation,createslot,getrecSlot,getdoctorAppointment,cancelRecurringSlot,changestatusAppointment,getsingleUser)
 interface CustomRequest extends Request {
   id: string;
 }
@@ -56,6 +66,9 @@ router.post("/slot/recurring",verifyDoctorToken, (req, res) => doctor.createAppo
 
 router.get("/slots/recurring/:id",(req, res) => doctor.getAllrecurringslots(req, res)) 
 router.get("/doctor/appoinment",verifyDoctor,(req, res) => doctor.getAllappoinment(req as CustomRequest, res)) 
+router.delete('/slots/recurring/:id',verifyDoctor,(req, res) => doctor.cancelappoinment(req as CustomRequest, res))
+
+router.patch("/doctor/appoinment/:id/:userid",verifyDoctor,(req, res) => doctor.changestatusappoinment(req as CustomRequest, res)) 
 
 
 export { router as doctorRouter };

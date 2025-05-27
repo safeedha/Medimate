@@ -59,11 +59,12 @@ function Appoinment() {
   const [modalIsOpen, setIsOpen] = useState(false)
   const subtitleRef = useRef<HTMLHeadingElement>(null)
   const [appoinment, setAppoinment] = useState<any[]>([])
+  const [doc,setDoc]=useState<string>("")
   const [currentPage, setCurrentPage] = useState<number>(1)
   const itemsPerPage = 4
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       try {
         const response = await getAllDoctor()
         if (response) setDoctors(response)
@@ -74,9 +75,10 @@ function Appoinment() {
     })()
   }, [])
 
-  const openModal = async (id: string) => {
+  const openModal = async (id: string,name:string) => {
     const result = await getAllappoinment(id)
     setAppoinment(result)
+    setDoc(name)
     setIsOpen(true)
   }
 
@@ -91,6 +93,11 @@ function Appoinment() {
   const indexOfLastDoctor = currentPage * itemsPerPage
   const indexOfFirstDoctor = indexOfLastDoctor - itemsPerPage
   const currentDoctors = doctors.slice(indexOfFirstDoctor, indexOfLastDoctor)
+
+  const handleRefund = (appointmentId: string) => {
+    // Implement refund logic here (API call)
+    toast.success(`Refund initiated for appointment ID: ${appointmentId}`)
+  }
 
   return (
     <div className="flex h-screen">
@@ -113,7 +120,7 @@ function Appoinment() {
       >
         <div className="bg-white p-6 max-h-[80vh] w-full max-w-[900px]">
           <h2 ref={subtitleRef} className="text-xl font-semibold mb-4 text-gray-800">
-            Appointment Details
+            Appointment Details of Dr:{doc}
           </h2>
 
           {appoinment.length === 0 ? (
@@ -140,10 +147,10 @@ function Appoinment() {
                     Gender: <span className="font-normal">{item.patient_gender}</span>
                   </p>
                   <p className="text-sm font-semibold text-gray-700">
-                    Date: <span className="font-normal">{new Date(item.schedule_id?.date).toLocaleDateString()}</span>
+                    Date: <span className="font-normal">{new Date(item.schedule?.date).toLocaleDateString()}</span>
                   </p>
                   <p className="text-sm font-semibold text-gray-700">
-                    Time: <span className="font-normal">{item.schedule_id?.startingTime}</span>
+                    Time: <span className="font-normal">{item.schedule?.startingTime}to{item.schedule?.endTime}</span>
                   </p>
                   <p className="text-sm font-semibold text-gray-700">
                     Reason: <span className="font-normal">{item.reason}</span>
@@ -151,9 +158,20 @@ function Appoinment() {
                   <p className="text-sm font-semibold text-gray-700">
                     Payment: <span className="font-normal">{item.payment_status}</span>
                   </p>
-                  <p className="text-sm font-semibold text-gray-700">
-                    Status: <span className="font-normal">{item.status}</span>
-                  </p>
+
+                  <div className="flex justify-between items-center">
+                    <p className="text-sm font-semibold text-gray-700">
+                      Status: <span className="font-normal">{item.status}</span>
+                    </p>
+                    {item.status === 'cancelled' && item.payment_status === 'paid' && (
+                      <button
+                        onClick={() => handleRefund(item._id)}
+                        className="px-2 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+                      >
+                        Refund
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -199,7 +217,7 @@ function Appoinment() {
                   </td>
                   <td className="py-3 px-4">
                     <button
-                      onClick={() => openModal(doctor._id!)}
+                      onClick={() => openModal(doctor._id!,doctor.firstname!)}
                       className="text-cyan-600 underline hover:text-cyan-800"
                     >
                       View Item
@@ -224,4 +242,3 @@ function Appoinment() {
 }
 
 export default Appoinment
-

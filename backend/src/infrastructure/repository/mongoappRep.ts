@@ -80,6 +80,12 @@ async changestatus(id:string,status:'pending' |  'cancelled' | 'completed'):Prom
   }
 }
 
+
+
+
+
+
+
 async  getappinmentbydoctor(doctorid: string): Promise<Appointment[]> {
   try {
     const doctorObjectId = new mongoose.Types.ObjectId(doctorid);
@@ -105,8 +111,7 @@ async  getappinmentbydoctor(doctorid: string): Promise<Appointment[]> {
       "schedule.date": 1 // sort by schedule.date ascending
     }
   }
-
-    ]);
+ ]);
     console.log(appointments)
     return appointments;
   } catch (error) {
@@ -119,10 +124,29 @@ async  getappinmentbydoctor(doctorid: string): Promise<Appointment[]> {
 
 async getallappinmentfordoctor(doctorid:string):Promise<Appointment[]>{
   try{
-    console.log("hi"+doctorid)
-    const appointments = await AppointmentModel.find({doctor_id:doctorid}) .populate({
-        path: 'schedule_id'})
-        console.log(appointments)
+    const doctorObjectId = new mongoose.Types.ObjectId(doctorid);
+
+    const appointments = await AppointmentModel.aggregate([
+      {
+        $match: {
+          doctor_id: doctorObjectId,
+        }
+      },
+      {
+         $lookup: {
+        from: "slots", // collection name of schedule_id
+        localField: "schedule_id",
+        foreignField: "_id",
+        as: "schedule"
+       }
+    },
+    {$unwind:"$schedule"},
+    {
+    $sort: {
+      "schedule.date": 1 // sort by schedule.date ascending
+    }
+  }
+ ]);
     return appointments
   }
     catch(error)

@@ -1,5 +1,7 @@
 
 import { Route } from "react-router-dom";
+import UserloginProtect from './UserloginProt'
+import UserProtect from './UserProtect'
 import Psignup from '../component/patient/Login/Psignup'
 import Plogin from '../component/patient/Login/Plogin'
 import PatientHomePage from '../component/patient/Phome'
@@ -11,15 +13,14 @@ import Booking from '../component/patient/Booking'
 function Userhandler() {
   return (
     <>
-    <Route path="/signup" element={<Psignup />} />
-    <Route path="/login" element={<Plogin />} />
-    <Route path="/home" element={< PatientHomePage />} />
-    <Route path="/home" element={< PatientHomePage />} />
-    <Route path="/doctor" element={< Doclist />} />
-    <Route path="/profile" element={< Pprofile />} />
-    <Route path="/doctor/:id" element={<  Docdetails />} />
-     <Route path="/booking_details" element={< Booking />} />
-   
+    <Route path="/signup" element={<UserloginProtect><Psignup /></UserloginProtect>} />
+    <Route path="/login" element={<UserloginProtect><Plogin /></UserloginProtect>} />
+
+    <Route path="/home" element={<UserProtect><PatientHomePage /></UserProtect>} />
+    <Route path="/doctor" element={<UserProtect><Doclist /></UserProtect>} />
+    <Route path="/profile" element={<UserProtect><Pprofile /></UserProtect>} />
+    <Route path="/doctor/:id" element={<UserProtect><Docdetails /></UserProtect>} />
+    <Route path="/booking_details" element={<UserProtect><Booking /></UserProtect>} />
     </> 
   )
 }

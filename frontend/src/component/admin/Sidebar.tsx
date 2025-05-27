@@ -23,6 +23,10 @@ function sidebar() {
   <div className=" mb-4">
     <Link to="/admin/Department" className="text-lg text-white">Department</Link>
   </div>
+
+   <div className=" mb-4">
+    <Link to="/admin/wallet" className="text-lg text-white">Wallet</Link>
+  </div>
 </div>
   )
 }

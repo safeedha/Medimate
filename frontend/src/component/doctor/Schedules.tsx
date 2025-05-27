@@ -58,6 +58,7 @@ const days: DayOfWeek[] = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
     SU: false,
   });
 
+
  const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   setStartTime(event.target.value);
   console.log(event.target.value)
@@ -83,6 +84,46 @@ const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const daysOfWeek: DayOfWeek[] = Object.entries(selectedDays)
     .filter(([_, isSelected]) => isSelected)
     .map(([day]) => day as DayOfWeek);
+      const today = new Date();
+  today.setHours(0, 0, 0, 0); // remove time part
+
+  const selectedStartDate = new Date(startDate);
+  selectedStartDate.setHours(0, 0, 0, 0);
+    const selectedEndDate = new Date(endDate);
+  selectedEndDate.setHours(0, 0, 0, 0);
+
+  if (selectedStartDate.getTime() === today.getTime()) {
+    toast.error("Start date cannot be today");
+    return;
+  }
+
+    if (selectedEndDate.getTime() === today.getTime()) {
+    toast.error("End date cannot be today");
+    return;
+  }
+
+    if (selectedEndDate.getTime() <= selectedStartDate.getTime()) {
+    toast.error("End date must be after start date");
+    return;
+  }
+  if (daysOfWeek.length===0)
+  {
+     toast.error("Please select atleast one week");
+    return;
+  }
+  if(interval<=0)
+  {
+    toast.error("Interval cannot be negative");
+    return;
+  }
+      const start = new Date(`1970-01-01T${startTime}`);
+  const end = new Date(`1970-01-01T${endTime}`);
+
+  if (end <= start) {
+    toast.error("End time must be greater than start time");
+    return;
+  }
+
     const result=await createAppoinment(startDate,endDate,daysOfWeek,startTime,endTime,interval,frequency)
     if(result==="slot creation sucessfull")
     {
@@ -223,7 +264,7 @@ const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         </div>
 
         <div>
-          <Slotlist render={render}/>
+         <Slotlist render={render} setRender={setRender} />
         </div>
        
 
