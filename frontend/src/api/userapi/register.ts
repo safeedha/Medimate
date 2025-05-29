@@ -99,8 +99,8 @@ export const verifyuserotp = async (email:string,otp:string) => {
 export const userpasswordRest=async(email:string,password:string)=>{
   try{
        const response = await userInstance.post("/reset", {email,password});
-       
-  }
+       console.log(response)
+  } 
   catch(error)
   {
     if (axios.isAxiosError(error)) {

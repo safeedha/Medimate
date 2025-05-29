@@ -1,9 +1,8 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import {  logoutDoctor} from '../../feature/doctorslice'
 import type{ AppDispatch} from '../../app/store'
 import { useDispatch } from 'react-redux';
 function DoctorSidebar() {
-  const navigate = useNavigate();
 const dispatch=useDispatch<AppDispatch>()
   const handleLogout = () => {
   dispatch( logoutDoctor())
@@ -29,9 +28,7 @@ const dispatch=useDispatch<AppDispatch>()
         <Link to="/doctor/appointments" className="block hover:text-cyan-200">
           📅 Appointments
         </Link>
-        <Link to="/doctor/slots" className="flex items-center gap-2 hover:text-cyan-200">
-          ⏰ <span>Current Schedules</span>
-        </Link>
+      
 
         <Link to="/doctor/wallet" className="flex items-center gap-2 hover:text-cyan-200">
           💰 <span>Wallet</span>

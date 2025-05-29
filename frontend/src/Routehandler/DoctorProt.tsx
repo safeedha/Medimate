@@ -11,7 +11,7 @@ function DoctorProtect({ children }: { children: ReactElement }) {
   {
     return children
   }
-  return <Navigate to='/doctor/login'/>
+  return <Navigate to='/'/>
 }
 
 export default DoctorProtect

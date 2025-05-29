@@ -40,15 +40,17 @@ export class MongoAppointmentRepository implements appointmentRepository {
   try {
     const now = new Date();
 
-    const appointments = await AppointmentModel.find({ user_id: userid,status:'pending' })
-      .populate({
+    const appointments = await AppointmentModel.find({ 
+  user_id: userid, 
+  status: { $in: ['pending', 'cancelled'] } 
+   }).populate({
         path: 'schedule_id',
         match: {
           date: { $gte: now }  // dates in future or now
         }
       }).populate({
         path:'doctor_id'
-      });
+      }).sort({created_at:-1});
 
   
     const futureAppointments = appointments.filter(app => app.schedule_id);

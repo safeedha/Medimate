@@ -16,17 +16,16 @@ function Slotlist({
   const doctor = useSelector((state: RootState) => state.doctor.doctorInfo);
   const [slot, setSlot] = useState<IRecurring[]>([]);
 
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // change as needed
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
   useEffect(() => {
     async function getAllRecurringslot() {
       try {
         const result = await getrecurring(doctor?._id!);
         if (Array.isArray(result)) {
           setSlot(result);
-          setCurrentPage(1); // reset page when data changes
+          setCurrentPage(1); 
         } else {
           console.error('Expected an array of slots, but received:', result);
         }
@@ -70,7 +69,7 @@ function Slotlist({
     return end >= now ? 'Active' : 'Inactive';
   };
 
-  // Calculate pagination
+ 
   const totalPages = Math.ceil(slot.length / itemsPerPage);
   const paginatedSlots = slot.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
@@ -78,7 +77,7 @@ function Slotlist({
     <div className="m-8 bg-yellow-50 relative">
       <div className="fixed top-6 right-6 bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg shadow-md z-50">
         <span className="text-sm font-medium">
-          ✅ You can only cancel and delete recurring slot before patient booking
+          ✅ You can only cancel  recurring slot before patient booking
         </span>
       </div>
 

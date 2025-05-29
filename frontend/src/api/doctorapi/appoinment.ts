@@ -72,10 +72,60 @@ export const changerecurringslotStatus=async(id:string)=>{
 }
 
 
-export const cancelAppoinment=async(id:string,reason:string,userid:string)=>{
+export const cancelAppoinment=async(id:string,reason:string,userid:string,email:string)=>{
   try{
   
-        const response=await doctorInstance.patch(`/doctor/appoinment/${id}/${userid}`,{reason})
+        const response=await doctorInstance.patch(`/doctor/appoinment/${id}/${userid}`,{reason,email})
+        console.log(response)
+        return response.data.message
+  }
+   catch(error)
+  {
+    if (axios.isAxiosError(error)) {
+      console.log(error)
+      return error.response?.data?.message || error.message;
+    } else {
+      console.error(error);
+    }
+  }
+}
+
+
+
+export const  getSlotedoctor=async(date:Date)=>{
+  try {
+    const response = await doctorInstance.get('/slots', {
+      params: { date: date }
+    });
+    return response.data; 
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+export const editSlot=async(id:string)=>{
+  try{
+  
+        const response=await doctorInstance.put(`/slots/${id}`)
+        console.log(response)
+        return response.data.message
+  }
+   catch(error)
+  {
+    if (axios.isAxiosError(error)) {
+      console.log(error)
+      return error.response?.data?.message || error.message;
+    } else {
+      console.error(error);
+    }
+  }
+}
+
+export const cancelSlot=async(id:string)=>{
+  try{
+  
+        const response=await doctorInstance.delete(`/slots/${id}`)
         console.log(response)
         return response.data.message
   }

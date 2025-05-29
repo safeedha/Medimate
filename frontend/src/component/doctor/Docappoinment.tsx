@@ -11,6 +11,7 @@ function Docappoinment() {
   const [reason, setReason] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [render, setRender] = useState(false);
+  const [mail,setMail]=useState<string>('')
 
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,11 +30,12 @@ function Docappoinment() {
     fetchAppointments();
   }, [render]);
 
-  const openCancelModal = (id: string, userid: string) => {
+  const openCancelModal = (id: string, userid: string,email:string) => {
     setSelectedId(id);
     setReason('');
     setShowModal(true);
     setUserid(userid);
+    setMail(email)
   };
 
   const handleCancelSubmit = async () => {
@@ -41,7 +43,7 @@ function Docappoinment() {
       toast.error('Reason Required ,Please enter a reason for cancellation.');
       return;
     }
-    const result = await cancelAppoinment(selectedId!, reason, userid!);
+    const result = await cancelAppoinment(selectedId!, reason, userid!,mail);
     if (result === "Status updated") {
       toast.success("Appointment is cancelled, Reason for cancellation mailed to patient mail");
       setRender(!render);
@@ -66,7 +68,7 @@ function Docappoinment() {
       <DoctorSidebar />
       <Toaster />
       <div className="ml-52 flex-1 bg-gray-100 p-6">
-        <h1 className="text-xl font-bold text-gray-800 mb-4">Appointments</h1>
+        <h1 className="text-xl font-bold text-gray-800 mb-4">Upcoming Appointments</h1>
 
         {appointments.length === 0 ? (
           <div className="text-center text-gray-500 mt-16 text-base">
@@ -81,12 +83,12 @@ function Docappoinment() {
                   className="flex justify-between items-start bg-white shadow-sm border border-gray-200 rounded-xl px-4 py-3 w-full"
                 >
                   <div className="text-sm text-gray-700 space-y-0.5">
-                    <p><span className="font-medium">Name:</span> {appt.patient_name}</p>
+                    <p><span className="font-medium">Patient Name:</span> {appt.patient_name}</p>
                     <p><span className="font-medium">Email:</span> {appt.patient_email}</p>
                     <p><span className="font-medium">Age:</span> {appt.patient_age}</p>
                     <p><span className="font-medium">Gender:</span> {appt.patient_gender}</p>
                     <p><span className="font-medium">Reason:</span> {appt.reason}</p>
-                    <p><span className="font-medium">Status:</span> {appt.status}</p>
+                    {/* <p><span className="font-medium">Status:</span> {appt.status}</p> */}
                     <p><span className="font-medium">Payment:</span> {appt.payment_status}</p>
                     <p><span className="font-medium">Date:</span> {new Date(appt.schedule?.date).toLocaleDateString()}</p>
                     <p><span className="font-medium">Time:</span> {appt.schedule?.startingTime} - {appt.schedule?.endTime}</p>
@@ -95,7 +97,7 @@ function Docappoinment() {
                   <div className="flex flex-col items-end justify-between ml-4 gap-2">
                     <button
                       className="text-sm bg-red-500 text-white px-5 py-2 rounded hover:bg-red-600 min-w-[90px]"
-                      onClick={() => openCancelModal(appt._id, appt.user_id)}
+                      onClick={() => openCancelModal(appt._id, appt.user_id,appt.patient_email)}
                     >
                       Cancel
                     </button>

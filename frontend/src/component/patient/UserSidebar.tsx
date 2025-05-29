@@ -22,6 +22,10 @@ function UserSidebar() {
     <Link to="" className="hover:text-teal-600 transition-colors">
       💊 Prescription
     </Link>
+     <Link to="/changepassword" className="hover:text-teal-600 transition-colors">
+      🔑 Change Password
+    </Link>
+
     <Link to="" className="hover:text-teal-600 transition-colors">
       💰 Wallet
     </Link>
