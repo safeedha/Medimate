@@ -9,4 +9,5 @@
   getAllreccslots(id:string):Promise<IRecurring[]>
   getSlotsByDate(id:string, date:Date): Promise<IndividualSlot[]>
   cancelreccslots(id:string):Promise<string>
+  deleteslot(id:string):Promise<string>
  }

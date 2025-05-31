@@ -8,7 +8,7 @@ export class MongoWalletRepository implements WalletRepository {
 
   async addmoneywallet(amount: number, userid: string, doctorid: string, appid: string): Promise<string> {
     try {
-      // Check if a wallet document exists
+    
       let wallet = await AdminWalletModel.findOne();
 
        const transaction: AdminWalletTransaction = {

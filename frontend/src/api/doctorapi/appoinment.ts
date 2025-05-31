@@ -122,10 +122,10 @@ export const editSlot=async(id:string)=>{
   }
 }
 
-export const cancelSlot=async(id:string)=>{
+export const cancelSlot=async(slotid:string)=>{
   try{
   
-        const response=await doctorInstance.delete(`/slots/${id}`)
+        const response=await doctorInstance.delete(`/slots/${slotid}`)
         console.log(response)
         return response.data.message
   }

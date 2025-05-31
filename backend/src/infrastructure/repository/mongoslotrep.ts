@@ -156,6 +156,21 @@ export class MongoSlotRepostory implements slotRepository{
 }
 
 
+ async deleteslot(id:string):Promise<string>{
+  try{
+     const slots = await Slot.deleteOne({ _id: id });
+     return "slot cancelled successfully";
+  }
+  catch(error)
+  {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error("Something happened");
+  }
+ }
+
+
 
 }
 // async getSlotsByDate(id: string, date: Date): Promise<IndividualSlot[]> {

@@ -10,7 +10,7 @@ import Pprofile from '../component/patient/Pprofile'
 import Docdetails from '../component/patient/Docdetails'
 import Booking from '../component/patient/Booking'
 import Password from '../component/patient/Password'
-
+import Chat from '../component/patient/Chat'
 function Userhandler() {
   return (
     <>
@@ -23,7 +23,7 @@ function Userhandler() {
     <Route path="/doctor/:id" element={<UserProtect><Docdetails /></UserProtect>} />
     <Route path="/booking_details" element={<UserProtect><Booking /></UserProtect>} />
     <Route path="/changepassword" element={<UserProtect><Password /></UserProtect>} />
-    
+    <Route path="/chat" element={<UserProtect><Chat /></UserProtect>} />
     </> 
   )
 }

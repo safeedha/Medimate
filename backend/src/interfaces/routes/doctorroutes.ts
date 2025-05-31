@@ -24,12 +24,13 @@ import {ChangestatusAppointment} from '../../application/usecase/appoinment/chan
 import {GetsingleUser} from "../../application/usecase/user/getSingleUser"
 import {MongoUserRepository } from '../../infrastructure/repository/mongouserRepository'
 import {GetSlotByDate} from '../../application/usecase/slot/getslotbydate'
-
+import {CancelSlot} from '../../application/usecase/slot/deleteslot'
 const mongoregrepository=new MongoRegRepository()
 const mongoslotrepository=new MongoSlotRepostory()
 const  mongoapporespository=new MongoAppointmentRepository()
 const  mongoUserrepository=new MongoUserRepository () 
 
+const cancelslot=new CancelSlot(mongoslotrepository)
 const getslotbydate=new GetSlotByDate(mongoslotrepository)
 const changestatusAppointment=new ChangestatusAppointment(mongoapporespository,mongoslotrepository)
 const getsingleUser=new GetsingleUser(mongoUserrepository)
@@ -47,7 +48,7 @@ const mongodocrepository=new MongoDocRepository()
 const docprofile=new Docprofile(mongodocrepository)
 const getdoctorAppointment=new GetdoctorAppointment(mongoapporespository)
 const cancelRecurringSlot=new CancelRecurringSlot(mongoslotrepository)
-const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation,createslot,getrecSlot,getdoctorAppointment,cancelRecurringSlot,changestatusAppointment,getsingleUser,getslotbydate)
+const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation,createslot,getrecSlot,getdoctorAppointment,cancelRecurringSlot,changestatusAppointment,getsingleUser,getslotbydate,cancelslot)
 interface CustomRequest extends Request {
   id: string;
 }
@@ -72,5 +73,5 @@ router.patch("/doctor/appoinment/:id/:userid",verifyDoctor,(req, res) => doctor.
 
 
 router.get("/slots",verifyDoctor,(req, res) => doctor.getSlotsofdoctor(req as CustomRequest, res)) 
-
+router.delete("/slots/:slotid",verifyDoctor,(req, res) => doctor.cancelSlots(req as CustomRequest, res))
 export { router as doctorRouter };

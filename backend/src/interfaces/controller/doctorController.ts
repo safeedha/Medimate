@@ -16,7 +16,7 @@ import {CancelRecurringSlot} from '../../application/usecase/slot/cancelslot'
 import {ChangestatusAppointment} from '../../application/usecase/appoinment/changestatus'
 import {GetsingleUser} from "../../application/usecase/user/getSingleUser"
 import {GetSlotByDate} from '../../application/usecase/slot/getslotbydate'
-
+import {CancelSlot} from '../../application/usecase/slot/deleteslot'
 interface CustomRequest extends Request {
   id?: string;
 }
@@ -24,7 +24,7 @@ interface CustomRequest extends Request {
 export class DoctorController {
   constructor(private getDept: GetDept,private docsignup:DocRegister,private doclogin:DoctorLogin,private otpdocverify:OtpdocVerify,private docprofile:Docprofile,private docPassrest:DocPassrest,
      private docreapply:DocReapply,private otpdoccreation:OtpdocCretion, private createslot:CreateSlot,private getallrecslot:GetRecurringSlot,private getdoctorAppointment:GetdoctorAppointment,
-     private cancelRecurringSlot:CancelRecurringSlot,private changestatusAppointment:ChangestatusAppointment,private getsingleUser:GetsingleUser,private getslotbydate:GetSlotByDate
+     private cancelRecurringSlot:CancelRecurringSlot,private changestatusAppointment:ChangestatusAppointment,private getsingleUser:GetsingleUser,private getslotbydate:GetSlotByDate,private cancelSlot:CancelSlot
   ) {}
   
 
@@ -283,6 +283,21 @@ async getSlotsofdoctor(req: CustomRequest, res: Response): Promise<void> {
         throw new Error('Date is required');
       }
       const result = await this.getslotbydate.getSlotsByDate(id!, new Date(date));
+      res.status(200).json(result)
+    }
+  catch(error)
+  {
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal server error";
+    res.status(500).json({ message: errorMessage });
+  }
+}
+
+async cancelSlots (req: CustomRequest, res: Response): Promise<void> {
+  try{
+     const { id } = req;
+     const {slotid}=req.params
+    const result = await this.cancelSlot.cancelSlot(slotid)
       res.status(200).json(result)
     }
   catch(error)
