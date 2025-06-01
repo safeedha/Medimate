@@ -11,7 +11,7 @@ function Chat() {
   const user = useSelector((state: RootState) => state.user.userInfo);
  const [userid,setUserid]=useState<string>("");
  useEffect(() => {
-   socket.emit('register', user?._id!);
+   socket.emit('register', user?._id!,'from user');
 }, []);
 
   const getUserId=(id:string)=>{

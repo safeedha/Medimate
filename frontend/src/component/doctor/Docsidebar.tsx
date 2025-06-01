@@ -28,7 +28,9 @@ const dispatch=useDispatch<AppDispatch>()
         <Link to="/doctor/appointments" className="block hover:text-cyan-200">
           📅 Appointments
         </Link>
-      
+         <Link to="/doctor/chat" className="flex items-center gap-2 hover:text-cyan-200">
+          💰 <span>Chat with patient</span>
+        </Link>
 
         <Link to="/doctor/wallet" className="flex items-center gap-2 hover:text-cyan-200">
           💰 <span>Wallet</span>

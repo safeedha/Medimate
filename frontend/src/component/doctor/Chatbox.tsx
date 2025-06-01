@@ -1,28 +1,18 @@
-import  { useState,useEffect } from 'react';
+import React, { useState,useEffect } from 'react';
 import {socket} from '../../socket'
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../app/store';
-import {geteverymessage} from '../../api/userapi/chat'
+
+
+
+
 function Chatbox({userid}:{userid:string}) {
-  const [messages,setMessages]=useState('')
   const [message, setMessage] = useState('');
-   const user = useSelector((state: RootState) => state.user.userInfo);
-
-
-  useEffect(()=>{
-  const getAllmeassge=async()=>{
-   const result=await geteverymessage(userid)
-  }
-  getAllmeassge()
-  },[user?._id,userid])
-
-
+  const [messages,setMessages]=useState(" ")
   useEffect(() => {
     socket.on('privateMessage', (data) => {
-      console.log('Private message from:',data ); 
-      setMessages(data)    
+      console.log('Private message from:', data); 
+         setMessages(data)    
     });
-    
+ 
     return () => {
       socket.off('privateMessage'); 
     }
@@ -39,6 +29,7 @@ function Chatbox({userid}:{userid:string}) {
         <div className="flex-1 overflow-y-auto p-4">
           <p className="text-gray-700">Chatbox</p>
           {messages}
+      
         </div>
 
        

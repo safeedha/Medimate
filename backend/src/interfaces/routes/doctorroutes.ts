@@ -25,6 +25,8 @@ import {GetsingleUser} from "../../application/usecase/user/getSingleUser"
 import {MongoUserRepository } from '../../infrastructure/repository/mongouserRepository'
 import {GetSlotByDate} from '../../application/usecase/slot/getslotbydate'
 import {CancelSlot} from '../../application/usecase/slot/deleteslot'
+import {GetUser} from "../../application/usecase/user/getUser"
+
 const mongoregrepository=new MongoRegRepository()
 const mongoslotrepository=new MongoSlotRepostory()
 const  mongoapporespository=new MongoAppointmentRepository()
@@ -48,7 +50,8 @@ const mongodocrepository=new MongoDocRepository()
 const docprofile=new Docprofile(mongodocrepository)
 const getdoctorAppointment=new GetdoctorAppointment(mongoapporespository)
 const cancelRecurringSlot=new CancelRecurringSlot(mongoslotrepository)
-const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation,createslot,getrecSlot,getdoctorAppointment,cancelRecurringSlot,changestatusAppointment,getsingleUser,getslotbydate,cancelslot)
+const getUser=new GetUser(mongoUserrepository)
+const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation,createslot,getrecSlot,getdoctorAppointment,cancelRecurringSlot,changestatusAppointment,getsingleUser,getslotbydate,cancelslot,getUser)
 interface CustomRequest extends Request {
   id: string;
 }
@@ -60,6 +63,7 @@ interface CustomRequest extends Request {
 router.post("/update",verifyDoctorToken, (req, res) => doctor.updatedocprofile(req, res)) 
 router.post("/reset", (req, res) => doctor.resetPassword(req, res)) 
 
+router.get("/user",verifyDoctor, (req, res) => doctor.getAllUser(req as CustomRequest, res))
 router.get("/department", (req, res) => doctor.getAllDept(req, res)) 
  
 

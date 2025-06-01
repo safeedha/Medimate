@@ -26,9 +26,12 @@ import {GetfutureAppointment} from '../../application/usecase/appoinment/getfutu
 import {GetpastAppointment} from '../../application/usecase/appoinment/getpastappoi'
 import {ChangestatusAppointment} from '../../application/usecase/appoinment/changestatus'
 import {MongoWalletRepository}  from '../../infrastructure/repository/mongowalletrep'
+import {MongoConversationRepo}  from '../../infrastructure/repository/mongoconverRep'
+import {GetAllmessage} from '../../application/usecase/conversation/getallmessage'
 export interface CustomRequest extends Request {
   id: string;
 }
+const mongoConversationRepo=new MongoConversationRepo()
 const mongoregRepository=new MongoRegRepository()
 const mongodocRepository=new MongoDocRepository()
 const mongouserRepository=new MongoUserRepository()
@@ -54,10 +57,10 @@ const createappoinment=new CreateAppointment(mongoappoinmentRepository,mongoslot
 const getfutureAppointment=new GetfutureAppointment(mongoappoinmentRepository)
 const getpastAppointment=new GetpastAppointment(mongoappoinmentRepository)
 const changestatusAppointment=new ChangestatusAppointment(mongoappoinmentRepository,mongoslotRepository)
-
+const getallmessage=new GetAllmessage(mongoConversationRepo)
 const getsingleUser=new GetsingleUser(mongouserRepository)
 const updateuser=new updatesingleUser(mongouserRepository)
-const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc,getslotbydate,createappoinment,getfutureAppointment,getpastAppointment,changestatusAppointment)
+const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc,getslotbydate,createappoinment,getfutureAppointment,getpastAppointment,changestatusAppointment,getallmessage)
 
 
 
@@ -101,6 +104,10 @@ router.get("/appointments/past", verifyUserAuth, (req, res) => {
 })
 router.patch("/appointment", verifyUserAuth, (req, res) => {
   user.changestatusAppoinments(req as CustomRequest, res);
+})
+
+router.get("/messages", verifyUserAuth, (req, res) => {
+  user.getAllmessages(req as CustomRequest, res);
 })
 
 export { router as userRouter };

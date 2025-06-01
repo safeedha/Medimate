@@ -19,6 +19,7 @@ import {CreateAppointment} from '../../application/usecase/appoinment/createappo
 import {GetfutureAppointment} from '../../application/usecase/appoinment/getfuturappoi'
 import {GetpastAppointment} from '../../application/usecase/appoinment/getpastappoi'
 import {ChangestatusAppointment} from '../../application/usecase/appoinment/changestatus'
+import {GetAllmessage} from '../../application/usecase/conversation/getallmessage'
 interface CustomRequest extends Request {
   id: string;
 }
@@ -27,7 +28,8 @@ export class UserController {
   constructor(private getDept: GetDept,private userreg:UserReg,private userlog:UserLog,private otpcration:OtpCretion,private otpverify:OtpVerify,
     private userpasssrest:UserPassrest,private getverified:Getverified,private googleuser:Googleuser,private getsingleuser:GetsingleUser,
     private updatesingleUser:updatesingleUser,private getsingledoc:GetSingledoc,private getslotbydate:GetSlotByDate,private createAppointment:CreateAppointment,
-    private getfutureAppointment:GetfutureAppointment,private getpastAppointment:GetpastAppointment,private changestatusAppointment:ChangestatusAppointment
+    private getfutureAppointment:GetfutureAppointment,private getpastAppointment:GetpastAppointment,private changestatusAppointment:ChangestatusAppointment,
+    private getallmessage:GetAllmessage
     
   ) {}
 
@@ -370,7 +372,29 @@ async verifyPayment(req: CustomRequest, res: Response): Promise<void> {
   }
 
 
+async getAllmessages(req: CustomRequest, res: Response): Promise<void> {
+  try {
+    const id = req.id;
+    const { receiver } = req.query;
 
+    if (!receiver) {
+      res.status(400).json({ message: "Receiver is required" });
+      return; 
+    }
+
+    if (typeof receiver !== 'string') {
+      res.status(400).json({ message: 'Invalid or missing receiver' });
+      return; 
+    }
+
+    const result = await this.getallmessage.getallmessage(id, receiver);
+    res.status(200).json(result);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error';
+    res.status(400).json({ message: errorMessage });
+  }
+}
 
 
 

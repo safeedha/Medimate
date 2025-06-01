@@ -9,7 +9,7 @@ import Schedules from '../component/doctor/Schedules';
 import Signup from '../component/doctor/Login/Signup';
 import Reapplication from '../component/doctor/Login/Reapplication';
 import Docappoinment from '../component/doctor/Docappoinment';
-
+import DocChat from '../component/doctor/Docchat'
 function Doctorhandler() {
   return (
     <>
@@ -54,6 +54,12 @@ function Doctorhandler() {
       <Route path="/doctor/appointments" element={
         <DoctorProtect>
           <Docappoinment />
+        </DoctorProtect>
+      } />
+
+      <Route path="/doctor/chat" element={
+        <DoctorProtect>
+          <DocChat />
         </DoctorProtect>
       } />
     </>
