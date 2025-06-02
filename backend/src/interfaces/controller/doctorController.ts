@@ -18,6 +18,7 @@ import {GetsingleUser} from "../../application/usecase/user/getSingleUser"
 import {GetSlotByDate} from '../../application/usecase/slot/getslotbydate'
 import {CancelSlot} from '../../application/usecase/slot/deleteslot'
 import {GetUser} from "../../application/usecase/user/getUser"
+import {GetAllmessage} from '../../application/usecase/conversation/getallmessage'
 interface CustomRequest extends Request {
   id?: string;
 }
@@ -26,7 +27,7 @@ export class DoctorController {
   constructor(private getDept: GetDept,private docsignup:DocRegister,private doclogin:DoctorLogin,private otpdocverify:OtpdocVerify,private docprofile:Docprofile,private docPassrest:DocPassrest,
      private docreapply:DocReapply,private otpdoccreation:OtpdocCretion, private createslot:CreateSlot,private getallrecslot:GetRecurringSlot,private getdoctorAppointment:GetdoctorAppointment,
      private cancelRecurringSlot:CancelRecurringSlot,private changestatusAppointment:ChangestatusAppointment,private getsingleUser:GetsingleUser,private getslotbydate:GetSlotByDate,private cancelSlot:CancelSlot,
-     private getUser:GetUser
+     private getUser:GetUser, private getallmessage:GetAllmessage
   ) {}
   
 
@@ -319,6 +320,36 @@ async cancelSlots (req: CustomRequest, res: Response): Promise<void> {
     res.status(500).json({ message: errorMessage });
   }
 }
+
+
+async getAllmessages(req: CustomRequest, res: Response): Promise<void> {
+  try {
+    const id = req.id as string;
+    const {  reciever} = req.query;
+
+    if (!reciever) {
+      res.status(400).json({ message: "Receiver is required" });
+      return; 
+    }
+
+    if (typeof reciever !== 'string') {
+      res.status(400).json({ message: 'Invalid or missing receiver' });
+      return; 
+    }
+
+    const result = await this.getallmessage.getallmessage(id, reciever);
+    res.status(200).json(result);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error';
+    res.status(400).json({ message: errorMessage });
+  }
+}
+
+
+
+
+
 
 
 

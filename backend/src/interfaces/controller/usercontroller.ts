@@ -375,19 +375,19 @@ async verifyPayment(req: CustomRequest, res: Response): Promise<void> {
 async getAllmessages(req: CustomRequest, res: Response): Promise<void> {
   try {
     const id = req.id;
-    const { receiver } = req.query;
+    const {  reciever} = req.query;
 
-    if (!receiver) {
+    if (!reciever) {
       res.status(400).json({ message: "Receiver is required" });
       return; 
     }
 
-    if (typeof receiver !== 'string') {
+    if (typeof reciever !== 'string') {
       res.status(400).json({ message: 'Invalid or missing receiver' });
       return; 
     }
 
-    const result = await this.getallmessage.getallmessage(id, receiver);
+    const result = await this.getallmessage.getallmessage(id, reciever);
     res.status(200).json(result);
   } catch (error) {
     const errorMessage =

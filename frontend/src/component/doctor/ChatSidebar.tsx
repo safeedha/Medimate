@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import type { Iuser } from '../../Interface/interface';
 import { getAlluser } from '../../api/doctorapi/chat';
 
-const ChatSidebar = ({getUserId}:{getUserId:(id:string)=>void}) => {
+const ChatSidebar = ({getUserId,onlineuser}:{getUserId:(id:string)=>void,onlineuser:string[]}) => {
   const [users, setUsers] = useState<Iuser[]>([]);
 
   useEffect(() => {
@@ -26,14 +26,16 @@ const ChatSidebar = ({getUserId}:{getUserId:(id:string)=>void}) => {
   const getUser = (id: string) => {
     getUserId(id);
   }
-  const person = users?.map((item, index) => {
-  const profileImg =  `https://i.pravatar.cc/150?img=${index + 1}`;
+const person = users?.map((item, index) => {
+  const profileImg = `https://i.pravatar.cc/150?img=${index + 1}`;
 
   return (
     <div
       key={item._id}
       className="flex items-center justify-start gap-3 p-3 hover:bg-green-100 cursor-pointer border-b h-16"
-      onClick={()=>{getUser(item._id!)}}
+      onClick={() => {
+        getUser(item._id!);
+      }}
     >
       <div>
         <img
@@ -44,13 +46,20 @@ const ChatSidebar = ({getUserId}:{getUserId:(id:string)=>void}) => {
       </div>
       <div className="flex flex-col justify-center">
         <p className="text-sm font-medium text-gray-800">{item.firstname}</p>
+        <p
+          className={`text-xs font-semibold ${
+            onlineuser.includes(item?._id!) ? "text-green-500" : "text-gray-500"
+          }`}
+        >
+          {onlineuser.includes(item?._id!) ? "Online" : "Offline"}
+        </p>
       </div>
     </div>
   );
 });
 
   return (
-    <div className='bg-slate-400 px-2  w-64 overflow-auto h-screen flex flex-col gap-2'>
+    <div className='px-2  w-64 overflow-auto h-screen flex flex-col gap-2 bg-gradient-to-br from-white via-emerald-50 to-cyan-100'>
       <div className='fixed mt-3'>
       <input
         type="text"

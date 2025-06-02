@@ -26,11 +26,14 @@ import {MongoUserRepository } from '../../infrastructure/repository/mongouserRep
 import {GetSlotByDate} from '../../application/usecase/slot/getslotbydate'
 import {CancelSlot} from '../../application/usecase/slot/deleteslot'
 import {GetUser} from "../../application/usecase/user/getUser"
+import {MongoConversationRepo}  from '../../infrastructure/repository/mongoconverRep'
+import {GetAllmessage} from '../../application/usecase/conversation/getallmessage'
 
 const mongoregrepository=new MongoRegRepository()
 const mongoslotrepository=new MongoSlotRepostory()
 const  mongoapporespository=new MongoAppointmentRepository()
 const  mongoUserrepository=new MongoUserRepository () 
+const mongoConversationRepo=new MongoConversationRepo()
 
 const cancelslot=new CancelSlot(mongoslotrepository)
 const getslotbydate=new GetSlotByDate(mongoslotrepository)
@@ -47,11 +50,12 @@ const getDept=new GetDept(mongodeotrepository)
 const createslot=new CreateSlot(mongoslotrepository)
 const getrecSlot=new GetRecurringSlot(mongoslotrepository)
 const mongodocrepository=new MongoDocRepository()
+const getallmessage=new GetAllmessage(mongoConversationRepo)
 const docprofile=new Docprofile(mongodocrepository)
 const getdoctorAppointment=new GetdoctorAppointment(mongoapporespository)
 const cancelRecurringSlot=new CancelRecurringSlot(mongoslotrepository)
 const getUser=new GetUser(mongoUserrepository)
-const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation,createslot,getrecSlot,getdoctorAppointment,cancelRecurringSlot,changestatusAppointment,getsingleUser,getslotbydate,cancelslot,getUser)
+const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation,createslot,getrecSlot,getdoctorAppointment,cancelRecurringSlot,changestatusAppointment,getsingleUser,getslotbydate,cancelslot,getUser,getallmessage)
 interface CustomRequest extends Request {
   id: string;
 }
@@ -78,4 +82,8 @@ router.patch("/doctor/appoinment/:id/:userid",verifyDoctor,(req, res) => doctor.
 
 router.get("/slots",verifyDoctor,(req, res) => doctor.getSlotsofdoctor(req as CustomRequest, res)) 
 router.delete("/slots/:slotid",verifyDoctor,(req, res) => doctor.cancelSlots(req as CustomRequest, res))
+
+router.get("/messages", verifyDoctor, (req, res) => {
+  doctor.getAllmessages(req as CustomRequest, res);
+})
 export { router as doctorRouter };

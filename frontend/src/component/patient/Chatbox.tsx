@@ -3,15 +3,30 @@ import {socket} from '../../socket'
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../app/store';
 import {geteverymessage} from '../../api/userapi/chat'
+import { useRef } from 'react';
 function Chatbox({userid}:{userid:string}) {
-  const [messages,setMessages]=useState('')
+  const [messages,setMessages]=useState([])
   const [message, setMessage] = useState('');
    const user = useSelector((state: RootState) => state.user.userInfo);
-
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+const scrollToBottom = () => {
+  messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+};
+useEffect(() => {
+  scrollToBottom();
+}, [messages])
 
   useEffect(()=>{
   const getAllmeassge=async()=>{
-   const result=await geteverymessage(userid)
+  const result=await geteverymessage(userid)
+  if(result==='No conversation found')
+  {
+    setMessages([])
+  }
+  else{
+     setMessages(result)
+  }
+
   }
   getAllmeassge()
   },[user?._id,userid])
@@ -20,7 +35,7 @@ function Chatbox({userid}:{userid:string}) {
   useEffect(() => {
     socket.on('privateMessage', (data) => {
       console.log('Private message from:',data ); 
-      setMessages(data)    
+       setMessages((prev)=>[...prev,data])    
     });
     
     return () => {
@@ -33,12 +48,28 @@ function Chatbox({userid}:{userid:string}) {
       setMessage('')
     };
 
+  
+  const chat = messages.map((item, index) => {
+  const isSender = user?._id === item?.senderId;
+
+  return (
+    <div
+      key={index}
+      className={`flex ${isSender ? 'justify-end' : 'justify-start'} mb-2`}
+    >
+      <p className={`px-4 py-2 rounded-lg ${isSender ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
+        {item?.message}
+      </p>
+    </div>
+  );
+});
+
   return (
     <div className="py-4 px-4 h-[calc(100vh-4rem)]">
       <div className="flex flex-col h-full border border-gray-300 rounded-md">  
         <div className="flex-1 overflow-y-auto p-4">
-          <p className="text-gray-700">Chatbox</p>
-          {messages}
+          {chat}
+            <div ref={messagesEndRef} />
         </div>
 
        

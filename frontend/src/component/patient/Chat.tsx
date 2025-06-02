@@ -9,10 +9,29 @@ import type { RootState } from '../../app/store';
 
 function Chat() {
   const user = useSelector((state: RootState) => state.user.userInfo);
+  const[onlineuser,setOnlineuser]=useState<string[]>([])
  const [userid,setUserid]=useState<string>("");
- useEffect(() => {
-   socket.emit('register', user?._id!,'from user');
-}, []);
+//  useEffect(() => {
+//    socket.emit('register', user?._id!,'user');
+// }, []);
+
+useEffect(() => {
+  if (!user?._id) return;
+
+  const handleConnect = () => {
+    socket.emit('register', user._id, 'user');
+  };
+
+  socket.on('connect', handleConnect);
+  socket.on('online-users',(data)=>{
+    setOnlineuser(data)
+  })
+
+  return () => {
+    socket.off('connect', handleConnect);
+    socket.off('online-users');
+  };
+}, [user?._id]);
 
   const getUserId=(id:string)=>{
       setUserid(id);
@@ -22,7 +41,7 @@ function Chat() {
     <>
     <Navbar/>
     <div className='flex flex-row mt-16'>
-      <Chatsidebar getUserId={getUserId}/>
+      <Chatsidebar getUserId={getUserId} onlineuser={onlineuser} />
       <div className='flex-1 bg-teal-50'>
         {userid===""?
         <Nochatselected/>:

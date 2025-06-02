@@ -15,7 +15,7 @@ export class MongoConversationRepo implements ConversationRepository {
    }).populate("messages");
 
     if (!conversation) {
-    throw new Error("No conversation found");
+       throw new Error("No conversation found");
     }
 
      return conversation.messages as unknown as Message[];

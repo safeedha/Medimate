@@ -10,3 +10,25 @@ export const getAlluser = async () => {
     console.log(error);
   }
 }
+
+
+
+export const geteverymessage = async (reciever:string) => {
+  try {
+    console.log(reciever)
+    const response = await doctorInstance.get("/messages",{
+      params:{
+        reciever
+      }
+    });
+    console.log(response.data)
+    return response.data; 
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+          
+          return error.response?.data?.message || error.message;
+        } else {
+          console.error(error);
+        }
+  }
+}

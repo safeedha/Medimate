@@ -3,7 +3,7 @@ import { getAlldoctors } from '../../api/userapi/doctor';
 import type{Idoctor} from '../../Interface/interface'
 
 
-function Chatsidebar({getUserId}:{getUserId:(id:string)=>void}) {
+function Chatsidebar({getUserId,onlineuser}:{getUserId:(id:string)=>void,onlineuser:string[]}) {
      const [singledepartment,setSingledepartment]=useState<string>("")
     const [search,setSearch]=useState<string>("")
     const [doctors, setDoctors] = useState<Idoctor[] | null>(null);
@@ -20,11 +20,11 @@ function Chatsidebar({getUserId}:{getUserId:(id:string)=>void}) {
     getUserId(id);
   }
 
-    const person = doctors?.map((item) => (
+   const person = doctors?.map((item) => (
   <div
-    key={item._id} // assuming _id is available and unique
+    key={item._id}
     className="flex items-center gap-3 p-3 hover:bg-green-100 cursor-pointer border-b"
-    onClick={()=>{getUser(item._id!)}}
+    onClick={() => getUser(item._id!)}
   >
     <div>
       <img
@@ -33,11 +33,17 @@ function Chatsidebar({getUserId}:{getUserId:(id:string)=>void}) {
         className="w-10 h-10 rounded-full object-cover"
       />
     </div>
-    <div>
-      <p className="text-sm font-medium text-gray-800">Dr. {item.firstname} {item.lastname}</p>
+    <div className="flex flex-col">
+      <p className="text-sm font-medium text-gray-800">
+        Dr. {item.firstname} {item.lastname}
+      </p>
+      <p className={`text-xs font-semibold ${onlineuser.includes(item._id) ? 'text-green-500' : 'text-gray-500'}`}>
+        {onlineuser.includes(item._id!) ? 'Online' : 'Offline'}
+      </p>
     </div>
   </div>
 ));
+
 
   return (
  

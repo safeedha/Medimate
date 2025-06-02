@@ -3,7 +3,7 @@ import DoctorSidebar from './Docsidebar';
 import { getallappoinment, cancelAppoinment } from '../../api/doctorapi/appoinment';
 import { toast, Toaster } from 'react-hot-toast';
 import Pagination from '../../component/common/Pgination';  // Your pagination component
-
+import {Link} from 'react-router-dom'
 function Docappoinment() {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -101,12 +101,8 @@ function Docappoinment() {
                     >
                       Cancel
                     </button>
-                    <a
-                      href={`/chat/`}
-                      className="text-xs text-blue-600 hover:underline"
-                    >
-                      Chat With patient
-                    </a>
+                    <Link to='/doctor/chat' state={{ userId:appt.user_id}}> Chat With patient</Link>
+                    
                   </div>
                 </div>
               ))}
