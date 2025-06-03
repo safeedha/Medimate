@@ -29,6 +29,8 @@ import {MongoWalletRepository}  from '../../infrastructure/repository/mongowalle
 import {MongoConversationRepo}  from '../../infrastructure/repository/mongoconverRep'
 import {GetAllmessage} from '../../application/usecase/conversation/getallmessage'
 import {StreamToken} from '../../application/usecase/streamtoken/streamtoken'
+import{Getreport} from '../../application/usecase/report/getreport'
+import {MongoreportRepository} from '../../infrastructure/repository/mongoreportRep'
 export interface CustomRequest extends Request {
   id: string;
 }
@@ -39,6 +41,9 @@ const mongouserRepository=new MongoUserRepository()
 const mongoslotRepository=new MongoSlotRepostory()
 const mongoappoinmentRepository=new MongoAppointmentRepository()
 const mongoWalletRepository=new MongoWalletRepository()
+const mongoreportRepository=new MongoreportRepository()
+
+const getreport=new Getreport(mongoreportRepository)
 const usergoogle=new Googleuser(mongoregRepository)
 const userdoc=new Getverified(mongodocRepository)
 const getsingledoc=new GetSingledoc(mongodocRepository)
@@ -61,7 +66,7 @@ const changestatusAppointment=new ChangestatusAppointment(mongoappoinmentReposit
 const getallmessage=new GetAllmessage(mongoConversationRepo)
 const getsingleUser=new GetsingleUser(mongouserRepository)
 const updateuser=new updatesingleUser(mongouserRepository)
-const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc,getslotbydate,createappoinment,getfutureAppointment,getpastAppointment,changestatusAppointment,getallmessage,streamToken)
+const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc,getslotbydate,createappoinment,getfutureAppointment,getpastAppointment,changestatusAppointment,getallmessage,streamToken,getreport)
 
 
 
@@ -115,4 +120,8 @@ router.get("/gettoken", verifyUserAuth, (req, res) => {
   user.gettoken(req as CustomRequest, res);
 })
 
+
+router.get("/report/:appId", verifyUserAuth, (req, res) => {
+  user.reportget(req as CustomRequest, res);
+})
 export { router as userRouter };

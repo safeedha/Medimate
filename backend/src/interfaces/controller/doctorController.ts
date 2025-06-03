@@ -19,6 +19,7 @@ import {GetSlotByDate} from '../../application/usecase/slot/getslotbydate'
 import {CancelSlot} from '../../application/usecase/slot/deleteslot'
 import {GetUser} from "../../application/usecase/user/getUser"
 import {GetAllmessage} from '../../application/usecase/conversation/getallmessage'
+import{Addreport} from '../../application/usecase/report/addreport'
 interface CustomRequest extends Request {
   id?: string;
 }
@@ -27,7 +28,7 @@ export class DoctorController {
   constructor(private getDept: GetDept,private docsignup:DocRegister,private doclogin:DoctorLogin,private otpdocverify:OtpdocVerify,private docprofile:Docprofile,private docPassrest:DocPassrest,
      private docreapply:DocReapply,private otpdoccreation:OtpdocCretion, private createslot:CreateSlot,private getallrecslot:GetRecurringSlot,private getdoctorAppointment:GetdoctorAppointment,
      private cancelRecurringSlot:CancelRecurringSlot,private changestatusAppointment:ChangestatusAppointment,private getsingleUser:GetsingleUser,private getslotbydate:GetSlotByDate,private cancelSlot:CancelSlot,
-     private getUser:GetUser, private getallmessage:GetAllmessage
+     private getUser:GetUser, private getallmessage:GetAllmessage,private addreport:Addreport
   ) {}
   
 
@@ -271,7 +272,8 @@ async changestatusappoinment(req: CustomRequest, res: Response): Promise<void> {
   try {
    const {id,userid}=req.params
    const {reason,email}=req.body
-    const result=await this.changestatusAppointment.changestus(id)
+     const status: 'pending' |  'cancelled' | 'completed'= 'cancelled';
+    const result=await this.changestatusAppointment.changestus(id,status)
     // const user=await this.getsingleUser.getsingleUser(userid)
     let subject:string="Reason for  appoinmentCancellation"
     console.log(email)
@@ -286,6 +288,24 @@ async changestatusappoinment(req: CustomRequest, res: Response): Promise<void> {
     res.status(500).json({ message: errorMessage });
   }
 }
+
+async changecompletstatusappoinment(req: CustomRequest, res: Response): Promise<void> {
+  try {
+   const {id}=req.params
+   console.log('hello')
+    const status: 'pending' |  'cancelled' | 'completed'= 'completed';
+    const result=await this.changestatusAppointment.changestus(id,status)
+     
+    res.status(200).json(result)
+
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal server error";
+    res.status(500).json({ message: errorMessage });
+  }
+}
+
 
 async getSlotsofdoctor(req: CustomRequest, res: Response): Promise<void> {
   try{
@@ -347,7 +367,18 @@ async getAllmessages(req: CustomRequest, res: Response): Promise<void> {
 }
 
 
-
+async Addreport(req: CustomRequest, res: Response): Promise<void> {
+  try {
+    const id = req.id as string;
+    const {htmlcontent,appoinmentId,userId}=req.body
+    const report =await  this.addreport.addReport(htmlcontent,appoinmentId,userId)
+     res.status(201).json(report);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error';
+    res.status(400).json({ message: errorMessage });
+  }
+}
 
 
 

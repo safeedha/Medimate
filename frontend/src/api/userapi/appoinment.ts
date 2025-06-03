@@ -23,6 +23,7 @@ export const getfutureAppoinments = async () => {
 export const getpasteAppoinments = async () => {
   try {
     const response = await userInstance.get("/appointments/past");
+    console.log(response.data)
     return response.data 
   } catch (error) {
     console.log(error);

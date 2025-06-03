@@ -49,6 +49,10 @@ const AppointmentSchema = new Schema<Appointment>({
     enum: ['paid', 'unpaid'],
     default: 'unpaid',
   },
+    reportAdded:{
+    type:Boolean,
+    default:false
+  }
 }, {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 });

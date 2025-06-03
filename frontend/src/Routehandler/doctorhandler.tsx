@@ -10,6 +10,7 @@ import Signup from '../component/doctor/Login/Signup';
 import Reapplication from '../component/doctor/Login/Reapplication';
 import Docappoinment from '../component/doctor/Docappoinment';
 import DocChat from '../component/doctor/Docchat'
+import Prescription from '../component/doctor/Prescription'
 function Doctorhandler() {
   return (
     <>
@@ -30,6 +31,12 @@ function Doctorhandler() {
       <Route path="/doctor/home" element={
         <DoctorProtect>
           <DoctorHome />
+        </DoctorProtect>
+      } />
+
+        <Route path="/doctor/addreport" element={
+        <DoctorProtect>
+          <Prescription/>
         </DoctorProtect>
       } />
 

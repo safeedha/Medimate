@@ -18,7 +18,9 @@ export interface Appointment {
 
   status: 'pending' |  'cancelled' | 'completed';
   payment_status: 'paid' | 'unpaid';
-
+  
+   reportAdded?: boolean; 
+   
   created_at?: Date;
   updated_at?: Date;
 }

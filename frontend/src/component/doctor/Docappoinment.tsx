@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import DoctorSidebar from './Docsidebar';
-import { getallappoinment, cancelAppoinment } from '../../api/doctorapi/appoinment';
+import { getallappoinment, cancelAppoinment,completeappoinment } from '../../api/doctorapi/appoinment';
 import { toast, Toaster } from 'react-hot-toast';
 import Pagination from '../../component/common/Pgination';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 function Docappoinment() {
   const [appointments, setAppointments] = useState<any[]>([]);
@@ -49,7 +50,27 @@ function Docappoinment() {
       setShowModal(false);
     }
   };
+   const confirmHandle = async (apptid: string) => {
+  const result = await Swal.fire({
+    title: 'Are you sure?',
+    text: "Do you want to mark this appointment as complete?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, confirm it!',
+  });
 
+  if (result.isConfirmed) {
+    try {
+      const response = await completeappoinment(apptid);
+      setRender(!render)
+      Swal.fire('Confirmed!', 'The appointment has been marked as complete.', 'success');
+    } catch (error) {
+      Swal.fire('Error!', 'Something went wrong.', 'error');
+    }
+  }
+};
   const indexOfLastAppointment = currentPage * appointmentsPerPage;
   const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
   const currentAppointments = appointments.slice(indexOfFirstAppointment, indexOfLastAppointment);
@@ -96,15 +117,21 @@ function Docappoinment() {
                       <td className="px-4 py-2">{appt.schedule?.startingTime} - {appt.schedule?.endTime}</td>
                       <td className="px-4 py-2 font-semibold">{appt.status}</td>
                       <td className="px-4 py-2 space-y-1">
-                        {appt.status === 'Completed' ? (
-                          <Link
-                            to="/doctor/addreport"
-                            state={{ appointmentId: appt._id }}
-                            className="inline-block px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs"
-                          >
-                            Add Report
-                          </Link>
-                        ) : appt.status === 'Cancelled' ? (
+                        {appt.status === 'completed' ? (
+                          appt.reportAdded === false ? (
+                            <Link
+                              to="/doctor/addreport"
+                              state={{ appointmentId: appt._id, userId: appt.user_id }}
+                              className="inline-block px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs"
+                            >
+                              Add Report
+                            </Link>
+                          ) : (
+                            <span className="inline-block px-3 py-1 bg-gray-200 text-green-600 border border-green-400 rounded text-xs">
+                              Report Added
+                            </span>
+                          )
+                        ) : appt.status === 'cancelled' ? (
                           <span className="text-gray-500 text-xs">No actions</span>
                         ) : (
                           <>
@@ -115,13 +142,14 @@ function Docappoinment() {
                               Cancel
                             </button>
                             <button
-                              onClick={() => toast.success('Appointment confirmed')}
+                              onClick={() => confirmHandle(appt._id)}
                               className="block w-full px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs"
                             >
                               Confirm
                             </button>
                           </>
                         )}
+
                         <Link
                           to="/doctor/chat"
                           state={{ userId: appt.user_id }}
@@ -130,6 +158,7 @@ function Docappoinment() {
                           Chat
                         </Link>
                       </td>
+
                     </tr>
                   ))}
                 </tbody>

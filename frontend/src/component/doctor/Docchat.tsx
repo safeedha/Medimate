@@ -28,7 +28,7 @@ function Docchat() {
   if (!doctor?._id) return;
 
   const handleConnect = () => {
-    socket.emit('register', doctor._id, 'user');
+    socket.emit('register', doctor._id, 'doctor');
   };
 
   socket.on('connect', handleConnect);
