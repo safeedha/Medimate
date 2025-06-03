@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import DoctorSidebar from './Docsidebar';
 import { getallappoinment, cancelAppoinment } from '../../api/doctorapi/appoinment';
 import { toast, Toaster } from 'react-hot-toast';
-import Pagination from '../../component/common/Pgination';  // Your pagination component
-import {Link} from 'react-router-dom'
+import Pagination from '../../component/common/Pgination';
+import { Link } from 'react-router-dom';
+
 function Docappoinment() {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -11,11 +12,9 @@ function Docappoinment() {
   const [reason, setReason] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [render, setRender] = useState(false);
-  const [mail,setMail]=useState<string>('')
-
-
+  const [mail, setMail] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
-  const appointmentsPerPage = 4; 
+  const appointmentsPerPage = 4;
 
   const fetchAppointments = async () => {
     try {
@@ -30,37 +29,31 @@ function Docappoinment() {
     fetchAppointments();
   }, [render]);
 
-  const openCancelModal = (id: string, userid: string,email:string) => {
+  const openCancelModal = (id: string, userid: string, email: string) => {
     setSelectedId(id);
     setReason('');
     setShowModal(true);
     setUserid(userid);
-    setMail(email)
+    setMail(email);
   };
 
   const handleCancelSubmit = async () => {
     if (!reason.trim()) {
-      toast.error('Reason Required ,Please enter a reason for cancellation.');
+      toast.error('Please enter a reason for cancellation.');
       return;
     }
-    const result = await cancelAppoinment(selectedId!, reason, userid!,mail);
+    const result = await cancelAppoinment(selectedId!, reason, userid!, mail);
     if (result === "Status updated") {
-      toast.success("Appointment is cancelled, Reason for cancellation mailed to patient mail");
+      toast.success("Appointment cancelled. Reason mailed to patient.");
       setRender(!render);
       setShowModal(false);
     }
   };
 
-  // Calculate appointments for the current page
   const indexOfLastAppointment = currentPage * appointmentsPerPage;
   const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
   const currentAppointments = appointments.slice(indexOfFirstAppointment, indexOfLastAppointment);
-
-  // Handle page change
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
+  const handlePageChange = (page: number) => setCurrentPage(page);
   const totalPages = Math.ceil(appointments.length / appointmentsPerPage);
 
   return (
@@ -76,39 +69,73 @@ function Docappoinment() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {currentAppointments.map((appt, index) => (
-                <div
-                  key={appt._id || index}
-                  className="flex justify-between items-start bg-white shadow-sm border border-gray-200 rounded-xl px-4 py-3 w-full"
-                >
-                  <div className="text-sm text-gray-700 space-y-0.5">
-                    <p><span className="font-medium">Patient Name:</span> {appt.patient_name}</p>
-                    <p><span className="font-medium">Email:</span> {appt.patient_email}</p>
-                    <p><span className="font-medium">Age:</span> {appt.patient_age}</p>
-                    <p><span className="font-medium">Gender:</span> {appt.patient_gender}</p>
-                    <p><span className="font-medium">Reason:</span> {appt.reason}</p>
-                    {/* <p><span className="font-medium">Status:</span> {appt.status}</p> */}
-                    <p><span className="font-medium">Payment:</span> {appt.payment_status}</p>
-                    <p><span className="font-medium">Date:</span> {new Date(appt.schedule?.date).toLocaleDateString()}</p>
-                    <p><span className="font-medium">Time:</span> {appt.schedule?.startingTime} - {appt.schedule?.endTime}</p>
-                  </div>
-
-                  <div className="flex flex-col items-end justify-between ml-4 gap-2">
-                    <button
-                      className="text-sm bg-red-500 text-white px-5 py-2 rounded hover:bg-red-600 min-w-[90px]"
-                      onClick={() => openCancelModal(appt._id, appt.user_id,appt.patient_email)}
-                    >
-                      Cancel
-                    </button>
-                    <Link to='/doctor/chat' state={{ userId:appt.user_id}}> Chat With patient</Link>
-                    
-                  </div>
-                </div>
-              ))}
+            <div className="overflow-x-auto bg-white rounded-xl shadow border border-gray-200">
+              <table className="w-full table-auto text-sm text-left text-gray-700">
+                <thead className="bg-gray-100 text-gray-600 font-semibold uppercase text-xs">
+                  <tr>
+                    <th className="px-4 py-3">Patient Name</th>
+                    <th className="px-4 py-3">Email</th>
+                    <th className="px-4 py-3">Age</th>
+                    <th className="px-4 py-3">Gender</th>
+                    <th className="px-4 py-3">Reason</th>
+                    <th className="px-4 py-3">Date</th>
+                    <th className="px-4 py-3">Time</th>
+                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentAppointments.map((appt) => (
+                    <tr key={appt._id} className="border-t border-gray-200">
+                      <td className="px-4 py-2">{appt.patient_name}</td>
+                      <td className="px-4 py-2">{appt.patient_email}</td>
+                      <td className="px-4 py-2">{appt.patient_age}</td>
+                      <td className="px-4 py-2">{appt.patient_gender}</td>
+                      <td className="px-4 py-2">{appt.reason}</td>
+                      <td className="px-4 py-2">{new Date(appt.schedule?.date).toLocaleDateString()}</td>
+                      <td className="px-4 py-2">{appt.schedule?.startingTime} - {appt.schedule?.endTime}</td>
+                      <td className="px-4 py-2 font-semibold">{appt.status}</td>
+                      <td className="px-4 py-2 space-y-1">
+                        {appt.status === 'Completed' ? (
+                          <Link
+                            to="/doctor/addreport"
+                            state={{ appointmentId: appt._id }}
+                            className="inline-block px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs"
+                          >
+                            Add Report
+                          </Link>
+                        ) : appt.status === 'Cancelled' ? (
+                          <span className="text-gray-500 text-xs">No actions</span>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => openCancelModal(appt._id, appt.user_id, appt.patient_email)}
+                              className="block w-full px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs mb-1"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={() => toast.success('Appointment confirmed')}
+                              className="block w-full px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs"
+                            >
+                              Confirm
+                            </button>
+                          </>
+                        )}
+                        <Link
+                          to="/doctor/chat"
+                          state={{ userId: appt.user_id }}
+                          className="block w-full px-3 py-1 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 text-xs mt-1"
+                        >
+                          Chat
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
 
-            {/* Pagination */}
             {totalPages > 1 && (
               <Pagination
                 currentPage={currentPage}
@@ -130,7 +157,7 @@ function Docappoinment() {
               placeholder="Enter cancellation reason..."
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-            ></textarea>
+            />
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setShowModal(false)}

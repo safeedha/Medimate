@@ -7,6 +7,8 @@ import Landinghandler from './Routehandler/Landinghandler'
 import Adminhandler from './Routehandler/adminhandler'
 import Userhandler from './Routehandler/userhandler'
 import Doctorhandler from './Routehandler/doctorhandler'
+
+import { Route } from 'react-router-dom';
 function App() {
   
 
@@ -14,6 +16,7 @@ function App() {
     <>
       <Router>
       <Routes>
+       
         {Landinghandler()}
         {Adminhandler()}
         {Userhandler()}

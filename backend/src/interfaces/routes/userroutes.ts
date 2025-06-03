@@ -28,6 +28,7 @@ import {ChangestatusAppointment} from '../../application/usecase/appoinment/chan
 import {MongoWalletRepository}  from '../../infrastructure/repository/mongowalletrep'
 import {MongoConversationRepo}  from '../../infrastructure/repository/mongoconverRep'
 import {GetAllmessage} from '../../application/usecase/conversation/getallmessage'
+import {StreamToken} from '../../application/usecase/streamtoken/streamtoken'
 export interface CustomRequest extends Request {
   id: string;
 }
@@ -41,7 +42,7 @@ const mongoWalletRepository=new MongoWalletRepository()
 const usergoogle=new Googleuser(mongoregRepository)
 const userdoc=new Getverified(mongodocRepository)
 const getsingledoc=new GetSingledoc(mongodocRepository)
-
+const streamToken=new StreamToken()
 const userreg=new UserReg(mongoregRepository)
 const userlog=new UserLog(mongoregRepository)
 const userrest=new UserPassrest(mongoregRepository)
@@ -60,7 +61,7 @@ const changestatusAppointment=new ChangestatusAppointment(mongoappoinmentReposit
 const getallmessage=new GetAllmessage(mongoConversationRepo)
 const getsingleUser=new GetsingleUser(mongouserRepository)
 const updateuser=new updatesingleUser(mongouserRepository)
-const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc,getslotbydate,createappoinment,getfutureAppointment,getpastAppointment,changestatusAppointment,getallmessage)
+const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc,getslotbydate,createappoinment,getfutureAppointment,getpastAppointment,changestatusAppointment,getallmessage,streamToken)
 
 
 
@@ -108,6 +109,10 @@ router.patch("/appointment", verifyUserAuth, (req, res) => {
 
 router.get("/messages", verifyUserAuth, (req, res) => {
   user.getAllmessages(req as CustomRequest, res);
+})
+
+router.get("/gettoken", verifyUserAuth, (req, res) => {
+  user.gettoken(req as CustomRequest, res);
 })
 
 export { router as userRouter };

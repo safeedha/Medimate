@@ -20,6 +20,7 @@ import {GetfutureAppointment} from '../../application/usecase/appoinment/getfutu
 import {GetpastAppointment} from '../../application/usecase/appoinment/getpastappoi'
 import {ChangestatusAppointment} from '../../application/usecase/appoinment/changestatus'
 import {GetAllmessage} from '../../application/usecase/conversation/getallmessage'
+import {StreamToken} from '../../application/usecase/streamtoken/streamtoken'
 interface CustomRequest extends Request {
   id: string;
 }
@@ -29,7 +30,7 @@ export class UserController {
     private userpasssrest:UserPassrest,private getverified:Getverified,private googleuser:Googleuser,private getsingleuser:GetsingleUser,
     private updatesingleUser:updatesingleUser,private getsingledoc:GetSingledoc,private getslotbydate:GetSlotByDate,private createAppointment:CreateAppointment,
     private getfutureAppointment:GetfutureAppointment,private getpastAppointment:GetpastAppointment,private changestatusAppointment:ChangestatusAppointment,
-    private getallmessage:GetAllmessage
+    private getallmessage:GetAllmessage,private streamToken:StreamToken
     
   ) {}
 
@@ -396,7 +397,19 @@ async getAllmessages(req: CustomRequest, res: Response): Promise<void> {
   }
 }
 
-
+async gettoken(req: CustomRequest, res: Response): Promise<void> {
+  try{
+      const id = req.id;
+      const result=await this.streamToken.gettoken(id)
+      res.status(200).json(result);
+  }
+  catch(error)
+  {
+     const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error';
+    res.status(400).json({ message: errorMessage });
+  }
+}
 
 
 
