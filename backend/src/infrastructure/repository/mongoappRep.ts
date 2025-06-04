@@ -17,14 +17,20 @@ export class MongoAppointmentRepository implements appointmentRepository {
  async getpastappoinment(userId: string): Promise<Appointment[]> {
   try {
     const currentDate = new Date();
+    const now = new Date();
+     const appointments = await AppointmentModel.find({ 
+      user_id: userId
+      }).populate({
+            path: 'schedule_id',
+            match: {
+              date: { $lte: now }  // dates in future or now
+            }
+          }).populate({
+            path:'doctor_id'
+          }).sort({created_at:-1});
 
-    const appointments = await AppointmentModel.find({ user_id: userId })
-      .populate({
-        path: 'schedule_id',
-        match: {
-          date: { $lt: currentDate } // only populate if the date is in the past
-        }
-      });
+  
+  
 
  
     const pastAppointments = appointments.filter(app => app.schedule_id);
@@ -42,7 +48,7 @@ export class MongoAppointmentRepository implements appointmentRepository {
 
     const appointments = await AppointmentModel.find({ 
   user_id: userid, 
-  status: { $in: ['pending', 'cancelled'] } 
+  // status: { $in: ['pending', 'cancelled'] } 
    }).populate({
         path: 'schedule_id',
         match: {
@@ -96,7 +102,6 @@ async  getappinmentbydoctor(doctorid: string): Promise<Appointment[]> {
       {
         $match: {
           doctor_id: doctorObjectId,
-          status: "pending"
         }
       },
       {

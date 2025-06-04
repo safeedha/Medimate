@@ -34,7 +34,7 @@ function Doctorhandler() {
         </DoctorProtect>
       } />
 
-        <Route path="/doctor/prescription" element={
+        <Route path="/doctor/addreport" element={
         <DoctorProtect>
           <Prescription/>
         </DoctorProtect>

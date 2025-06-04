@@ -5,10 +5,34 @@ import { getfutureAppoinments, getpasteAppoinments, cancelAppoinment } from '../
 import type { Appointment } from '../../Interface/interface';
 import Swal from 'sweetalert2';
 import { Toaster, toast } from 'react-hot-toast';
+import { getReport } from '../../api/userapi/report';
+import { useRef } from 'react';
+
+import jsPDF from 'jspdf';
 
 function Booking() {
   const [futur, setFuture] = useState<Appointment[]>([]);
   const [past, setPast] = useState<Appointment[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedReport, setSelectedReport] = useState<string>('report');
+  const [loadingReport, setLoadingReport] = useState(false);
+    const reportTemplateRef = useRef(null);
+  const handleDownloadPDF = () => {
+   const doc = new jsPDF({
+      format: 'a4',
+      unit: 'px',
+    });
+
+    // Adding the fonts.
+    doc.setFont('Inter-Regular', 'normal');
+
+    doc.html(reportTemplateRef.current, {
+      async callback(doc) {
+        await doc.save('document');
+      },
+    });
+  };
+
 
   useEffect(() => {
     const getFutureAppointments = async () => {
@@ -46,6 +70,20 @@ function Booking() {
     }
   };
 
+  const handleViewReport = async (appointmentId: string) => {
+    try {
+      setLoadingReport(true);
+      const report = await getReport(appointmentId);
+      console.log(report.content)
+      setSelectedReport(report.content || "No report content found.");
+      setShowModal(true);
+    } catch (error) {
+      toast.error("Failed to fetch report");
+    } finally {
+      setLoadingReport(false);
+    }
+  };
+
   return (
     <>
       <div className='min-h-screen'>
@@ -67,7 +105,7 @@ function Booking() {
                       <tr>
                         <th className="border px-4 py-2">Patient Name</th>
                         <th className="border px-4 py-2">Doctor</th>
-                        <th className="border px-4 py-2"> Appoinment Date</th>
+                        <th className="border px-4 py-2">Appointment Date</th>
                         <th className="border px-4 py-2">Time</th>
                         <th className="border px-4 py-2">Reason</th>
                         <th className="border px-4 py-2">Status</th>
@@ -94,18 +132,31 @@ function Booking() {
                           <td className="border px-4 py-2">{appointment.reason}</td>
                           <td className="border px-4 py-2 capitalize">{appointment.status}</td>
                           <td className="border px-4 py-2 text-center">
-                           <button
-                              onClick={() => cancelHandle(appointment._id!)}
-                              className={`px-3 py-1 rounded-md text-sm ${
-                                appointment.status === 'cancelled'
-                                  ? 'bg-gray-400 cursor-not-allowed'
-                                  : 'bg-red-500 hover:bg-red-600 text-white'
-                              }`}
-                              disabled={appointment.status === 'cancelled'}
-                            >
-                              {appointment.status === 'cancelled' ? 'Cancelled' : 'Cancel'}
-                            </button>
-
+                            {appointment.status === 'pending' ? (
+                              <button
+                                onClick={() => cancelHandle(appointment._id!)}
+                                className="px-3 py-1 rounded-md text-sm bg-red-500 hover:bg-red-600 text-white"
+                              >
+                                Cancel
+                              </button>
+                            ) : appointment.status === 'cancelled' ? (
+                              <span className="px-3 py-1 rounded-md text-sm bg-gray-300 text-gray-700 cursor-not-allowed">
+                                Cancelled
+                              </span>
+                            ) : appointment.status === 'completed' ? (
+                              appointment.reportAdded === false ? (
+                                <span className="px-3 py-1 rounded-md text-sm bg-yellow-100 text-yellow-700">
+                                  Report Pending
+                                </span>
+                              ) : (
+                                <button
+                                  onClick={() => handleViewReport(appointment._id!)}
+                                  className="px-3 py-1 rounded-md text-sm bg-blue-500 text-white hover:bg-blue-600"
+                                >
+                                  View Report
+                                </button>
+                              )
+                            ) : null}
                           </td>
                         </tr>
                       ))}
@@ -160,6 +211,45 @@ function Booking() {
               )}
             </div>
 
+            {showModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm px-4">
+              <div className="relative bg-white rounded-2xl w-full max-w-3xl p-6 md:p-8 shadow-2xl border border-gray-200">
+                
+                {/* Close Button */}
+                <button
+                  className="absolute top-4 right-4 text-gray-400 hover:text-red-600 text-2xl font-bold"
+                  onClick={() => setShowModal(false)}
+                  aria-label="Close"
+                >
+                  &times;
+                </button>
+
+                {/* Title */}
+                <h3 className="text-2xl font-bold text-center text-gray-800 mb-4 border-b pb-2">
+                  Appointment Report
+                </h3>
+
+                {/* Content */}
+                <div className="max-h-[60vh] overflow-y-auto custom-scrollbar">
+                  {loadingReport ? (
+                    <p className="text-center text-gray-500 animate-pulse">Loading report...</p>
+                  ) : (
+                    <div
+                    ref={reportTemplateRef}
+                      className="prose max-w-none text-gray-800 "
+                      dangerouslySetInnerHTML={{ __html: selectedReport || "<p>No report available.</p>" }}
+                    />
+                  )}
+                    <button
+                    onClick={handleDownloadPDF}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                  >
+                    Download PDF
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           </div>
         </div>
       </div>
