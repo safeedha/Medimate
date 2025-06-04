@@ -6,6 +6,9 @@ import type { Appointment } from '../../Interface/interface';
 import Swal from 'sweetalert2';
 import { Toaster, toast } from 'react-hot-toast';
 import { getReport } from '../../api/userapi/report';
+import { useRef } from 'react';
+
+import jsPDF from 'jspdf';
 
 function Booking() {
   const [futur, setFuture] = useState<Appointment[]>([]);
@@ -13,6 +16,23 @@ function Booking() {
   const [showModal, setShowModal] = useState(false);
   const [selectedReport, setSelectedReport] = useState<string>('report');
   const [loadingReport, setLoadingReport] = useState(false);
+    const reportTemplateRef = useRef(null);
+  const handleDownloadPDF = () => {
+   const doc = new jsPDF({
+      format: 'a4',
+      unit: 'px',
+    });
+
+    // Adding the fonts.
+    doc.setFont('Inter-Regular', 'normal');
+
+    doc.html(reportTemplateRef.current, {
+      async callback(doc) {
+        await doc.save('document');
+      },
+    });
+  };
+
 
   useEffect(() => {
     const getFutureAppointments = async () => {
@@ -215,10 +235,17 @@ function Booking() {
                     <p className="text-center text-gray-500 animate-pulse">Loading report...</p>
                   ) : (
                     <div
+                    ref={reportTemplateRef}
                       className="prose max-w-none text-gray-800 "
                       dangerouslySetInnerHTML={{ __html: selectedReport || "<p>No report available.</p>" }}
                     />
                   )}
+                    <button
+                    onClick={handleDownloadPDF}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                  >
+                    Download PDF
+                  </button>
                 </div>
               </div>
             </div>
