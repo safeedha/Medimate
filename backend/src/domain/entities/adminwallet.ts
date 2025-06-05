@@ -4,12 +4,15 @@ import {Appointment} from './appoinment';
 
 export interface AdminWalletTransaction {
   _id?: string;
-  type: 'credit' | 'debit';              // credit: incoming from user, debit: payout to doctor
+  type: 'credit' | 'debit'|'refund';             
   amount: number;
-  from_user_id: string |Iuser;           // user who paid (for credit), null if payout
-  to_doctor_id: string | Idoctor;           // doctor who received (for debit), null if credit
-  appointment_id: string|Appointment; // appointment associated with the transaction, null if not applicable
-  timestamp: Date;
+  from: string |Iuser;          
+  to: string | Idoctor; 
+  toModel:'User'| 'Doctor'| 'Platform'
+  doctorId:string|Idoctor          
+  appointmentId: string|Appointment; 
+  paymentstatus:boolean
+  date: Date;
 }
 
 export interface AdminWallet {

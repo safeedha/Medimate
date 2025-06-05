@@ -41,8 +41,15 @@ function Chatbox({ userid }: { userid: string }) {
       socket.off('privateMessage');
     };
   }, []);
+    
+
+  useEffect(()=>{
+   socket.emit('markAsRead', { from: user?._id, to: userid });
+  },[userid ])
+
 
   const handleSend = () => {
+    
     socket.emit('privateMessage', { to: userid, message: message });
     setMessage('');
   };
@@ -114,16 +121,19 @@ function Chatbox({ userid }: { userid: string }) {
 
         {/* Input box */}
         <div className="flex items-center gap-2 border-t border-gray-200 p-4">
-          <input
+           <input
             type="text"
             placeholder="Type your message..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             className="flex-1 px-3 py-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
+
           <button
             onClick={handleSend}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            disabled={!message.trim()} // ✅ Disable if message is empty or just spaces
+            className={`px-4 py-2 text-white rounded-md transition 
+              ${!message.trim() ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'}`}
           >
             Send
           </button>

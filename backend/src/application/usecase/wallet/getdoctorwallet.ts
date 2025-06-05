@@ -2,13 +2,12 @@ import { Appointment } from '../../../domain/entities/appoinment';
 import {WalletRepository} from '../../../domain/repository/wallet-repo';
 import{ AdminWallet} from "../../../domain/entities/adminwallet"
 
-export class GetAdminWallet {
+export class GetDoctorWallet {
 
   constructor(private walletRepository:WalletRepository) {}
-  async getwallet(): Promise<any> {
+  async getwallet(doctrid:string): Promise<any> {
     try {
-      console.log('hello')
-      const wallet = await this.walletRepository.getdminwallet();
+      const wallet = await this.walletRepository.getdoctorwallet(doctrid);
       return wallet
     } catch (error) {
       if (error instanceof Error) {

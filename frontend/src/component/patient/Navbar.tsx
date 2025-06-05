@@ -2,10 +2,26 @@ import { Link ,useNavigate} from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import {logoutUser} from '../../feature/userslice'
 import type{ AppDispatch} from '../../app/store'
+import {useState,useEffect} from 'react'
+import { socket } from '../../socket';
 
 
 const Navbar = () => {
   const navigate=useNavigate();
+  
+   const [unreadCount, setUnreadCount] = useState(0);
+    useEffect(()=>{
+      
+    },[])
+  useEffect(() => {
+    socket.on('unreadCount', (data) => {
+      setUnreadCount(prev=>prev+data.count);
+    });
+
+    return () => {
+      socket.off('unreadCount');
+    };
+  }, []);
   const handleBlock = () => {
      dispatch(logoutUser())
     navigate('/login');
@@ -46,6 +62,21 @@ const Navbar = () => {
         >
           Profile
         </Link>
+       <div className="relative inline-block">
+        <Link to=""
+          className="hover:underline hover:text-blue-100 transition text-xl"
+        >
+          🔔
+        </Link>
+
+        {/* Notification Count Badge */}
+        {unreadCount > 0 && (
+          <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-full">
+            {unreadCount}
+          </span>
+        )}
+      </div>
+
         <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition" onClick={handleBlock}>
           Logout
         </button>

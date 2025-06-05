@@ -12,9 +12,16 @@ import {EditDept} from "../../application/usecase/dept/editdept"
 import {BlockDept} from "../../application/usecase/dept/blockdept"
 import{GetdoctorAppointmentByid}  from "../../application/usecase/appoinment/getappoinfordoc"
 import {GetAdminWallet} from '../../application/usecase/wallet/geadminwallet'
+import {Getrefund} from '../../application/usecase/wallet/getRefund'
+import {GetPayout} from '../../application/usecase/wallet/getpayout'
+import {Paytodoctor} from '../../application/usecase/wallet/paytodoctor'
+import {Refundhandle} from '../../application/usecase/wallet/refund'
+import {GetsingleUser}  from '../../application/usecase/user/getSingleUser'
+import {GetSingledoc}  from '../../application/usecase/doctor/getSingledoc'
 export class AdminController{
     constructor(private login:Login,private addDept:AddDept,private getDept:GetDept,private getUnverified:GetUnverified,private getverified:Getverified,private getUser:GetUser,private changestatus:ChangeStatus,private changedocstat:ChangeDocStatus,
-      private verifyDoctor:VerifyDoctor,private editDept:EditDept,private blockDept:BlockDept,private getdoctorAppointmentByid:GetdoctorAppointmentByid,private getAdminWallet:GetAdminWallet
+      private verifyDoctor:VerifyDoctor,private editDept:EditDept,private blockDept:BlockDept,private getdoctorAppointmentByid:GetdoctorAppointmentByid,private getAdminWallet:GetAdminWallet,private getrefund:Getrefund,private getPayout:GetPayout,
+      private paytodoctor:Paytodoctor,private refundhandle:Refundhandle,private getsingleUser:GetsingleUser,private getSingledoc:GetSingledoc
     )
     {
 
@@ -113,6 +120,18 @@ async getAllVerfiedDoctors(req: Request, res: Response): Promise<void> {
     res.status(400).json({ message: errorMessage });
   }
 }
+
+async getSingledoctor(req: Request, res: Response): Promise<void> {
+  try {
+    const {doctorid}=req.params
+    console.log(doctorid)
+    const result = await this.getSingledoc.getsingledoc(doctorid);
+    res.status(200).json(result);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Internal server error";
+    res.status(400).json({ message: errorMessage });
+  }
+}
 async changeDoctorblockstatus(req: Request, res: Response): Promise<void> {
   try {
     const { id } = req.params;
@@ -164,6 +183,17 @@ async changeUserblockstatus(req: Request, res: Response): Promise<void> {
   }
 }
 
+async getsingleuser(req: Request, res: Response): Promise<void> {
+  try {
+    const { id } = req.params;
+    const result = await this.getsingleUser.getsingleUser(id);
+    res.status(200).json(result);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Internal server error";
+    res.status(400).json({ message: errorMessage });
+  }
+}
+
 async getAllappoinmentbydoctor(req: Request, res: Response): Promise<void> {
   try {
     const { id } = req.params;
@@ -185,5 +215,50 @@ async getWalletinformation(req: Request, res: Response): Promise<void> {
     res.status(400).json({ message: errorMessage });
   }
 }
+
+async getRefundinformation(req: Request, res: Response): Promise<void> {
+  try {
+    const result=await this.getrefund.getrefundable()
+    res.status(200).json(result);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Internal server error";
+    res.status(400).json({ message: errorMessage });
+  }
+}
+
+async payoutinformation(req: Request, res: Response):Promise<void> {
+    try {
+      console.log("payout")
+    const result=await this.getPayout.getrpayoutInfor()
+    res.status(200).json(result);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Internal server error";
+    res.status(400).json({ message: errorMessage });
+  }
+}
+
+async payouttodoctor(req: Request, res: Response):Promise<void> {
+    try {
+    const {transactionId,doctorid}=req.body
+    const result=await this.paytodoctor.paymentToDoctor(transactionId,doctorid)
+    res.status(200).json(result);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Internal server error";
+    res.status(400).json({ message: errorMessage });
+  }
+}
+
+async refundhandl(req: Request, res: Response):Promise<void> {
+    try {
+    const {transactionId}=req.body
+    const result=await this.refundhandle.refundhandler(transactionId)
+    res.status(200).json(result);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Internal server error";
+    res.status(400).json({ message: errorMessage });
+  }
+}
+
+
 
 }

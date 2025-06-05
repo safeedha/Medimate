@@ -1,6 +1,6 @@
 import {SaveMessage} from  "../../application/usecase/conversation/saveMessage"
 import {MongoConversationRepo}  from '../../infrastructure/repository/mongoconverRep'
-
+import {MessageModel} from '../database/models/message'
 const mongoConversationRepo=new MongoConversationRepo()
 const savemessage=new SaveMessage(mongoConversationRepo)
 import { Server } from 'socket.io'
@@ -25,8 +25,6 @@ export const registerSocketEvents = async(io: Server) => {
       socket.on('privateMessage', async(data) => {
         const {to,message}=data
             const from = socket.data.userId;
-            // console.log("hey")
-            // console.log(from)
           const messages=await savemessage.MessageSave(from,to,message)
         
         const senderSockets = users[from] || [];
@@ -34,14 +32,38 @@ export const registerSocketEvents = async(io: Server) => {
           io.to(socketId).emit('privateMessage' ,messages);
           });
 
-         // Send to all tabs of the recipient
         const recipientSockets = users[to] || [];
         recipientSockets.forEach((socketId) => {
           io.to(socketId).emit('privateMessage', messages);
         });  
-          
-      })
 
+            const unreadCount = await MessageModel.countDocuments({
+            recieverId: to,
+            isRead: false,
+          });
+
+          (users[to] || []).forEach((sid) => {
+          io.to(sid).emit('unreadCount', { count: unreadCount });
+        });
+                  
+      })
+     
+
+  socket.on('markAsRead', async ({ from, to }) => {
+  await MessageModel.updateMany(
+    { senderId: to, recieverId: from, isRead: false },
+    { $set: { isRead: true } }
+  );
+
+  const unreadCount = await MessageModel.countDocuments({
+    recieverId: from,
+    isRead: false,
+  });
+
+  (users[from] || []).forEach((sid) => {
+    io.to(sid).emit('unreadCount', { count: unreadCount });
+  });
+});
   
 
     socket.on('disconnect', () => {

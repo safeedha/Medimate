@@ -26,7 +26,7 @@ function UserSidebar() {
       🔑 Change Password
     </Link>
 
-    <Link to="" className="hover:text-teal-600 transition-colors">
+    <Link to="/wallet" className="hover:text-teal-600 transition-colors">
       💰 Wallet
     </Link>
   </nav>

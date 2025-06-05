@@ -13,34 +13,53 @@ import jsPDF from 'jspdf';
 function Booking() {
   const [futur, setFuture] = useState<Appointment[]>([]);
   const [past, setPast] = useState<Appointment[]>([]);
+  const[render,setRender]=useState(false)
   const [showModal, setShowModal] = useState(false);
   const [selectedReport, setSelectedReport] = useState<string>('report');
   const [loadingReport, setLoadingReport] = useState(false);
     const reportTemplateRef = useRef(null);
-  const handleDownloadPDF = () => {
-   const doc = new jsPDF({
-      format: 'a4',
+   const handleDownloadPDF = () => {
+    const doc = new jsPDF({
+       format: 'a4',
       unit: 'px',
     });
 
-    // Adding the fonts.
-    doc.setFont('Inter-Regular', 'normal');
+      
+         doc.setFont('helvetica', 'normal')
 
-    doc.html(reportTemplateRef.current, {
-      async callback(doc) {
-        await doc.save('document');
-      },
+     doc.html(reportTemplateRef.current, {
+       async callback(doc) {
+         await doc.save('document');
+       },
     });
-  };
+   };
 
+//  const handleDownloadPDF = () => {
+//   const doc = new jsPDF({
+//     format: 'a4',
+//     unit: 'px',
+//   });
 
+//   doc.setFont('helvetica', 'normal'); // Use default font to ensure compatibility
+
+//   doc.html(reportTemplateRef.current, {
+//     x: 10, // horizontal offset
+//     y: 10, // vertical offset
+//     html2canvas: {
+//       scale: 1.5, // better quality
+//     },
+//     callback(doc) {
+//       doc.save('document.pdf');
+//     },
+//   });
+// };
   useEffect(() => {
     const getFutureAppointments = async () => {
       const result = await getfutureAppoinments();
       setFuture(result);
     };
     getFutureAppointments();
-  }, []);
+  }, [render]);
 
   useEffect(() => {
     const getPastAppointments = async () => {
@@ -48,12 +67,12 @@ function Booking() {
       setPast(result);
     };
     getPastAppointments();
-  }, []);
+  }, [render]);
 
   const cancelHandle = async (id: string) => {
     const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: "Your changes will not be saved!",
+      title: 'Are you sure to cancel this?',
+      text: "",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -65,7 +84,7 @@ function Booking() {
       const response = await cancelAppoinment(id);
       if (response === 'Status updated') {
         toast.success("The appointment was cancelled. You will be refunded within weeks.");
-        setFuture((prev) => prev.filter(item => item._id !== id));
+        setRender(!render)
       }
     }
   };

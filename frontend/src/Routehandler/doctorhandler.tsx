@@ -11,6 +11,7 @@ import Reapplication from '../component/doctor/Login/Reapplication';
 import Docappoinment from '../component/doctor/Docappoinment';
 import DocChat from '../component/doctor/Docchat'
 import Prescription from '../component/doctor/Prescription'
+import Docwallet from '../component/doctor/Docwallet'
 function Doctorhandler() {
   return (
     <>
@@ -67,6 +68,12 @@ function Doctorhandler() {
       <Route path="/doctor/chat" element={
         <DoctorProtect>
           <DocChat />
+        </DoctorProtect>
+      } />
+
+       <Route path="/doctor/wallet" element={
+        <DoctorProtect>
+          <Docwallet />
         </DoctorProtect>
       } />
     </>

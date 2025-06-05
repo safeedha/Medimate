@@ -40,7 +40,7 @@ function Slotlist({
   const handleCancel = async (id: string) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
-      text: 'Do you want to change status?',
+      text: 'Do you want to cancel this entire slot?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',

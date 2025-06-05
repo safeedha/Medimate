@@ -154,6 +154,23 @@ export const getuserdetail=async()=>{
   }
 }
 
+export const checkuserstatus=async()=>{
+  try{
+        const response = await userInstance.post("/status");
+        return response.data.message
+  }
+  catch(error)
+  {
+         if (axios.isAxiosError(error)) {
+      console.log(error.response?.data?.message);
+      return error.response?.data?.message || error.message;
+    } else if (error instanceof Error) {
+      return error.message;
+    } else {
+      return 'Internal server error';
+    }
+  }
+}
 export const setUserdetail=async(firstname:string,lastname:string,phone:string,age:number=1,gender:string)=>{
   try{
         const response = await userInstance.post("/profile",{firstname,lastname,phone,age,gender});
@@ -171,7 +188,6 @@ export const setUserdetail=async(firstname:string,lastname:string,phone:string,a
     }
   }
 }
-
 
 
 

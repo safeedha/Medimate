@@ -17,6 +17,7 @@ const messageSchema = new Schema<Message>(
       type: String,
       required: true,
     },
+    read: { type: Boolean, default: false },
     // senderModel: {
     //   type: String,
     //   required: true,

@@ -30,13 +30,18 @@ import {MongoConversationRepo}  from '../../infrastructure/repository/mongoconve
 import {GetAllmessage} from '../../application/usecase/conversation/getallmessage'
 import{Addreport} from '../../application/usecase/report/addreport'
 import {MongoreportRepository} from '../../infrastructure/repository/mongoreportRep'
+import {GetDoctorWallet}  from '../../application/usecase/doctorwallet/getdoctorwallet'
+import {MongoWalletRepository} from  '../../infrastructure/repository/mongowalletrep'
+
 const mongoregrepository=new MongoRegRepository()
 const mongoslotrepository=new MongoSlotRepostory()
 const  mongoapporespository=new MongoAppointmentRepository()
 const  mongoUserrepository=new MongoUserRepository () 
 const mongoConversationRepo=new MongoConversationRepo()
 const mongoreportRepository=new MongoreportRepository()
+const mongoWalletRepository=new MongoWalletRepository()
 
+const getDoctorWallet=new GetDoctorWallet(mongoWalletRepository)
 const addreport=new Addreport(mongoreportRepository)
 const cancelslot=new CancelSlot(mongoslotrepository)
 const getslotbydate=new GetSlotByDate(mongoslotrepository)
@@ -58,7 +63,7 @@ const docprofile=new Docprofile(mongodocrepository)
 const getdoctorAppointment=new GetdoctorAppointment(mongoapporespository)
 const cancelRecurringSlot=new CancelRecurringSlot(mongoslotrepository)
 const getUser=new GetUser(mongoUserrepository)
-const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation,createslot,getrecSlot,getdoctorAppointment,cancelRecurringSlot,changestatusAppointment,getsingleUser,getslotbydate,cancelslot,getUser,getallmessage,addreport)
+const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation,createslot,getrecSlot,getdoctorAppointment,cancelRecurringSlot,changestatusAppointment,getsingleUser,getslotbydate,cancelslot,getUser,getallmessage,addreport,getDoctorWallet)
 interface CustomRequest extends Request {
   id: string;
 }
@@ -92,5 +97,9 @@ router.get("/messages", verifyDoctor, (req, res) => {
 
 router.post("/report", verifyDoctor, (req, res) => {
   doctor.Addreport(req as CustomRequest, res);
+})
+
+router.get("/wallet", verifyDoctor, (req, res) => {
+  doctor.getWallet(req as CustomRequest, res);
 })
 export { router as doctorRouter };

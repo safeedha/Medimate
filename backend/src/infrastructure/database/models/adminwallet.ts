@@ -1,81 +1,6 @@
-// import { Schema, model } from 'mongoose';
-
-
-// import { AdminWalletTransaction } from '../../../domain/entities/adminwallet';
-// import { IAdminWallet } from '../../../domain/entities/adminwallet';
-// const AdminWalletTransactionSchema = new Schema<AdminWalletTransaction>({
-//   type: {
-//     type: String,
-//     enum: ['credit', 'debit'],
-//     required: true,
-//   },
-//   amount: {
-//     type: Number,
-//     required: true,
-//   },
-//   from: {
-//     type: Schema.Types.ObjectId,
-//     ref: 'User',     
-//     default: null,
-//   },
-//   to: {
-//     type: String
-//   },
-//    doctorId: {
-//     type: Schema.Types.ObjectId,
-//     ref: 'Doctor',   
-//     default: null,
-//   },
-//   appointmentId: {
-//     type: Schema.Types.ObjectId,
-//     ref: 'Appointment',
-//     required: true,
-//   },
-//   date:{
-//     type: Date,
-//     default: Date.now,
-//   }
-// });
-
-// const AdminWalletSchema = new Schema({
-//   totalRevenue: {
-//     type: Number,
-//     required: true,
-//     default: 0,
-//   },
-//   totalEarnings: {
-//     type: Number,
-//     required: true,
-//     default: 0,
-//   },
-//   balance: {
-//     type: Number,
-//     required: true,
-//     default: 0,
-//   },
-//   pendingPayouts: {
-//     type: Number,
-//     required: true,
-//     default: 0,
-//   },
-//   transactions: {
-//     type: [AdminWalletTransactionSchema],
-//     default: [],
-//   },
-//   lastUpdated: {
-//     type: Date,
-//     default: Date.now,
-//   },
-// });
-
-// const AdminWalletModel = model('AdminWallet', AdminWalletSchema);
-
-// export default AdminWalletModel;
 import { Schema, model } from 'mongoose';
-
-
 import { AdminWalletTransaction } from '../../../domain/entities/adminwallet';
-import { AdminWallet } from '../../../domain/entities/adminwallet';
+
 const AdminWalletTransactionSchema = new Schema<AdminWalletTransaction>({
   type: {
     type: String,
@@ -86,29 +11,36 @@ const AdminWalletTransactionSchema = new Schema<AdminWalletTransaction>({
     type: Number,
     required: true,
   },
-  from_user_id: {
+  from: {
+    type: Schema.Types.Mixed, // ObjectId or string
+    required: true,
+  },
+  to: {
+    type: Schema.Types.Mixed, // ObjectId or string
+    required: true,
+  },
+  doctorId: {
     type: Schema.Types.ObjectId,
-    ref: 'User',     
+    ref: 'Doctor',
     default: null,
   },
-  to_doctor_id: {
-    type: Schema.Types.ObjectId,
-    ref: 'Doctor',   
-    default: null,
-  },
-  appointment_id: {
+  appointmentId: {
     type: Schema.Types.ObjectId,
     ref: 'Appointment',
     required: true,
   },
- 
-  timestamp: {
+  paymentstatus: {
+    type: Boolean,
+    default: false,
+  },
+  date: {
     type: Date,
     default: Date.now,
   },
 });
 
-const AdminWalletSchema = new Schema<AdminWallet>({
+
+const AdminWalletSchema = new Schema({
   balance: {
     type: Number,
     required: true,
@@ -118,12 +50,68 @@ const AdminWalletSchema = new Schema<AdminWallet>({
     type: [AdminWalletTransactionSchema],
     default: [],
   },
-  last_updated: {
+  lastUpdated: {
     type: Date,
     default: Date.now,
   },
 });
 
-const AdminWalletModel = model('AdminWallet', AdminWalletSchema);
+export const AdminWalletModel = model('AdminWallet', AdminWalletSchema);
 
-export default AdminWalletModel;
+
+// import { Schema, model } from 'mongoose';
+
+
+// import { AdminWalletTransaction } from '../../../domain/entities/adminwallet';
+// import { AdminWallet } from '../../../domain/entities/adminwallet';
+// const AdminWalletTransactionSchema = new Schema<AdminWalletTransaction>({
+//   type: {
+//     type: String,
+//     enum: ['credit', 'debit'],
+//     required: true,
+//   },
+//   amount: {
+//     type: Number,
+//     required: true,
+//   },
+//   from_user_id: {
+//     type: Schema.Types.ObjectId,
+//     ref: 'User',     
+//     default: null,
+//   },
+//   to_doctor_id: {
+//     type: Schema.Types.ObjectId,
+//     ref: 'Doctor',   
+//     default: null,
+//   },
+//   appointment_id: {
+//     type: Schema.Types.ObjectId,
+//     ref: 'Appointment',
+//     required: true,
+//   },
+ 
+//   timestamp: {
+//     type: Date,
+//     default: Date.now,
+//   },
+// });
+
+// const AdminWalletSchema = new Schema<AdminWallet>({
+//   balance: {
+//     type: Number,
+//     required: true,
+//     default: 0,
+//   },
+//   transactions: {
+//     type: [AdminWalletTransactionSchema],
+//     default: [],
+//   },
+//   last_updated: {
+//     type: Date,
+//     default: Date.now,
+//   },
+// });
+
+// const AdminWalletModel = model('AdminWallet', AdminWalletSchema);
+
+// export default AdminWalletModel;

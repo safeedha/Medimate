@@ -1,24 +1,24 @@
 import { useState, useEffect } from 'react'
-import { getSlotedoctor, editSlot, cancelSlot } from '../../api/doctorapi/appoinment'
+import { getSlotedoctor, cancelSlot } from '../../api/doctorapi/appoinment'
 import type { IndividualSlot } from '../../Interface/interface'
 import Swal from 'sweetalert2';
 
 
 
-function convertTo24Hour(time12h: string): string {
-  const [time, modifier] = time12h.toLowerCase().split(" ");
-  let [hours, minutes] = time.split(":").map(Number);
+// function convertTo24Hour(time12h: string): string {
+//   const [time, modifier] = time12h.toLowerCase().split(" ");
+//   let [hours, minutes] = time.split(":").map(Number);
 
-  if (modifier === "pm" && hours !== 12) hours += 12;
-  if (modifier === "am" && hours === 12) hours = 0;
+//   if (modifier === "pm" && hours !== 12) hours += 12;
+//   if (modifier === "am" && hours === 12) hours = 0;
 
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
-}
+//   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+// }
 
 function Getslot() {
   const [date, setDate] = useState<Date>()
   const [slot, setSlot] = useState<IndividualSlot[]>([])
-  const [selectedSlot, setSelectedSlot] = useState<IndividualSlot | null>(null)
+  // const [selectedSlot, setSelectedSlot] = useState<IndividualSlot | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
@@ -38,19 +38,19 @@ function Getslot() {
     setDate(selectedDate)
   }
 
-  const editHandle = (slot: IndividualSlot) => {
-    const convertedStart = convertTo24Hour(slot.startingTime)
-    const convertedEnd = convertTo24Hour(slot.endTime)
-    setSelectedSlot(slot)
-    setStartTime(convertedStart)
-    setEndTime(convertedEnd)
-    setShowModal(true)
-  }
+  // const editHandle = (slot: IndividualSlot) => {
+  //   const convertedStart = convertTo24Hour(slot.startingTime)
+  //   const convertedEnd = convertTo24Hour(slot.endTime)
+  //   setSelectedSlot(slot)
+  //   setStartTime(convertedStart)
+  //   setEndTime(convertedEnd)
+  //   setShowModal(true)
+  // }
 
 const cancelHandle = async (id: string) => {
   const result = await Swal.fire({
     title: 'Are you sure?',
-    text: 'Do you want to change status?',
+    text: 'Do you want to cancel this slot?',
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#d33',
@@ -70,9 +70,9 @@ const cancelHandle = async (id: string) => {
 
 
 
-  const handleEditSubmit = async () => {
-    const result=await editSlot(selectedSlot?._id!,startTime,endTime)
-  }
+  // const handleEditSubmit = async () => {
+  //   const result=await editSlot(selectedSlot?._id!,startTime,endTime)
+  // }
 
   return (
     <div className="m-8 bg-slate-100 p-6 rounded shadow-md">
@@ -103,12 +103,12 @@ const cancelHandle = async (id: string) => {
 
               {item.status === 'available' && (
                 <div className="mt-2 flex justify-center gap-2">
-                  <button
+                  {/* <button
                     className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs"
                     onClick={() => editHandle(item)}
                   >
                     Edit
-                  </button>
+                  </button> */}
                   <button
                     className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs"
                     onClick={() => cancelHandle(item._id!)}
@@ -145,12 +145,12 @@ const cancelHandle = async (id: string) => {
                 className="w-full border p-2 rounded text-sm"
               />
               <div className="flex justify-center gap-4 mt-4">
-                <button
+                {/* <button
                   className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded text-sm"
                   onClick={handleEditSubmit}
                 >
                   Save
-                </button>
+                </button> */}
                 <button
                   className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-1 rounded text-sm"
                   onClick={() => setShowModal(false)}

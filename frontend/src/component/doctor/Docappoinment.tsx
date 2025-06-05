@@ -127,10 +127,10 @@ function Docappoinment() {
                               Add Report
                             </Link>
                           ) : (
-                            <span className="inline-block px-3 py-1 bg-gray-200 text-green-600 border border-green-400 rounded text-xs">
-                              Report Added
-                            </span>
-                          )
+                            <span className="inline-block px-3 py-1 bg-gradient-to-r from-green-200 via-green-300 to-green-400 text-green-900 border border-green-600  text-xs shadow-sm">
+                           Report Added
+                        </span>
+                            )
                         ) : appt.status === 'cancelled' ? (
                           <span className="text-gray-500 text-xs">No actions</span>
                         ) : (
@@ -145,7 +145,7 @@ function Docappoinment() {
                               onClick={() => confirmHandle(appt._id)}
                               className="block w-full px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs"
                             >
-                              Confirm
+                              Complete
                             </button>
                           </>
                         )}

@@ -31,6 +31,7 @@ import {GetAllmessage} from '../../application/usecase/conversation/getallmessag
 import {StreamToken} from '../../application/usecase/streamtoken/streamtoken'
 import{Getreport} from '../../application/usecase/report/getreport'
 import {MongoreportRepository} from '../../infrastructure/repository/mongoreportRep'
+import {GetUserallet} from '../../application/usecase/wallet/getuserwallet'
 export interface CustomRequest extends Request {
   id: string;
 }
@@ -43,6 +44,7 @@ const mongoappoinmentRepository=new MongoAppointmentRepository()
 const mongoWalletRepository=new MongoWalletRepository()
 const mongoreportRepository=new MongoreportRepository()
 
+const getUserallet=new GetUserallet(mongoWalletRepository)
 const getreport=new Getreport(mongoreportRepository)
 const usergoogle=new Googleuser(mongoregRepository)
 const userdoc=new Getverified(mongodocRepository)
@@ -66,7 +68,7 @@ const changestatusAppointment=new ChangestatusAppointment(mongoappoinmentReposit
 const getallmessage=new GetAllmessage(mongoConversationRepo)
 const getsingleUser=new GetsingleUser(mongouserRepository)
 const updateuser=new updatesingleUser(mongouserRepository)
-const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc,getslotbydate,createappoinment,getfutureAppointment,getpastAppointment,changestatusAppointment,getallmessage,streamToken,getreport)
+const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc,getslotbydate,createappoinment,getfutureAppointment,getpastAppointment,changestatusAppointment,getallmessage,streamToken,getreport,getUserallet)
 
 
 
@@ -123,5 +125,13 @@ router.get("/gettoken", verifyUserAuth, (req, res) => {
 
 router.get("/report/:appId", verifyUserAuth, (req, res) => {
   user.reportget(req as CustomRequest, res);
+})
+
+router.get("/report/:appId", verifyUserAuth, (req, res) => {
+  user.reportget(req as CustomRequest, res);
+})
+
+router.get("/wallet", verifyUserAuth, (req, res) => {
+  user.walletget(req as CustomRequest, res);
 })
 export { router as userRouter };
