@@ -4,6 +4,7 @@ import {logoutUser} from '../../feature/userslice'
 import type{ AppDispatch} from '../../app/store'
 import {useState,useEffect} from 'react'
 import { socket } from '../../socket';
+import {getuserdetail} from '../../api/userapi/register'
 
 
 const Navbar = () => {
@@ -11,17 +12,17 @@ const Navbar = () => {
   
    const [unreadCount, setUnreadCount] = useState(0);
     useEffect(()=>{
-      
+      const setuserdetail=async()=>{
+       const result=await getuserdetail()
+       if(result.isBlocked===true)
+       {
+        dispatch(logoutUser())
+         navigate('/login');
+       }
+      }
+      setuserdetail()
     },[])
-  useEffect(() => {
-    socket.on('unreadCount', (data) => {
-      setUnreadCount(prev=>prev+data.count);
-    });
-
-    return () => {
-      socket.off('unreadCount');
-    };
-  }, []);
+ 
   const handleBlock = () => {
      dispatch(logoutUser())
     navigate('/login');

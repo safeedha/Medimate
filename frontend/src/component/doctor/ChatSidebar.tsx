@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import type { Iuser } from '../../Interface/interface';
 import { getAlluser } from '../../api/doctorapi/chat';
 
-const ChatSidebar = ({getUserId,onlineuser}:{getUserId:(id:string)=>void,onlineuser:string[]}) => {
+const ChatSidebar = ({getUserId,onlineuser}:{getUserId:(id:string,name:string)=>void,onlineuser:string[]}) => {
   const [users, setUsers] = useState<Iuser[]>([]);
 
   useEffect(() => {
@@ -23,8 +23,8 @@ const ChatSidebar = ({getUserId,onlineuser}:{getUserId:(id:string)=>void,onlineu
     fetchData();
   }, []);
 
-  const getUser = (id: string) => {
-    getUserId(id);
+  const getUser = (id: string,name:string) => {
+    getUserId(id,name);
   }
 const person = users?.map((item, index) => {
   const profileImg = `https://i.pravatar.cc/150?img=${index + 1}`;
@@ -34,7 +34,7 @@ const person = users?.map((item, index) => {
       key={item._id}
       className="flex items-center justify-start gap-3 p-3 hover:bg-green-100 cursor-pointer border-b h-16"
       onClick={() => {
-        getUser(item._id!);
+        getUser(item._id!,item.firstname!);
       }}
     >
       <div>

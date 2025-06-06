@@ -23,6 +23,7 @@ import {GetAllmessage} from '../../application/usecase/conversation/getallmessag
 import {StreamToken} from '../../application/usecase/streamtoken/streamtoken'
 import {GetUserallet} from '../../application/usecase/wallet/getuserwallet'
 import{Getreport} from '../../application/usecase/report/getreport'
+
 interface CustomRequest extends Request {
   id: string;
 }
@@ -32,7 +33,7 @@ export class UserController {
     private userpasssrest:UserPassrest,private getverified:Getverified,private googleuser:Googleuser,private getsingleuser:GetsingleUser,
     private updatesingleUser:updatesingleUser,private getsingledoc:GetSingledoc,private getslotbydate:GetSlotByDate,private createAppointment:CreateAppointment,
     private getfutureAppointment:GetfutureAppointment,private getpastAppointment:GetpastAppointment,private changestatusAppointment:ChangestatusAppointment,
-    private getallmessage:GetAllmessage,private streamToken:StreamToken,private getreport:Getreport,private getUserallet:GetUserallet
+    private getallmessage:GetAllmessage,private streamToken:StreamToken,private getreport:Getreport,private getUserallet:GetUserallet,
     
   ) {}
 
@@ -433,6 +434,20 @@ async walletget(req: CustomRequest, res: Response): Promise<void> {
  try{
       const id = req.id;    
       const result=await this. getUserallet.getwallet(id)
+      res.status(200).json(result);
+  }
+  catch(error)
+  {
+     const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error';
+    res.status(400).json({ message: errorMessage });
+  }
+}
+
+async getSingleuser(req: CustomRequest, res: Response): Promise<void> {
+ try{
+      const id = req.id;    
+      const result=await this.getsingleuser.getsingleUser(id)
       res.status(200).json(result);
   }
   catch(error)

@@ -5,7 +5,7 @@ import type { RootState } from '../../app/store';
 import { geteverymessage } from '../../api/userapi/chat';
 import { useNavigate } from 'react-router-dom';
 
-function Chatbox({ userid }: { userid: string }) {
+function Chatbox({ userid ,name}: { userid: string,name:string }) {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
   const user = useSelector((state: RootState) => state.user.userInfo);
@@ -31,6 +31,9 @@ function Chatbox({ userid }: { userid: string }) {
     getAllmessage();
   }, [user?._id, userid]);
 
+
+  
+
   useEffect(() => {
     socket.on('privateMessage', (data) => {
       console.log('Private message from:', data);
@@ -43,9 +46,7 @@ function Chatbox({ userid }: { userid: string }) {
   }, []);
     
 
-  useEffect(()=>{
-   socket.emit('markAsRead', { from: user?._id, to: userid });
-  },[userid ])
+
 
 
   const handleSend = () => {
@@ -82,10 +83,10 @@ function Chatbox({ userid }: { userid: string }) {
   return (
     <div className="py-4 px-4 h-[calc(100vh-4rem)]">
       <div className="flex flex-col h-full border border-gray-300 rounded-md">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-300 bg-gray-100 rounded-t-md">
+     
+          <div className="flex items-center justify-between p-4 border-b border-gray-300 bg-gray-100 rounded-t-md">
+
           <div className="flex items-center gap-2">
-            {/* Video Call Icon as Anchor Link */}
             {user?._id && (
               <a
                 href={videoLink}
@@ -111,15 +112,21 @@ function Chatbox({ userid }: { userid: string }) {
             )}
             <span className="font-semibold text-lg">Chat Room</span>
           </div>
+
+     
+          <div className="text-md text-red-500">
+            Chat with DR: {name}
+          </div>
         </div>
 
-        {/* Chat messages */}
+
+
         <div className="flex-1 overflow-y-auto p-4">
           {chat}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input box */}
+
         <div className="flex items-center gap-2 border-t border-gray-200 p-4">
            <input
             type="text"

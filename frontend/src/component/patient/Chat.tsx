@@ -7,34 +7,30 @@ import Chatbox from './Chatbox';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../app/store';
 
+
 function Chat() {
   const user = useSelector((state: RootState) => state.user.userInfo);
   const[onlineuser,setOnlineuser]=useState<string[]>([])
  const [userid,setUserid]=useState<string>("");
-//  useEffect(() => {
-//    socket.emit('register', user?._id!,'user');
-// }, []);
+ const [name,setName]=useState<string>("");
+
+
+
 
 useEffect(() => {
   if (!user?._id) return;
-
-  const handleConnect = () => {
-    socket.emit('register', user._id, 'user');
-  };
-
-  socket.on('connect', handleConnect);
+  socket.emit('register', user._id, 'user');
   socket.on('online-users',(data)=>{
     setOnlineuser(data)
   })
-
   return () => {
-    socket.off('connect', handleConnect);
     socket.off('online-users');
   };
 }, [user?._id]);
 
-  const getUserId=(id:string)=>{
+  const getUserId=(id:string,name:string)=>{
       setUserid(id);
+      setName(name)
     }
   return (
   
@@ -45,7 +41,7 @@ useEffect(() => {
       <div className='flex-1 bg-teal-50'>
         {userid===""?
         <Nochatselected/>:
-         <Chatbox userid={userid}/>
+         <Chatbox userid={userid} name={name}/>
         }
       
       </div>

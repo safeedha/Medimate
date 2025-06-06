@@ -4,7 +4,7 @@ import { geteverymessage } from '../../api/doctorapi/chat';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../app/store';
 
-function Chatbox({ userid }: { userid: string }) {
+function Chatbox({ userid ,name}: { userid: string,name:string }) {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -73,34 +73,40 @@ function Chatbox({ userid }: { userid: string }) {
 
    
         <div className="flex items-center justify-between p-4 border-b border-gray-300 bg-gray-100">
-          <div className="flex items-center gap-2">
-           <a
-          href={`/video/${roomId}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-500 hover:text-blue-700"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14m0-4v4m-1 4H5a2 2 0 01-2-2V8a2 2 0 012-2h9a2 2 0 012 2v8a2 2 0 01-2 2z"
-            />
-          </svg>
-        </a>
+  {/* Left Side */}
+  <div className="flex items-center gap-2">
+    <a
+      href={`/video/${roomId}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-500 hover:text-blue-700"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14m0-4v4m-1 4H5a2 2 0 01-2-2V8a2 2 0 012-2h9a2 2 0 012 2v8a2 2 0 01-2 2z"
+        />
+      </svg>
+    </a>
+    <span className="font-semibold text-lg">Chat Room</span>
+  </div>
 
-            <span className="font-semibold text-lg">Chat Room</span>
-          </div>
-        </div>
+ 
+  <div className="text-md text-red-700">
+    Chat with user {name}
+  </div>
+</div>
 
-        {/* Chat Messages Area */}
+
+        
         <div className="flex-1 overflow-y-auto p-4">
           {chat}
           <div ref={messagesEndRef} />

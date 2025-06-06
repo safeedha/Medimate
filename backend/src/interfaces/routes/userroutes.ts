@@ -134,4 +134,8 @@ router.get("/report/:appId", verifyUserAuth, (req, res) => {
 router.get("/wallet", verifyUserAuth, (req, res) => {
   user.walletget(req as CustomRequest, res);
 })
+
+router.get("/status", verifyUserAuth, (req, res) => {
+  user.getSingleuser(req as CustomRequest, res);
+})
 export { router as userRouter };

@@ -3,7 +3,7 @@ import { getAlldoctors } from '../../api/userapi/doctor';
 import type{Idoctor} from '../../Interface/interface'
 
 
-function Chatsidebar({getUserId,onlineuser}:{getUserId:(id:string)=>void,onlineuser:string[]}) {
+function Chatsidebar({getUserId,onlineuser}:{getUserId:(id:string,name:string)=>void,onlineuser:string[]}) {
      const [singledepartment,setSingledepartment]=useState<string>("")
     const [search,setSearch]=useState<string>("")
     const [doctors, setDoctors] = useState<Idoctor[] | null>(null);
@@ -16,15 +16,16 @@ function Chatsidebar({getUserId,onlineuser}:{getUserId:(id:string)=>void,onlineu
      fetchDoctors();
    }, [singledepartment,search]);
 
-  const getUser = (id: string) => {
-    getUserId(id);
+  const getUser = (id: string,name:string) => {
+    getUserId(id,name);
+
   }
 
    const person = doctors?.map((item) => (
   <div
     key={item._id}
     className="flex items-center gap-3 p-3 hover:bg-green-100 cursor-pointer border-b"
-    onClick={() => getUser(item._id!)}
+    onClick={() => getUser(item._id!,item.firstname!)}
   >
     <div>
       <img

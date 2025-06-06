@@ -14,6 +14,7 @@ function Docchat() {
  const doctor = useSelector((state: RootState) => state.doctor.doctorInfo);
  const[onlineuser,setOnlineuser]=useState([])
  const [userid,setUserid]=useState<string>("");
+  const [name,setName]=useState<string>("");
   
  useEffect(()=>{
   if(userId)
@@ -26,24 +27,18 @@ function Docchat() {
 
  useEffect(() => {
   if (!doctor?._id) return;
-
-  const handleConnect = () => {
-    socket.emit('register', doctor._id, 'doctor');
-  };
-
-  socket.on('connect', handleConnect);
+  socket.emit('register', doctor._id, 'doctor');
   socket.on('online-users',(data)=>{
     setOnlineuser(data)
   })
-
   return () => {
-    socket.off('connect', handleConnect);
     socket.off('online-users');
   };
 }, [doctor?._id]);
 
- const getUserId=(id:string)=>{
+ const getUserId=(id:string,name:string)=>{
       setUserid(id);
+      setName(name)
     }
     
   return (
@@ -57,7 +52,7 @@ function Docchat() {
       <div className='flex-1 mt-6'>
         {userid===""?
         <Nochatselected/>:
-         <Chatbox userid={userid}/>
+         <Chatbox userid={userid} name={name}/>
         }
       </div>
     </div>
