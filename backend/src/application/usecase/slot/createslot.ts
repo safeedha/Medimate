@@ -1,6 +1,6 @@
 import {slotRepository} from '../../../domain/repository/slot-repository';
 import {Weekdays} from '../../../domain/entities/recurringslot';
-import{IRecurring} from '../../../domain/entities/recurringslot'
+import { SlotLockDTO,RecurringDTO} from '../../../dto/slot.dto';
 import { RRule, Weekday } from 'rrule';
 import {convertTo12HourFormat} from '../../service/timeconvert'
 import {IndividualSlot} from '../../../domain/entities/slot'
@@ -18,8 +18,7 @@ export class CreateSlot {
   constructor(private slotrepository: slotRepository) {}
   async createSlots(id:string,startDate:string,endDate:string,selectedDays:Weekdays[],startTime:string,endTime:string,interval:number,frequency:"WEEKLY"|"DAILY"): Promise<{message:string}> {
     try {
-      
-       console.log(frequency)
+  
        const [startHour, startMinute] = startTime.split(':').map(Number);
        const [year, month, day] = startDate.split('-').map(Number);
        const dtStart = new Date(Date.UTC(year, month - 1, day, startHour, startMinute, 0));
@@ -43,7 +42,7 @@ export class CreateSlot {
      const et=convertTo12HourFormat(endTime)
       const allSlots = rule.all();
 
-      const data:IRecurring={
+      const data:RecurringDTO={
         doctorId:id,
         startDate:dtStart,
         endDate:until,
@@ -57,11 +56,11 @@ export class CreateSlot {
   const recurringslot = await this.slotrepository.createRecurringSlot(data);
 
 for (const item of allSlots) {
-  const date = new Date(item);  // no quotes around item
+  const date = new Date(item);  
   
   
   const slotData: IndividualSlot = {
-    recurringSlotId: recurringslot._id!,  // assume it's not undefined
+    recurringSlotId: recurringslot._id!,  
     doctorId: id,
     date: date,
     startingTime: st,
@@ -83,7 +82,6 @@ for (const item of allSlots) {
         throw new Error("An unknown error occurred");
       }
     }
-
  
   }
 }

@@ -21,6 +21,10 @@ import {GetUser} from "../../application/usecase/user/getUser"
 import {GetAllmessage} from '../../application/usecase/conversation/getallmessage'
 import {GetDoctorWallet}  from '../../application/usecase/doctorwallet/getdoctorwallet'
 import{Addreport} from '../../application/usecase/report/addreport'
+import {GetSingleappoinment} from  '../../application/usecase/appoinment/getSingleappoinment'
+import {Getallunblockeddept} from '../../application/usecase/dept/getunblocked';
+import {Getunreadcount} from '../../application/usecase/conversation/getunreadcount';
+import {Reshedule} from '../../application/usecase/appoinment/reshedule'
 interface CustomRequest extends Request {
   id?: string;
 }
@@ -29,7 +33,8 @@ export class DoctorController {
   constructor(private getDept: GetDept,private docsignup:DocRegister,private doclogin:DoctorLogin,private otpdocverify:OtpdocVerify,private docprofile:Docprofile,private docPassrest:DocPassrest,
      private docreapply:DocReapply,private otpdoccreation:OtpdocCretion, private createslot:CreateSlot,private getallrecslot:GetRecurringSlot,private getdoctorAppointment:GetdoctorAppointment,
      private cancelRecurringSlot:CancelRecurringSlot,private changestatusAppointment:ChangestatusAppointment,private getsingleUser:GetsingleUser,private getslotbydate:GetSlotByDate,private cancelSlot:CancelSlot,
-     private getUser:GetUser, private getallmessage:GetAllmessage,private addreport:Addreport,private getDoctorWallet:GetDoctorWallet
+     private getUser:GetUser, private getallmessage:GetAllmessage,private addreport:Addreport,private getDoctorWallet:GetDoctorWallet,private getSingleappoinment:GetSingleappoinment,private getallunblockeddept:Getallunblockeddept,
+     private getunreadcount:Getunreadcount,private reshedule:Reshedule
   ) {}
   
 
@@ -90,6 +95,26 @@ export class DoctorController {
       }
     }
   }
+
+  async logout(req: Request, res: Response): Promise<void> {
+  try {
+   
+    res.clearCookie("refreshtokendoctor", {
+      httpOnly: true,
+      secure: false,
+    });
+
+    res.clearCookie("accesstokendoctor", {
+      httpOnly: true,
+      secure: false,
+    });
+
+    res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    console.error("Logout error:", error);
+    res.status(500).json({ message: "Internal server error during logout" });
+  }
+}
    
    async reapplication(req: Request, res: Response): Promise<void> {
     try{
@@ -158,8 +183,10 @@ export class DoctorController {
 
 
   async getAllDept(req: Request, res: Response): Promise<void> {
-    try {
-      const result = await this.getDept.getAllDept();
+      try {
+      console.log('from dept')
+      const result = await this.getallunblockeddept.getAllunblockedDept();
+
       res.status(200).json(result);
     } catch (error) {
       const errorMessage = error instanceof Error
@@ -205,7 +232,8 @@ export class DoctorController {
   
   async getAllUser(req: CustomRequest, res: Response): Promise<void> {
   try {
-    const result = await this.getUser.getAllUser();
+    const search=req.query.search as string
+    const result = await this.getUser.getAllUser(0,0,search);
     res.status(200).json(result);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Internal server error";
@@ -214,10 +242,11 @@ export class DoctorController {
 }
 
   async getAllrecurringslots(req:Request,res:Response):Promise<void>{
-    try{
-    
+    try{   
           const {id}=req.params
-          const result=await this.getallrecslot.getSlots(id)
+         const page=parseInt(req.query.page as string)
+         const limit=parseInt(req.query.limit as string)
+          const result=await this.getallrecslot.getSlots(id,page,limit)
           console.log(result)
           res.status(200).json({result})
     }
@@ -234,17 +263,15 @@ export class DoctorController {
  async getAllappoinment(req: CustomRequest, res: Response): Promise<void> {
   try {
     const { id } = req;
-      console.log(id)
+    const page=parseInt(req.query.page as string)
+    const limit=parseInt(req.query.limit as string)
     if (!id) {
       res.status(401).json({ message: "Unauthorized access: No doctor ID" });
       return;
     }
-
-
-    const appointments = await this.getdoctorAppointment.getallappoinment(id)
-
+    const appointments = await this.getdoctorAppointment.getallappoinment(id,page,limit)
+    console.log(appointments)
     res.status(200).json({appoi: appointments} );
-
   } catch (error) {
     console.error("Error fetching appointments:", error);
     const errorMessage =
@@ -258,7 +285,6 @@ async cancelappoinment(req: CustomRequest, res: Response): Promise<void> {
   try {
    const {id}=req.params
    const result=await this.cancelRecurringSlot.cancelSlots(id)
-
     res.status(200).json({message:result});
 
   } catch (error) {
@@ -275,10 +301,9 @@ async changestatusappoinment(req: CustomRequest, res: Response): Promise<void> {
    const {reason,email}=req.body
      const status: 'pending' |  'cancelled' | 'completed'= 'cancelled';
     const result=await this.changestatusAppointment.changestus(id,status)
-    // const user=await this.getsingleUser.getsingleUser(userid)
     let subject:string="Reason for  appoinmentCancellation"
     console.log(email)
-     await sendMail(email, 'undefined',subject,reason);
+     await sendMail(email, undefined,subject,reason);
      
     res.status(200).json(result)
 
@@ -290,15 +315,46 @@ async changestatusappoinment(req: CustomRequest, res: Response): Promise<void> {
   }
 }
 
+async createresedule(req: CustomRequest, res: Response): Promise<void> {
+  try{
+    
+     const {canceledslot,reason,userid,email,newslot}=req.body
+     console.log(reason)
+    const status: 'pending' |  'cancelled' | 'completed'= 'cancelled';
+    const result=await this.changestatusAppointment.changestus(canceledslot,status)
+    const response=await this.reshedule.createresedule(canceledslot,newslot)
+    let subject:string="Reason for  appoinment Cancellation"
+    await sendMail(email, undefined,subject,reason);
+      res.status(200).json(response)
+
+  }
+  catch(error)
+  {
+     const errorMessage =
+        error instanceof Error ? error.message : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
+  }
+}
+
 async changecompletstatusappoinment(req: CustomRequest, res: Response): Promise<void> {
   try {
    const {id}=req.params
-   console.log('hello')
     const status: 'pending' |  'cancelled' | 'completed'= 'completed';
-    const result=await this.changestatusAppointment.changestus(id,status)
-     
+    const result=await this.changestatusAppointment.changestus(id,status)    
     res.status(200).json(result)
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal server error";
+    res.status(500).json({ message: errorMessage });
+  }
+}
 
+async getsingleappoinment(req: CustomRequest, res: Response): Promise<void> {
+  try {
+   const {id}=req.params 
+    const result=await this.getSingleappoinment.getsingleappoinment(id)   
+    res.status(200).json(result)
   } catch (error) {
     console.error("Error fetching appointments:", error);
     const errorMessage =
@@ -346,19 +402,16 @@ async cancelSlots (req: CustomRequest, res: Response): Promise<void> {
 async getAllmessages(req: CustomRequest, res: Response): Promise<void> {
   try {
     const id = req.id as string;
-    const {  reciever} = req.query;
-
-    if (!reciever) {
+    const {sender} = req.query;
+    if (!sender) {
       res.status(400).json({ message: "Receiver is required" });
       return; 
     }
-
-    if (typeof reciever !== 'string') {
+    if (typeof sender!== 'string') {
       res.status(400).json({ message: 'Invalid or missing receiver' });
       return; 
     }
-
-    const result = await this.getallmessage.getallmessage(id, reciever);
+    const result = await this.getallmessage.getallmessage(sender,id);
     res.status(200).json(result);
   } catch (error) {
     const errorMessage =
@@ -384,9 +437,24 @@ async Addreport(req: CustomRequest, res: Response): Promise<void> {
 async getWallet(req: CustomRequest, res: Response): Promise<void> {
   try {
     const id = req.id as string;
-    const wallet=await this.getDoctorWallet.getwallet(id)
+    const page=parseInt(req.query.page as string)
+   const limit=parseInt(req.query.limit as string)
+    const wallet=await this.getDoctorWallet.getwallet(id,page,limit)
     console.log('wallet',wallet)
      res.status(200).json(wallet);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error';
+    res.status(400).json({ message: errorMessage });
+  }
+}
+
+async getUnreadcount(req: CustomRequest, res: Response): Promise<void> {
+  try {
+    const id = req.id as string;
+    const result=await this.getunreadcount.getcount(id)
+    console.log(result) 
+     res.status(200).json(result);
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : 'Internal server error';

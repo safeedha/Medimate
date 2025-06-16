@@ -1,13 +1,13 @@
 
 import {DoctorRepository} from '../../../domain/repository/doctor-repository';
-import {Idoctor} from '../../../domain/entities/doctor';
+import {DoctorDTO} from '../../../dto/doctor.dto'
 
 export class Getverified {
 
   constructor(private doctorRepository: DoctorRepository) {}
-  async getAllVerifiedDoctors(department?: string,search?:string): Promise<Idoctor[]> {
+  async getAllVerifiedDoctors(page:number,limit:number,department?: string,search?:string): Promise<{ total: number; data: DoctorDTO[] }> {
     try {
-      const unverifiedDoctors = await this.doctorRepository.getAllverified(department,search);
+      const unverifiedDoctors = await this.doctorRepository.getAllverified(page,limit,department,search);
       return unverifiedDoctors;
     } catch (error) {
       if (error instanceof Error) {

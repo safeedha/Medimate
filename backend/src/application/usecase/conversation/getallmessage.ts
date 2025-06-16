@@ -8,6 +8,7 @@ export class GetAllmessage{
   }
   async getallmessage(sender:string,receiver:string):Promise<Message[]>{
     try{
+      
       const result=await this.conversationrepository.getAllmessage(sender,receiver)
       return result
     }

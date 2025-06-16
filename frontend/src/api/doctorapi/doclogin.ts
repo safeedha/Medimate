@@ -99,6 +99,24 @@ export const  login = async (email: string, password: string,dispatch:AppDispatc
 }
 
 
+export const  logout = async () => {
+  try {
+    const response = await doctorInstance.get("/logout");
+   
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log(error)
+      return error.response?.data?.message || error.message;
+    } else if (error instanceof Error) {
+      return error.message;
+    } else {
+      return 'Internal server error';
+    }
+  }
+}
+
+
+
 
 export const docpasswordRest=async(email:string,password:string)=>{
   try{

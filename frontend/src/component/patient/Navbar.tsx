@@ -4,7 +4,7 @@ import {logoutUser} from '../../feature/userslice'
 import type{ AppDispatch} from '../../app/store'
 import {useState,useEffect} from 'react'
 import { socket } from '../../socket';
-import {getuserdetail} from '../../api/userapi/register'
+import {getuserdetail,logout} from '../../api/userapi/register'
 
 
 const Navbar = () => {
@@ -16,6 +16,7 @@ const Navbar = () => {
        const result=await getuserdetail()
        if(result.isBlocked===true)
        {
+        await logout()
         dispatch(logoutUser())
          navigate('/login');
        }
@@ -23,7 +24,8 @@ const Navbar = () => {
       setuserdetail()
     },[])
  
-  const handleBlock = () => {
+  const handlelogout= async() => {
+    //  await logout()
      dispatch(logoutUser())
     navigate('/login');
   };
@@ -78,7 +80,7 @@ const Navbar = () => {
         )}
       </div>
 
-        <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition" onClick={handleBlock}>
+        <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition" onClick={handlelogout}>
           Logout
         </button>
       </div>

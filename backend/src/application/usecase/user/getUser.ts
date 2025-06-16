@@ -1,12 +1,12 @@
 import {UserRepository} from '../../../domain/repository/user-repository';
-import {Iuser} from '../../../domain/entities/user';
+import {UserDTO} from '../../../dto/user.dto'
 
 export class GetUser {
 
   constructor(private userRepository: UserRepository) {}
-  async getAllUser(): Promise<Iuser[]> {
+  async getAllUser(page:number,limit:number,search:string): Promise<{ users: UserDTO[]; total: number }> {
     try {
-      const users = await this.userRepository.getAlluser();
+      const users = await this.userRepository.getAlluser(page,limit,search);
       return users;
     } catch (error) {
       if (error instanceof Error) {

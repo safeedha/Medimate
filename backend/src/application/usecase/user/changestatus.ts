@@ -1,10 +1,10 @@
 import {UserRepository} from '../../../domain/repository/user-repository';
-import {Iuser} from '../../../domain/entities/user';
+import {UserDTO} from '../../../dto/user.dto'
 
 export class ChangeStatus {
 
   constructor(private userRepository: UserRepository) {}
-  async changesatus(id:string): Promise<Iuser[]> {
+  async changesatus(id:string): Promise<UserDTO[]> {
     try {
       const users = await this.userRepository.changeStatus(id);
       return users;

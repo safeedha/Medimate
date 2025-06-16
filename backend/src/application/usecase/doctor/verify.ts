@@ -1,12 +1,12 @@
 import {DoctorRepository} from '../../../domain/repository/doctor-repository';
 import {Idoctor} from '../../../domain/entities/doctor';
 import {sendMail} from '../../../application/service/emailservice'
-
+import {DoctorDTO} from '../../../dto/doctor.dto'
 
 export class VerifyDoctor {
   constructor(private docRepository: DoctorRepository) {}
 
- async verifyStatus(id: string, status: 'Approved' | 'Rejected',reason?:string): Promise<Idoctor[]> {
+ async verifyStatus(id: string, status: 'Approved' | 'Rejected',reason?:string): Promise<DoctorDTO[]> {
    try{
 
        if(reason)

@@ -6,11 +6,8 @@ import {verifyuserotp} from '../../api/userapi/register';
 import {verifydoctorotp} from '../../api/doctorapi/doclogin'
 import { Toaster, toast } from 'react-hot-toast';
 import {useNavigate} from 'react-router-dom';
+import type{LocationState} from '../../Interface/interface'
 
-type LocationState = {
-  email: string;
-  role?:string
-};
 
 function Otp() {
   const location = useLocation();

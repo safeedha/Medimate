@@ -1,15 +1,40 @@
 import {DepartmentRepository} from '../../domain/repository/department-repository';
 import {Department} from '../../domain/entities/departnment';
 import DepartmentModel from '../database/models/department';
-
+import {DepartmentDTO } from '../../dto/doctor.dto'
 export class MongoDeptRepository implements DepartmentRepository {
    async add(deptData: Department): Promise<Department> {
     const newDept = new DepartmentModel(deptData);
     return await newDept.save();
    }
-   async getAll(): Promise<Department[]> {
-    return await DepartmentModel.find({isblocked:false});
-   }
+    async getAll(page: number, limit: number, search: string): Promise<{ data: Department[]; total: number }> {
+
+        const skip = (page - 1) * limit;
+
+      const filter = search
+      ? { deptname: { $regex: search, $options: 'i' } } 
+      : {};
+
+    const [data, total] = await Promise.all([
+        DepartmentModel.find(filter).skip(skip).limit(limit),
+        DepartmentModel.countDocuments(filter),
+    ]);
+
+    return { data, total };
+  }
+    async getAllunblocked():Promise<DepartmentDTO[]>
+    {
+
+        const dept=await DepartmentModel.find({isblocked:false})
+        const result: DepartmentDTO[] = dept.map((dept) => ({
+        id: dept._id.toString(),
+        deptname: dept.deptname,
+        description: dept.description,
+            }));
+
+            return result;
+    
+    }
     async getByName(name: string): Promise<Department | null> {
     return await DepartmentModel.findOne({ deptname: name });
     }

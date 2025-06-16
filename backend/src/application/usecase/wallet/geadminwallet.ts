@@ -1,14 +1,14 @@
-import { Appointment } from '../../../domain/entities/appoinment';
+
 import {WalletRepository} from '../../../domain/repository/wallet-repo';
-import{ AdminWallet} from "../../../domain/entities/adminwallet"
+import {AdminWalletTransactionDto} from '../../../dto/wallet.dto'
+
 
 export class GetAdminWallet {
 
   constructor(private walletRepository:WalletRepository) {}
-  async getwallet(): Promise<any> {
+  async getwallet(page:number,limit:number): Promise<{ transaction: AdminWalletTransactionDto[]; balance: number; total: number }> {
     try {
-      console.log('hello')
-      const wallet = await this.walletRepository.getdminwallet();
+      const wallet = await this.walletRepository.getdminwallet(page,limit);
       return wallet
     } catch (error) {
       if (error instanceof Error) {

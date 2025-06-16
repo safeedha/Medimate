@@ -4,7 +4,9 @@ import { Idoctor } from './doctor';
 export interface Message {
   senderId: string | Iuser | Idoctor;
   recieverId: string | Idoctor | Iuser;
-  message: string;
+  message?: string;
+  image?:string;
+  messageType:'text'|'image'
   read?: boolean; 
  
 }

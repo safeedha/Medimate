@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { Appointment } from '../../../domain/entities/appoinment';
 
-const AppointmentSchema = new Schema<Appointment>({
+const AppointmentSchema = new Schema<Appointment >({
   user_id: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -52,10 +52,19 @@ const AppointmentSchema = new Schema<Appointment>({
     reportAdded:{
     type:Boolean,
     default:false
+  },
+   rescheduled_to:{
+    type: Schema.Types.ObjectId,
+    ref: 'Slot',
+  },
+  isRescheduled:{
+    type: Boolean,
+    default: false,
   }
+   
 }, {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 });
 
-export const AppointmentModel = model<Appointment>('Appointment', AppointmentSchema);
+export const AppointmentModel = model('Appointment', AppointmentSchema);
 

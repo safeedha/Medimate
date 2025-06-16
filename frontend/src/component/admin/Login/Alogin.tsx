@@ -17,6 +17,7 @@ function Login() {
       const result=await adminLogin(email,password)
       if(result==='admin login sucessfull')
       {
+        localStorage.setItem("admin", "admin@gmail.com");
         toast.success("Login sucessfull")
         navigate("/admin/dashboard")
       }

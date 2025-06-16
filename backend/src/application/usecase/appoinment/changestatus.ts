@@ -6,13 +6,10 @@ export class ChangestatusAppointment {
    async changestus(appoinmentid:string,status: 'pending' |  'cancelled' | 'completed'):Promise<{message:string}>{
        try{
            const result=await this.appointmentRepo.changestatus(appoinmentid,status)
-           const slotId=result.schedule_id
-          if (typeof slotId === 'string' && status=='cancelled') {
-          const result = await this.slotRepository.changeStatus(slotId);
-        } else {
-          // Handle the case where slotId is an IndividualSlot
-          console.error('slotId is not a string');
-        }
+            const slotId = result.schedule_id?.toString();
+           const r= await this.slotRepository.changeStatus(slotId);
+      
+
           return {message:"Status updated"}
        }
        catch(error)

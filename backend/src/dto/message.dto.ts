@@ -1,0 +1,1 @@
+export type UnreadCounts = Record<string, number>;

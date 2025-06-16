@@ -173,6 +173,25 @@ export const setUserdetail=async(firstname:string,lastname:string,phone:string,a
   }
 }
 
+export const logout=async()=>{
+  try{
+        const response = await userInstance.get("/logout");
+        return response.data.message
+       
+  }
+  catch(error)
+  {
+    if (axios.isAxiosError(error)) {
+      console.log(error.response?.data?.message);
+      return error.response?.data?.message || error.message;
+    } else if (error instanceof Error) {
+      return error.message;
+    } else {
+      return 'Internal server error';
+    }
+  }
+}
+
 
 
 

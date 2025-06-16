@@ -3,62 +3,113 @@ import { ConversationRepository } from '../../domain/repository/conver-repo';
 import {ConversationModel}  from '../database/models/conversation';
 import {MessageModel} from '../database/models/message'
 import { Message } from '../../domain/entities/messages';
+import {UnreadCounts} from '../../dto/message.dto'
 
 export class MongoConversationRepo implements ConversationRepository {
   constructor() {
    
   }
-  async getAllmessage(sender:string,receiver:string):Promise<Message[]>{
-    try{
-       const conversation = await ConversationModel.findOne({
-     participants: { $all: [sender, receiver] },
-   }).populate("messages");
+   async getAllmessage(sender: string, receiver: string): Promise<Message[]> {
+  try {
+   
+    await MessageModel.updateMany(
+      { senderId: sender, recieverId: receiver, read: false },
+      { $set: { read: true } }
+    );
+
+    const conversation = await ConversationModel.findOne({
+      participants: { $all: [sender, receiver] },
+    }).populate("messages");
 
     if (!conversation) {
-       throw new Error("No conversation found");
+      throw new Error("No conversation found");
     }
 
-     return conversation.messages as unknown as Message[];
-
+    return conversation.messages as unknown as Message[];
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
     }
-    catch(error)
-    {
-       if (error instanceof Error) {
-        throw new Error(error.message);
-      }
-      throw new Error("Something happened");
-    }
+    throw new Error("Something happened");
   }
+}
+  async changereadstatus(sender: string, receiver: string): Promise<string> {
+    console.log(sender,receiver)
+  await MessageModel.updateMany(
+    { senderId: sender, recieverId: receiver, read: false },
+    { $set: { read: true } } 
+  );
+   return 'message red'
+}
 
   async messageSave(
   sender: string,
   reciever: string,
-  message: string,
+  message?: string,
+  image?: string
 ): Promise<Message> {
-  const newMessage = new MessageModel({
-    senderId: sender,
-    recieverId: reciever,
-    message,
+  if (!message && !image) {
+    throw new Error("Either message or image is required");
+  }
 
+  let newMessage;
+
+  if (message) {
+    newMessage = new MessageModel({
+      senderId: sender,
+      recieverId: reciever,
+      messageType: 'text',
+      message,
+    });
+  } else if (image) {
+    newMessage = new MessageModel({
+      senderId: sender,
+      recieverId: reciever,
+      messageType: 'image',
+      image,
+    });
+  }
+
+  let conversation = await ConversationModel.findOne({
+    participants: { $all: [sender, reciever] },
   });
-  	let conversation = await ConversationModel.findOne({
-			participants: { $all: [sender, reciever] },
-		});
 
-		if (!conversation) {
-			conversation = await ConversationModel.create({
-				participants: [sender, reciever],
-			});
-		}
-    if(newMessage)
-    {
-  
-			conversation.messages.push(newMessage._id);
-		
+  if (!conversation) {
+    conversation = await ConversationModel.create({
+      participants: [sender, reciever],
+    });
+  }
+    if (!newMessage) {
+    throw new Error("Message creation failed unexpectedly");
+  }
+  conversation.messages.push(newMessage._id);
+   await Promise.all([conversation.save(), newMessage.save()]);
+  return newMessage;
+}
+
+async getcount(recieverId:string):Promise<UnreadCounts>{
+  try{
+    const count = await MessageModel.aggregate([
+    { $match: { recieverId: recieverId, read: false } },
+    { $group: { _id: "$senderId", count: { $sum: 1 } } }
+  ])
+   const result: UnreadCounts = {};
+  count.forEach(item => {
+    result[item._id] = item.count;
+  });
+
+  return result;
+  }
+  catch(error)
+  {
+     if (error instanceof Error) {     
+        throw new Error(error.message); 
+      }    
+      throw new Error('Unexpected error occurred during doctor registration');
     }
-  await Promise.all([conversation.save(), newMessage.save()]);
+  }
 
-  return newMessage
+
 }
- 
-}
+
+

@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import { useParams } from 'react-router-dom'
 import { getSingledoctor, getSlotedoctor,handlePayment } from '../../api/userapi/doctor'
-import{creatAppoinment} from '../../api/userapi/appoinment'
+import{creatAppoinment,createlockslot} from '../../api/userapi/appoinment'
 import type { Idoctor, IndividualSlot } from '../../Interface/interface'
 import toast, { Toaster } from 'react-hot-toast'
 import Modal from 'react-modal';
 import {useRazorpay} from "react-razorpay"
+import type{formData} from '../../Interface/interface'
 
 const customStyles = {
   content: {
@@ -26,15 +27,7 @@ const customStyles = {
   },
 };
 
-type formData= {
-    fullName: string;
-    age: string;
-    gender: "male"|"female"|"other";
-    email: string;
-    phone: string;
-    reason: string;
-    paymentMethod: string;
-}
+
 function Docdetails() {
   let subtitle: any;
   Modal.setAppElement('body');
@@ -87,8 +80,18 @@ function Docdetails() {
   }
 
   const bookHandle = async (item: IndividualSlot) => {
-    setSelectedSlot(item)
-    setIsOpen(true)
+    let result=await createlockslot(item._id!,doctor?._id!)
+    if(result==='Slot is locked')
+    {
+        setSelectedSlot(item)
+        setIsOpen(true)
+    }
+    if(result==='Slot is already locked or confirmed')
+      {
+          toast.error(
+        "You can't book this slot now, because another user is trying to book it. Please use another slot or try again later."
+      );
+      } 
   }
 
   const afterOpenModal = () => {
@@ -156,7 +159,6 @@ function Docdetails() {
   contentLabel="Patient Form Modal"
 >
   <div className="flex flex-col md:flex-row w-full p-3 gap-3 ">
-    {/* Doctor Info and Privacy Policy */}
     <div className="md:w-1/2 bg-gray-50 p-3 rounded shadow-sm text-xs text-gray-700">
       <div className="bg-slate-200 p-2 rounded mb-2">
         <p className="text-lg font-semibold text-gray-800">
@@ -189,7 +191,7 @@ function Docdetails() {
       </p>
     </div>
 
-    {/* Patient Form */}
+
     <form
       onSubmit={handleSubmit}
       className="md:w-1/2 bg-white p-3 rounded shadow-sm space-y-3"
@@ -277,7 +279,7 @@ function Docdetails() {
       <div>
         <label className="block text-xs font-medium mb-1">Payment Method</label>
         <div className="flex items-center gap-3 text-xs">
-          <label className="flex items-center gap-1">
+          {/* <label className="flex items-center gap-1">
             <input
               type="radio"
               name="paymentMethod"
@@ -286,7 +288,7 @@ function Docdetails() {
               onChange={handleInputChange}
             />
             Wallet Payment
-          </label>
+          </label> */}
           <label className="flex items-center gap-1">
             <input
               type="radio"
@@ -335,7 +337,7 @@ function Docdetails() {
         </div>
       </div>
 
-      {/* Slot Selection */}
+ 
       <div className="bg-white shadow-md rounded-md p-4 mt-6 mx-auto max-w-5xl">
         <h1 className="text-lg font-semibold text-gray-800 mb-2">Select Slots</h1>
         <p className="text-gray-600 text-sm mb-3">

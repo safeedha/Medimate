@@ -12,47 +12,32 @@ import jsPDF from 'jspdf';
 
 function Booking() {
   const [futur, setFuture] = useState<Appointment[]>([]);
+  const [appid,setAppid]=useState<string>('report')
   const [past, setPast] = useState<Appointment[]>([]);
   const[render,setRender]=useState(false)
   const [showModal, setShowModal] = useState(false);
   const [selectedReport, setSelectedReport] = useState<string>('report');
   const [loadingReport, setLoadingReport] = useState(false);
     const reportTemplateRef = useRef(null);
-   const handleDownloadPDF = () => {
+   const handleDownloadPDF = async() => {
+    const {content} = await getReport(appid);
+    const container = document.createElement('div');
+    container.innerHTML = content;
+    document.body.appendChild(container);
     const doc = new jsPDF({
-       format: 'a4',
+      format: 'a4',
       unit: 'px',
     });
-
-      
          doc.setFont('helvetica', 'normal')
 
-     doc.html(reportTemplateRef.current, {
+     doc.html(container, {
        async callback(doc) {
          await doc.save('document');
        },
     });
    };
 
-//  const handleDownloadPDF = () => {
-//   const doc = new jsPDF({
-//     format: 'a4',
-//     unit: 'px',
-//   });
 
-//   doc.setFont('helvetica', 'normal'); // Use default font to ensure compatibility
-
-//   doc.html(reportTemplateRef.current, {
-//     x: 10, // horizontal offset
-//     y: 10, // vertical offset
-//     html2canvas: {
-//       scale: 1.5, // better quality
-//     },
-//     callback(doc) {
-//       doc.save('document.pdf');
-//     },
-//   });
-// };
   useEffect(() => {
     const getFutureAppointments = async () => {
       const result = await getfutureAppoinments();
@@ -70,6 +55,7 @@ function Booking() {
   }, [render]);
 
   const cancelHandle = async (id: string) => {
+    
     const result = await Swal.fire({
       title: 'Are you sure to cancel this?',
       text: "",
@@ -91,6 +77,7 @@ function Booking() {
 
   const handleViewReport = async (appointmentId: string) => {
     try {
+      setAppid(appointmentId)
       setLoadingReport(true);
       const report = await getReport(appointmentId);
       console.log(report.content)
@@ -112,7 +99,6 @@ function Booking() {
           <UserSidebar />
           <div className="ml-64 flex-1 p-6 overflow-y-auto space-y-8 mt-20">
 
-            {/* Upcoming Appointments Table */}
             <div className="bg-white shadow-md rounded-lg p-6">
               <h2 className="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2 text-center">
                 Upcoming Appointments
@@ -164,7 +150,7 @@ function Booking() {
                               </span>
                             ) : appointment.status === 'completed' ? (
                               appointment.reportAdded === false ? (
-                                <span className="px-3 py-1 rounded-md text-sm bg-yellow-100 text-yellow-700">
+                                <span className="px-3 py-1 rounded-md text-sm text-red-950">
                                   Report Pending
                                 </span>
                               ) : (
@@ -248,7 +234,7 @@ function Booking() {
                   Appointment Report
                 </h3>
 
-                {/* Content */}
+          
                 <div className="max-h-[60vh] overflow-y-auto custom-scrollbar">
                   {loadingReport ? (
                     <p className="text-center text-gray-500 animate-pulse">Loading report...</p>

@@ -1,10 +1,11 @@
-import{Idoctor} from "../entities/doctor"
+import { DoctorDTO } from '../../dto/doctor.dto';
 
 export interface DoctorRepository {
-getAllunverified():Promise<Idoctor[]>
-getAllverified(department?: string,search?:string):Promise<Idoctor[]>
-changeStatus(id:string):Promise<Idoctor[]>
-verification(id:string,stataus:"Approved"|"Rejected"):Promise<Idoctor[]>
-profileupdate(firstname:string,lastname:string,experience:number,fee:number,image:string,email:string,phone:string,specialisation:string,qualification:string):Promise<{message:string}>
-getSingleDoctor(id:string):Promise<Idoctor>
+  getAllunverified(page:number,limit:number): Promise<{ doctors: DoctorDTO[]; total: number }>;
+  getAllverified(page: number, limit: number, department?: string, search?: string): Promise<{ total: number; data: DoctorDTO[] }>;
+  changeStatus(id: string): Promise<DoctorDTO[]>;
+  verification(id: string, status: "Approved" | "Rejected"): Promise<DoctorDTO[]>;
+  profileupdate(firstname: string, lastname: string, experience: number, fee: number, image: string, email: string, phone: string, specialisation: string, qualification: string): Promise<{ message: string }>;
+  getSingleDoctor(id: string): Promise<DoctorDTO>;
+  getAlldoctor(page: number, limit: number, search: string): Promise<{ doctors: DoctorDTO[]; total: number }>;
 }

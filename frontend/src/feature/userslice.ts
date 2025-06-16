@@ -7,7 +7,6 @@ interface UserInfo{
   firstname:string,
   lastname:string,
   email:string,
-  password:string,
   phone:string,
   googleIds?:string|null,
   isBlocked:boolean,

@@ -4,12 +4,9 @@ import {IndividualSlot} from './slot';
 
 export interface Appointment {
   _id?: string; 
-  user_id: string| Iuser; // User who booked the appointment
-  doctor_id: string| Idoctor; // Doctor for the appointment
-  schedule_id: string| IndividualSlot; // Schedule details for the appointment
-  
-
- 
+  user_id: string| Iuser; 
+  doctor_id: string| Idoctor; 
+  schedule_id: string| IndividualSlot; 
   patient_name: string;
   patient_email: string;
   patient_age: number;
@@ -18,8 +15,9 @@ export interface Appointment {
 
   status: 'pending' |  'cancelled' | 'completed';
   payment_status: 'paid' | 'unpaid';
-  
-   reportAdded?: boolean; 
+  rescheduled_to?: string| IndividualSlot
+  isRescheduled?:boolean;
+ reportAdded?: boolean; 
    
   created_at?: Date;
   updated_at?: Date;

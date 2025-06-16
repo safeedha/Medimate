@@ -1,5 +1,5 @@
 import { WalletRepository } from '../../../domain/repository/wallet-repo';
-
+import{AdminWalletTransactionDto} from '../../../dto/wallet.dto'
 export class Paytodoctor {
   constructor(private walletRepository: WalletRepository) {}
 

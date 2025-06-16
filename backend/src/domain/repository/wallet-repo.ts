@@ -1,14 +1,14 @@
-import{ AdminWallet} from "../entities/adminwallet"
+
+import {WalletTransactionDto,AdminWalletTransactionDto,DoctorTransactionDTO} from '../../dto/wallet.dto'
 
 export interface WalletRepository { 
 addmoneywallet(amount:number,userid:string,doctorid:string,appid:string):Promise<string>
-getdminwallet():Promise<any>
-getRefundTransactions():Promise<any>
-getPayoutinfor():Promise<any>
-getdoctorwallet(doctorId:string):Promise<any>
+getdminwallet(page:number,limit:number):Promise<{ transaction: AdminWalletTransactionDto[]; balance: number; total: number }>
+getRefundTransactions():Promise<AdminWalletTransactionDto[]>
+getPayoutinfor():Promise<AdminWalletTransactionDto[]>
+getdoctorwallet(doctorId:string,page:number,limit:number):Promise<{ balance: number; transaction: DoctorTransactionDTO[]; total: number }>
 addpaytodoctor(transactionId:string,doctorid:string):Promise<{message:string}>
 addrefund(transactionId:string):Promise<string>
-
-getuserwallet(userid:string):Promise<any>
+getuserwallet(userid:string,page:number,limit:number):Promise<{ balance: number;  transactions: WalletTransactionDto[] }>
 
 }

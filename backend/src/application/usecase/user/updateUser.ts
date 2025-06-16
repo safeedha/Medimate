@@ -1,10 +1,10 @@
 import {UserRepository} from '../../../domain/repository/user-repository';
-import {Iuser} from '../../../domain/entities/user';
+import {UserDTO} from '../../../dto/user.dto'
 
 export class updatesingleUser {
 
   constructor(private userRepository: UserRepository) {}
-  async updatesingleUser(id:string,firstname:string,lastname:string,phone:string,age:number,gender:"male"|"female"|"other"): Promise<Iuser> {
+  async updatesingleUser(id:string,firstname:string,lastname:string,phone:string,age:number,gender:"male"|"female"|"other"): Promise<string> {
     try {
       const user = await this.userRepository.updatesingleuser(id,firstname,lastname,phone,age,gender);
    

@@ -1,4 +1,4 @@
-import {Conversation} from '../../../domain/entities/conversation'
+
 import {ConversationRepository} from '../../../domain/repository/conver-repo'
 import { Message } from '../../../domain/entities/messages';
 
@@ -7,9 +7,9 @@ export class SaveMessage{
   {
    
   }
-  async MessageSave(senderId:string,recieverId:string,message:string):Promise<Message>
+  async MessageSave(senderId:string,recieverId:string,message?:string,image?:string):Promise<Message>
   {
-    const result=await this.conversationrepository.messageSave(senderId,recieverId,message)
+    const result=await this.conversationrepository.messageSave(senderId,recieverId,message,image)
     return result
   }
 

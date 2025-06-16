@@ -1,6 +1,7 @@
 import { appointmentRepository  } from '../../../domain/repository/appoinment-rep';
 import { slotRepository } from '../../../domain/repository/slot-repository';
 import { Appointment } from '../../../domain/entities/appoinment';
+
 import {WalletRepository} from '../../../domain/repository/wallet-repo';;
 export class CreateAppointment {
   constructor(private appointmentRepo: appointmentRepository,private slotRepository:slotRepository,private walletRepository:WalletRepository ) {}
@@ -19,7 +20,8 @@ export class CreateAppointment {
         status: 'pending',
         payment_status: 'paid',
      }
-      const appointment = await this.appointmentRepo.createappoinment(data);
+     
+      const appointment  = await this.appointmentRepo.createappoinment(data);
       const result=await this.slotRepository.changeStatus(slot);
       const wallet=await this.walletRepository.addmoneywallet(amount, id, doctorId,appointment._id!)
       console.log(wallet)

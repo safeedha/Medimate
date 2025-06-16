@@ -11,9 +11,18 @@ export interface Iuser{
   gender?:"male"|"female"|"other",
   age?:number
 }
+export type formData= {
+    fullName: string;
+    age: string;
+    gender: "male"|"female"|"other";
+    email: string;
+    phone: string;
+    reason: string;
+    paymentMethod: string;
+}
 
 export interface IDepartment {
-  _id: string;
+  _id?: string;
   deptname: string;
   description?: string;
   createdAt?: Date;
@@ -23,16 +32,15 @@ export interface IDepartment {
 
 export interface Idoctor {
   _id?: string;
-  firstname: string;
-  lastname: string;
-  email: string;
-  password: string;
-  phone: string;
-  specialisation: IDepartment;
-  experience: number;
+  firstname?: string;
+  lastname?: string;
+  email?: string;
+  phone?: string;
+  specialisation?: IDepartment;
+  experience?: number;
   fee: number;
-  status: 'Approved' | 'Rejected' | 'Pending';
-  isBlocked: boolean;
+  status?: 'Approved' | 'Rejected' | 'Pending';
+  isBlocked?: boolean;
   googleVerified?: boolean;
   additionalInfo?: string;
   profilePicture?: string;
@@ -81,10 +89,22 @@ export interface Appointment {
   patient_age: number;
   patient_gender: 'male' | 'female' | 'other';
   reason: string;
-
+  reportAdded:boolean
   status: 'pending' |  'cancelled' | 'completed';
   payment_status: 'paid' | 'unpaid';
 
   created_at?: Date;
   updated_at?: Date;
 }
+
+
+export type LocationState = {
+  email: string;
+  role?:string
+};
+
+
+export type AppointmentCountByDate = {
+  _id: string;    
+  count: number;
+};

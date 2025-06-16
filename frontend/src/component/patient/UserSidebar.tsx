@@ -19,9 +19,9 @@ function UserSidebar() {
     <Link to="/booking_details" className="hover:text-teal-600 transition-colors">
       📅 Bookings
     </Link>
-    <Link to="" className="hover:text-teal-600 transition-colors">
+    {/* <Link to="" className="hover:text-teal-600 transition-colors">
       💊 Prescription
-    </Link>
+    </Link> */}
      <Link to="/changepassword" className="hover:text-teal-600 transition-colors">
       🔑 Change Password
     </Link>

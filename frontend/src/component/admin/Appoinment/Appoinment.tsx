@@ -4,31 +4,7 @@ import { toast, Toaster } from 'react-hot-toast'
 import { getAllDoctor } from '../../../api/adminapi/doctor'
 import { getAllappoinment } from '../../../api/adminapi/appoinment'
 import Modal from 'react-modal'
-import Pagination from '../../../component/common/Pgination'
-
-interface DepartmentProps {
-  _id: string;
-  deptname: string;
-  description: string;
-  isblocked: boolean;
-  createdAt: string;   
-  updatedAt: string; 
-}
-
-interface Idoctor {
-  _id?: string
-  firstname: string
-  lastname: string
-  email: string
-  password: string
-  phone: string
-  specialisation: DepartmentProps
-  experience: number
-  fee: number
-  isBlocked: boolean
-  additionalInfo?: string
-  profilePicture?: string
-}
+import type { Idoctor } from '../../../Interface/interface'
 
 const customStyles = {
   content: {
@@ -59,23 +35,33 @@ function Appoinment() {
   const [modalIsOpen, setIsOpen] = useState(false)
   const subtitleRef = useRef<HTMLHeadingElement>(null)
   const [appoinment, setAppoinment] = useState<any[]>([])
-  const [doc,setDoc]=useState<string>("")
+  const [doc, setDoc] = useState<string>('')
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const itemsPerPage = 4
+  const [itemsPerPage] = useState<number>(4)
+  const [searchTerm, setSearchTerm] = useState<string>('')
+  const [totalDoctors, setTotalDoctors] = useState<number>(0)
+
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    (async () => {
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current)
+
+    searchTimeoutRef.current = setTimeout(async () => {
       try {
-        const response = await getAllDoctor()
-        if (response) setDoctors(response)
-        else toast.error('Failed to fetch doctors')
+        const response = await getAllDoctor(currentPage, itemsPerPage, searchTerm.trim())
+        setDoctors(response.doctors)
+        setTotalDoctors(response.total)
       } catch {
         toast.error('An error occurred while fetching doctors')
       }
-    })()
-  }, [])
+    }, 500)
 
-  const openModal = async (id: string,name:string) => {
+    return () => {
+      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current)
+    }
+  }, [currentPage, itemsPerPage, searchTerm])
+
+  const openModal = async (id: string, name: string) => {
     const result = await getAllappoinment(id)
     setAppoinment(result)
     setDoc(name)
@@ -90,14 +76,11 @@ function Appoinment() {
     if (subtitleRef.current) subtitleRef.current.style.color = '#1f2937'
   }
 
-  const indexOfLastDoctor = currentPage * itemsPerPage
-  const indexOfFirstDoctor = indexOfLastDoctor - itemsPerPage
-  const currentDoctors = doctors.slice(indexOfFirstDoctor, indexOfLastDoctor)
-
   const handleRefund = (appointmentId: string) => {
-    // Implement refund logic here (API call)
     toast.success(`Refund initiated for appointment ID: ${appointmentId}`)
   }
+
+  const totalPages = Math.ceil(totalDoctors / itemsPerPage)
 
   return (
     <div className="flex h-screen">
@@ -120,7 +103,7 @@ function Appoinment() {
       >
         <div className="bg-white p-6 max-h-[80vh] w-full max-w-[900px]">
           <h2 ref={subtitleRef} className="text-xl font-semibold mb-4 text-gray-800">
-            Appointment Details of Dr:{doc}
+            Appointment Details of Dr: {doc}
           </h2>
 
           {appoinment.length === 0 ? (
@@ -147,10 +130,16 @@ function Appoinment() {
                     Gender: <span className="font-normal">{item.patient_gender}</span>
                   </p>
                   <p className="text-sm font-semibold text-gray-700">
-                    Date: <span className="font-normal">{new Date(item.schedule?.date).toLocaleDateString()}</span>
+                    Date:{' '}
+                    <span className="font-normal">
+                      {new Date(item.schedule?.date).toLocaleDateString()}
+                    </span>
                   </p>
                   <p className="text-sm font-semibold text-gray-700">
-                    Time: <span className="font-normal">{item.schedule?.startingTime}to{item.schedule?.endTime}</span>
+                    Time:{' '}
+                    <span className="font-normal">
+                      {item.schedule?.startingTime} to {item.schedule?.endTime}
+                    </span>
                   </p>
                   <p className="text-sm font-semibold text-gray-700">
                     Reason: <span className="font-normal">{item.reason}</span>
@@ -191,6 +180,20 @@ function Appoinment() {
       <div className="w-5/6 bg-gray-100 p-6 overflow-auto">
         <h1 className="text-2xl font-bold text-center mb-6">Doctors List</h1>
 
+        {/* Search Input Centered */}
+        <div className="flex justify-center mb-6">
+          <input
+            type="text"
+            placeholder="Search doctor..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value)
+              setCurrentPage(1) // Reset to first page on search
+            }}
+            className="border px-4 py-2 rounded-md w-72 shadow-sm"
+          />
+        </div>
+
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white shadow rounded">
             <thead>
@@ -201,7 +204,7 @@ function Appoinment() {
               </tr>
             </thead>
             <tbody>
-              {currentDoctors.map((doctor) => (
+              {doctors.map((doctor) => (
                 <tr
                   key={doctor._id}
                   className={`border-b ${doctor.isBlocked ? 'bg-red-100' : 'bg-white'}`}
@@ -217,7 +220,7 @@ function Appoinment() {
                   </td>
                   <td className="py-3 px-4">
                     <button
-                      onClick={() => openModal(doctor._id!,doctor.firstname!)}
+                      onClick={() => openModal(doctor._id!, doctor.firstname!)}
                       className="text-cyan-600 underline hover:text-cyan-800"
                     >
                       View Item
@@ -227,14 +230,27 @@ function Appoinment() {
               ))}
             </tbody>
           </table>
+        </div>
 
-          <div className="mt-6 flex justify-center">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={Math.ceil(doctors.length / itemsPerPage)}
-              onPageChange={(page: number) => setCurrentPage(page)}
-            />
-          </div>
+
+        <div className="flex justify-center items-center mt-6 space-x-4">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span className="font-medium">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50"
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>

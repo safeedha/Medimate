@@ -1,13 +1,16 @@
 import userInstance from "./instance";
 
-export const getAlldoctors = async (singledepartment:string,search:string) => {
+export const getAlldoctors = async (page:number,limit:number,singledepartment:string,search:string) => {
   try {
    const response = await userInstance.get("/doctors", {
     params: {
       department: singledepartment,
-      search:search
+      search:search,
+      page,
+      limit
     }
   });
+    console.log('fvf')
     console.log(response.data)
     return response.data; 
   } catch (error) {
@@ -19,8 +22,7 @@ export const getAlldoctors = async (singledepartment:string,search:string) => {
 export const getDepartnment = async () => {
   try {
     const response = await userInstance.get("/department");
-    console.log(response.data)
-    return response.data; 
+    return response.data 
   } catch (error) {
     console.log(error);
   }

@@ -32,7 +32,7 @@ function Signup() {
       async function getAllDepartment() {
         try {
           const result = await getDepartment();
-          setDepartments(result); // Set the fetched departments to state
+          setDepartments(result); 
           console.log(result); 
         } catch (error) {
           console.error("Error fetching departments:", error);
@@ -293,7 +293,7 @@ function Signup() {
                 {dept.deptname}
               </option>
             ))}
-          </select>
+          </select> 
         </div>
 
             <div>

@@ -4,7 +4,6 @@ import bann from "../../assets/bann.jpg";
 function Landing() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-green-50 flex flex-col justify-between">
-      {/* Navbar */}
       <nav className="bg-gradient-to-r from-blue-500 to-green-400 p-4 shadow-lg flex justify-between items-center">
         <div className="text-3xl font-bold text-white tracking-wide flex items-center gap-2">
           <span className="text-4xl">🩺</span>

@@ -1,13 +1,12 @@
-import { Appointment } from '../../../domain/entities/appoinment';
-import {WalletRepository} from '../../../domain/repository/wallet-repo';
-import{ AdminWallet} from "../../../domain/entities/adminwallet"
 
+import {WalletRepository} from '../../../domain/repository/wallet-repo';
+import {WalletTransactionDto} from '../../../dto/wallet.dto'
 export class GetUserallet {
 
   constructor(private walletRepository:WalletRepository) {}
-  async getwallet(userid:string): Promise<any> {
+  async getwallet(userid:string,page:number,limit:number): Promise<{ balance: number;  transactions: WalletTransactionDto[] }> {
     try {
-      const wallet = await this.walletRepository.getuserwallet(userid);
+      const wallet = await this.walletRepository.getuserwallet(userid,page,limit);
       return wallet
     } catch (error) {
       if (error instanceof Error) {

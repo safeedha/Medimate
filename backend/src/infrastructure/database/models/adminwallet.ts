@@ -19,7 +19,11 @@ const AdminWalletTransactionSchema = new Schema<AdminWalletTransaction>({
     type: Schema.Types.Mixed, // ObjectId or string
     required: true,
   },
-  doctorId: {
+    toModel: {
+      type: String,
+      enum: ['User', 'Doctor', 'Platform'],
+    },
+   doctorId: {
     type: Schema.Types.ObjectId,
     ref: 'Doctor',
     default: null,

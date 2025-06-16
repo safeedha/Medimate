@@ -2,6 +2,7 @@ import { RegRepository } from "../../../domain/repository/reg-repository"
 import { Iuser } from '../../../domain/entities/user';
 import jwt from 'jsonwebtoken';
 
+
 export class UserLog {
   constructor(private regRepository: RegRepository) {}
 

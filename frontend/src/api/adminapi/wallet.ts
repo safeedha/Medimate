@@ -1,10 +1,10 @@
 import axios from 'axios'
 import adminInstance from './instance';
 
-export const walletInformation=async()=>{
+export const walletInformation=async(page:number,limit:number)=>{
   try{
-    const response = await adminInstance.get(`/wallet`);
-    console.log(response)
+    const response = await adminInstance.get(`/wallet`,{params:{page,limit}});
+    console.log(response.data)
      return response.data;
   }
   catch(error)

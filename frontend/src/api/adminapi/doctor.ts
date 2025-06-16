@@ -1,23 +1,41 @@
 import adminInstance from './instance';
 import axios from 'axios';
 
-export const getAllunVerfiedDoctors = async () => {
+export const getAllunVerfiedDoctors = async (page:number,limit:number) => {
   try {
-    const response = await adminInstance.get("/doctor/unverified");
+    const response = await adminInstance.get("/doctor/unverified",{
+      params: {
+        page,
+        limit
+      },
+    });
+    console.log(response.data)
     return response.data; 
   } catch (error) {
     console.log(error);
   }
 }
 
-export const getAllDoctor = async () => {
+ export const getAllDoctor = async (page: number, limit: number,search?:string) => {
   try {
-    const response = await adminInstance.get("/doctor");
-    return response.data; 
+    
+    const response = await adminInstance.get("/doctor", {
+      params: {
+        page,
+        limit,
+        search
+      },
+    });
+  
+    return {
+      doctors: response.data.doctors,
+      total: response.data.total,
+    };
   } catch (error) {
     console.log(error);
+    return { doctors: [], total: 0 }; // fallback to avoid crashing UI
   }
-}
+};
 
 
 export const changeblockStatus = async (id: string) => {

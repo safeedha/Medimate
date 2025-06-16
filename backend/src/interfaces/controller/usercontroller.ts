@@ -23,7 +23,9 @@ import {GetAllmessage} from '../../application/usecase/conversation/getallmessag
 import {StreamToken} from '../../application/usecase/streamtoken/streamtoken'
 import {GetUserallet} from '../../application/usecase/wallet/getuserwallet'
 import{Getreport} from '../../application/usecase/report/getreport'
-
+import{CreateLockslot} from '../../application/usecase/appoinment/createlockslot'
+import {Getallunblockeddept}from '../../application/usecase/dept/getunblocked';
+import {Getunreadcount} from '../../application/usecase/conversation/getunreadcount';
 interface CustomRequest extends Request {
   id: string;
 }
@@ -33,14 +35,17 @@ export class UserController {
     private userpasssrest:UserPassrest,private getverified:Getverified,private googleuser:Googleuser,private getsingleuser:GetsingleUser,
     private updatesingleUser:updatesingleUser,private getsingledoc:GetSingledoc,private getslotbydate:GetSlotByDate,private createAppointment:CreateAppointment,
     private getfutureAppointment:GetfutureAppointment,private getpastAppointment:GetpastAppointment,private changestatusAppointment:ChangestatusAppointment,
-    private getallmessage:GetAllmessage,private streamToken:StreamToken,private getreport:Getreport,private getUserallet:GetUserallet,
+    private getallmessage:GetAllmessage,private streamToken:StreamToken,private getreport:Getreport,private getUserallet:GetUserallet,private createlockslot:CreateLockslot,
+    private getallunblockeddept:Getallunblockeddept,private getunreadcount:Getunreadcount
     
   ) {}
 
-  // ← Make sure this method is *inside* the class body
+ 
   async getAllDept(req: Request, res: Response): Promise<void> {
     try {
-      const result = await this.getDept.getAllDept();
+      console.log('from dept')
+      const result = await this.getallunblockeddept.getAllunblockedDept();
+
       res.status(200).json(result);
     } catch (error) {
       const errorMessage = error instanceof Error
@@ -54,7 +59,9 @@ export class UserController {
      try {
       const department = req.query.department as string | undefined;
       const search=req.query.search as string | undefined
-      const result = await this.getverified.getAllVerifiedDoctors(department,search);
+       const page = parseInt(req.query.page as string) 
+      const limit= parseInt(req.query.limit as string) 
+      const result = await this.getverified.getAllVerifiedDoctors(page,limit,department,search);
       res.status(200).json(result);
     } catch (error) {
       const errorMessage = error instanceof Error
@@ -131,7 +138,6 @@ async login(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
     const result = await this.userlog.login({ email, password });
 
-    // Set access token in cookie with custom name
     res.cookie("accessusertoken", result.accessToken, {
       httpOnly: true,
       secure: false, // true in production
@@ -140,6 +146,11 @@ async login(req: Request, res: Response): Promise<void> {
 
   
     res.cookie("refreshusertoken", result.refreshToken, {
+      httpOnly: true,
+      secure: false, // true in production
+      maxAge: 15 * 60 * 1000,  // 7 days
+    });
+      res.cookie("refreshusertoken", result.refreshToken, {
       httpOnly: true,
       secure: false, // true in production
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
@@ -158,6 +169,25 @@ async login(req: Request, res: Response): Promise<void> {
   }
 }
 
+async logout(req: Request, res: Response): Promise<void> {
+  try {
+    res.clearCookie('accessusertoken',
+      { httpOnly: true,
+      secure: false, 
+    })
+      res.clearCookie("refreshusertoken",
+      { httpOnly: true,
+      secure: false, 
+    })
+     res.status(200).json({ message: 'Logged out successfully' });
+
+  } catch (error) {
+    const errorMessage = error instanceof Error
+      ? error.message
+      : 'Internal server error';
+    res.status(400).json({ message: errorMessage });
+  }
+}
 
 
 
@@ -280,6 +310,23 @@ async login(req: Request, res: Response): Promise<void> {
     }
   }
 
+  async createLockslot(req: CustomRequest, res: Response): Promise<void> {
+    try{
+      const {slotid,doctorid}=req.body
+      const result=await this.createlockslot.createLock(slotid,doctorid)
+       res.status(201).json({message:result})
+    }
+    catch(error)
+    {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+        console.log(errorMessage)
+      res.status(409).json({ message: errorMessage });
+    }
+  }
+    
+
   async createPayment(req: CustomRequest, res: Response): Promise<void> {
     try {
       const { amount } = req.body;
@@ -380,19 +427,19 @@ async verifyPayment(req: CustomRequest, res: Response): Promise<void> {
 async getAllmessages(req: CustomRequest, res: Response): Promise<void> {
   try {
     const id = req.id;
-    const {  reciever} = req.query;
+    const { sender} = req.query;
 
-    if (!reciever) {
+    if (!sender) {
       res.status(400).json({ message: "Receiver is required" });
       return; 
     }
 
-    if (typeof reciever !== 'string') {
+    if (typeof sender !== 'string') {
       res.status(400).json({ message: 'Invalid or missing receiver' });
       return; 
     }
 
-    const result = await this.getallmessage.getallmessage(id, reciever);
+    const result = await this.getallmessage.getallmessage(sender, id);
     res.status(200).json(result);
   } catch (error) {
     const errorMessage =
@@ -432,8 +479,10 @@ async reportget(req: CustomRequest, res: Response): Promise<void> {
 
 async walletget(req: CustomRequest, res: Response): Promise<void> {
  try{
-      const id = req.id;    
-      const result=await this. getUserallet.getwallet(id)
+      const id = req.id;  
+      const page = parseInt(req.query.page as string) 
+      const limit= parseInt(req.query.limit as string)   
+      const result=await this. getUserallet.getwallet(id,page,limit)
       res.status(200).json(result);
   }
   catch(error)
@@ -453,6 +502,19 @@ async getSingleuser(req: CustomRequest, res: Response): Promise<void> {
   catch(error)
   {
      const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error';
+    res.status(400).json({ message: errorMessage });
+  }
+}
+
+async getUnreadcount(req: CustomRequest, res: Response): Promise<void> {
+  try {
+    const id = req.id as string;
+    const result=await this.getunreadcount.getcount(id)
+    console.log(result) 
+     res.status(200).json(result);
+  } catch (error) {
+    const errorMessage =
       error instanceof Error ? error.message : 'Internal server error';
     res.status(400).json({ message: errorMessage });
   }

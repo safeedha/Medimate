@@ -1,18 +1,23 @@
-import {Route} from 'react-router-dom'
-import Landing from '../component/common/Landing'
-import Otp from '../component/common/Otp'
-import Forgetpass from '../component/common/Forgetpass'
-import Meetingroom from '../component/common/Videocall'
+import { Route } from 'react-router-dom';
+import { BounceLoader } from 'react-spinners';
+import { Suspense, lazy } from 'react';
+
+import LoaderFallback from '../component/common/LoaderFallback';
+const Landing = lazy(() => import('../component/common/Landing'));
+const Otp = lazy(() => import('../component/common/Otp'));
+const Forgetpass = lazy(() => import('../component/common/Forgetpass'));
+const Meetingroom = lazy(() => import('../component/common/Videocall'));
 
 function Landinghandler() {
   return (
-     <>
-       <Route path="/" element={<Landing />} />
-       <Route path="/otp" element={<Otp />} />
-       <Route path="/forgetpassword" element={<Forgetpass />} />
-       <Route path="/video/:roomId" element={<Meetingroom />} />
+    <>
+      <Route path="/"element={<Suspense fallback={<LoaderFallback/>} > <Landing /></Suspense> } />
+      
+      <Route path="/otp" element={<Otp />} />
+      <Route path="/forgetpassword" element={<Forgetpass />} />
+      <Route path="/video/:roomId" element={<Meetingroom />} />
     </>
-  )
+  );
 }
 
-export default Landinghandler
+export default Landinghandler;

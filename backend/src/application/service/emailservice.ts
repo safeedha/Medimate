@@ -23,7 +23,7 @@ export async function sendMail(
   } else {
     message = 'No message content provided.';
   }
-
+   console.log(message)
   await transporter.sendMail({
     from: 'mksafeedha@gmail.com',
     to: email,

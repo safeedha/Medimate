@@ -1,13 +1,13 @@
 import {slotRepository} from '../../../domain/repository/slot-repository';
+import {RecurringDTO} from '../../../dto/slot.dto';
 
-import{IRecurring} from '../../../domain/entities/recurringslot'
 
 export class GetRecurringSlot {
 
   constructor(private slotrepository: slotRepository) {}
-  async getSlots(id:string): Promise<IRecurring[]> {
+  async getSlots(id:string,page:number,limit:number): Promise<{ data: RecurringDTO[]; total: number }> {
     try {
-      const slots= await this.slotrepository.getAllreccslots(id)
+      const slots= await this.slotrepository.getAllreccslots(id,page,limit)
       return slots
     } catch (error) {
       if (error instanceof Error) {

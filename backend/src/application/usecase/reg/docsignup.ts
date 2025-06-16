@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import {RegRepository } from "../../../domain/repository/reg-repository";
 import { Idoctor } from "../../../domain/entities/doctor";
 export class DocRegister{
@@ -6,11 +7,13 @@ export class DocRegister{
   async signup(data:{firstname:string,lastname:string,email:string,phone:string,specialisation:string|null,experience:number,fee:number,password:string,additionalInfo?:string,profilePicture?:string,medicalLicence?:string}):Promise<{ message: string }> 
   {
      try{
+          const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(data.password, saltRounds);
         const newdata:Idoctor={
           firstname:data.firstname,
           lastname:data.lastname,
           email:data.email,
-          password:data.password,
+          password:hashedPassword,
           phone:data.phone,
           specialisation:data.specialisation,
           experience:data.experience,

@@ -1,4 +1,5 @@
 import { RegRepository } from '../../domain/repository/reg-repository';
+import bcrypt from 'bcrypt'
 import { Idoctor } from '../../domain/entities/doctor';
 import { Doctor } from '../database/models/docter';
 import { Iuser } from '../../domain/entities/user';
@@ -61,10 +62,13 @@ export class MongoRegRepository implements RegRepository {
         {
           throw new Error("This email is not registered")
         }
-        if(doctor.password!==password)
-        {
-          throw new Error("Invalid credential")
+       const isMatch = await bcrypt.compare(password,doctor.password!  );
+        if (isMatch) {
+        console.log('Passwords match');
+        } else {
+          throw new Error('invalid credential');
         }
+
         if(doctor.status==="Rejected")
         {
           throw new Error("Your account is Rejected by admin")
@@ -155,9 +159,13 @@ export class MongoRegRepository implements RegRepository {
       if (!user) {
         throw new Error('this email not registered');
       }
-      if (user.password !== password) {
-        throw new Error('invalid credential');
-      }
+      const isMatch = await bcrypt.compare(password,user.password!  );
+        if (isMatch) {
+        console.log('Passwords match');
+        } else {
+          throw new Error('invalid credential');
+        }
+    
       if (user.isBlocked === true) {
         throw new Error('this account is blocked');
       }

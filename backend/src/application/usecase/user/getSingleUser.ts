@@ -1,10 +1,10 @@
 import {UserRepository} from '../../../domain/repository/user-repository';
-import {Iuser} from '../../../domain/entities/user';
+import {UserDTO} from '../../../dto/user.dto'
 
 export class GetsingleUser {
 
   constructor(private userRepository: UserRepository) {}
-  async getsingleUser(id:string): Promise<Iuser> {
+  async getsingleUser(id:string): Promise<UserDTO> {
     try {
       const user = await this.userRepository.getsingleuser(id);
     

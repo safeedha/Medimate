@@ -1,10 +1,10 @@
 import {DoctorRepository} from '../../../domain/repository/doctor-repository';
-import {Idoctor} from '../../../domain/entities/doctor';
+import {DoctorDTO} from '../../../dto/doctor.dto'
 
 export class GetSingledoc {
 
   constructor(private doctorRepository: DoctorRepository) {}
-  async getsingledoc(id:string):Promise<Idoctor>{
+  async getsingledoc(id:string):Promise<DoctorDTO>{
     try{
          const doctor=await this.doctorRepository.getSingleDoctor(id)
          return doctor

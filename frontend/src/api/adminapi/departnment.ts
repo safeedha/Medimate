@@ -1,10 +1,11 @@
 import adminInstance from './instance';
 import axios from "axios";
-export const getDepartment = async () => {
+export const getDepartment = async (page:number, limit:number,search:string) => {
   try {
-    const response = await adminInstance.get("/department");
-    console.log(response.data)
-    return response.data; 
+    console.log(page,limit,search)
+    const response = await adminInstance.get("/department",{params:{page,limit,search}});
+
+    return {item:response.data.data,total:response.data.total}; 
   } catch (error) {
     console.log(error);
   }

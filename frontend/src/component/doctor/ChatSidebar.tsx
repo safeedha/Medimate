@@ -1,15 +1,22 @@
 
 import { useEffect, useState } from 'react';
 import type { Iuser } from '../../Interface/interface';
-import { getAlluser } from '../../api/doctorapi/chat';
+import { getAlluser,getUnreadCounts } from '../../api/doctorapi/chat';
+import { socket } from '../../socket';
+
 
 const ChatSidebar = ({getUserId,onlineuser}:{getUserId:(id:string,name:string)=>void,onlineuser:string[]}) => {
+    type UnreadCounts = {
+  [key: string]: number;
+};
+ 
   const [users, setUsers] = useState<Iuser[]>([]);
-
+  const[search,setSearch]=useState('')
+  const[unreadcount,setUnreadcount]=useState<UnreadCounts>({});
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getAlluser();
+        const response = await getAlluser(search);
         if (response) {
           setUsers(response);
         } else {
@@ -21,7 +28,35 @@ const ChatSidebar = ({getUserId,onlineuser}:{getUserId:(id:string,name:string)=>
     };
 
     fetchData();
-  }, []);
+  }, [search]);
+
+  useEffect(() => {
+  const fetchUnreadCounts = async () => {
+    try {
+      const data = await getUnreadCounts(); 
+      setUnreadcount(data);
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
+  fetchUnreadCounts();
+}, []);
+
+   useEffect(()=>{
+       socket.on('notification',(data)=>{
+        console.log(data)
+          setUnreadcount(prev => ({
+            ...prev,
+            [data.reciever]: (prev[data.reciever] || 0) + data.count
+          }))
+          }) 
+          
+       return () => {
+             socket.off('notification')
+          }
+     },[])
+  
 
   const getUser = (id: string,name:string) => {
     getUserId(id,name);
@@ -32,9 +67,13 @@ const person = users?.map((item, index) => {
   return (
     <div
       key={item._id}
-      className="flex items-center justify-start gap-3 p-3 hover:bg-green-100 cursor-pointer border-b h-16"
+      className="flex items-center gap-3 p-3 hover:bg-green-100 cursor-pointer border-b relative"
       onClick={() => {
-        getUser(item._id!,item.firstname!);
+        getUser(item._id!, item.firstname!);
+        setUnreadcount((prev) => ({
+          ...prev,
+          [item._id!]: 0,
+        }));
       }}
     >
       <div>
@@ -44,14 +83,25 @@ const person = users?.map((item, index) => {
           className="w-10 h-10 rounded-full object-cover"
         />
       </div>
-      <div className="flex flex-col justify-center">
-        <p className="text-sm font-medium text-gray-800">{item.firstname}</p>
+      <div className="flex flex-col flex-1">
+        <div className="flex justify-between items-center">
+          <p className="text-sm font-medium text-gray-800">
+            {item.firstname} {item.lastname}
+          </p>
+          {unreadcount[item._id!] > 0 && (
+            <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              {unreadcount[item._id!]}
+            </span>
+          )}
+        </div>
         <p
           className={`text-xs font-semibold ${
-            onlineuser.includes(item?._id!) ? "text-green-500" : "text-gray-500"
+            onlineuser.includes(item._id!)
+              ? "text-green-500"
+              : "text-gray-500"
           }`}
         >
-          {onlineuser.includes(item?._id!) ? "Online" : "Offline"}
+          {onlineuser.includes(item._id!) ? "Online" : "Offline"}
         </p>
       </div>
     </div>
@@ -64,6 +114,7 @@ const person = users?.map((item, index) => {
       <input
         type="text"
         placeholder="Search doctors..."
+        onChange={(e)=>setSearch(e.target.value)}
         className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 "
       />
     </div >

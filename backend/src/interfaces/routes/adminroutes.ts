@@ -25,6 +25,10 @@ import {Paytodoctor} from '../../application/usecase/wallet/paytodoctor'
 import {Refundhandle} from '../../application/usecase/wallet/refund'
 import {GetsingleUser}  from '../../application/usecase/user/getSingleUser'
 import {GetSingledoc}  from '../../application/usecase/doctor/getSingledoc'
+import {GetAlldoctor} from '../../application/usecase/doctor/getalldoctor'
+import {GetDashbordappoinment} from '../../application/usecase/appoinment/appoinmentdash'
+import {GetCountofappforeachDoc}  from '../../application/usecase/appoinment/gecountforeach'
+import {GetFilter } from '../../application/usecase/appoinment/getfilter'
 const router=express.Router()
 
 const mongouserrepository=new MongoUserRepository()
@@ -32,6 +36,8 @@ const mongoAppointmentRepository=new MongoAppointmentRepository()
 const mongoWalletRepository=new MongoWalletRepository()
 const mongodocrepository=new MongoDocRepository()
 
+const getFilter=new GetFilter(mongoAppointmentRepository)
+const getAlldoctor=new GetAlldoctor(mongodocrepository)
 const getsingledoc=new GetSingledoc(mongodocrepository)
 const getsingleUser=new GetsingleUser(mongouserrepository)
 const refundhandle=new Refundhandle(mongoWalletRepository)
@@ -40,7 +46,8 @@ const getPayout=new GetPayout(mongoWalletRepository)
 const getdoctorAppointmentByid=new GetdoctorAppointmentByid(mongoAppointmentRepository)
 const getUser=new GetUser(mongouserrepository)
 const changestatus=new ChangeStatus(mongouserrepository)
-
+const getDashbordappoinment=new GetDashbordappoinment(mongoAppointmentRepository)
+const getCountofappforeachDoc=new GetCountofappforeachDoc(mongoAppointmentRepository)
 const getUnverified=new GetUnverified(mongodocrepository)
 const getverified=new Getverified(mongodocrepository)
 const changedocstat=new ChangeDocStatus(mongodocrepository)
@@ -56,13 +63,15 @@ const getrefund =new Getrefund( mongoWalletRepository)
 const login=new Login()
 const admin=new AdminController(login,addDept,getDept,getUnverified,getverified
 ,getUser,changestatus,changedocstat,verifyDoctor,editDept,blockDept,getdoctorAppointmentByid,getAdminWallet,
-getrefund ,getPayout,paytodoctor,refundhandle,getsingleUser,getsingledoc
+getrefund ,getPayout,paytodoctor,refundhandle,getsingleUser,getsingledoc,getAlldoctor,getDashbordappoinment,
+ getCountofappforeachDoc,getFilter
 )
 
 
 
 
 router.post("/login",(req, res) => admin.adminLogin(req, res))
+router.get("/logout",(req, res) => admin.adminLogout(req, res))
 
 router.put("/department/:id",verifyAdminAuth,(req, res) => admin.editDepartment(req, res))
 router.patch("/department/:id",verifyAdminAuth,(req, res) => admin.blockDepartment(req, res))
@@ -81,7 +90,10 @@ router.get("/user",verifyAdminAuth, (req, res) => admin.getAllUser(req, res))
 router.patch("/user/status/:id",verifyAdminAuth,(req, res) => admin.changeUserblockstatus(req, res))
 router.patch("/user/:id",verifyAdminAuth,(req, res) => admin.getsingleuser(req, res))
 
-router.get("/appoinment/doctor/:id",verifyAdminAuth,(req, res) => admin.getsingleuser(req, res))
+router.get("/appoinment/doctor/:id",verifyAdminAuth,(req, res) => admin.getAllappoinmentbydoctor(req, res))
+router.get("/appoinment",verifyAdminAuth,(req, res) => admin.getAllappoinment(req, res))
+router.get("/appoinment/count",verifyAdminAuth,(req, res) => admin.getCountforDoc(req, res))
+router.get("/appoinment/filter",verifyAdminAuth,(req, res) => admin.getAppointmentsFiltered(req, res))
 
 router.get("/wallet",verifyAdminAuth,(req, res) => admin.getWalletinformation(req, res))
 router.get("/wallet/refund",verifyAdminAuth,(req, res) => admin.getRefundinformation(req, res))

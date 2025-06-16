@@ -1,5 +1,5 @@
 import userInstance from "./instance";
-
+import axios from 'axios'
 export const creatAppoinment = async (doctorId:string,slot:string,name:string,email:string,age:number,gender:"male"|"female"|"other",reason:string,amount:number) => {
   try {
     const response = await userInstance.post("/createappoinment",{doctorId, slot, name, email, age, gender, reason,amount})
@@ -7,6 +7,23 @@ export const creatAppoinment = async (doctorId:string,slot:string,name:string,em
     return response.data.message; 
   } catch (error) {
     console.log(error);
+  }
+}
+
+export const createlockslot=async(slotid:string,doctorid:string)=>
+{
+    try {
+    const response = await userInstance.post("/lockslot",{slotid,doctorid});    
+    return response.data.message
+  } catch (error) {
+    console.log(error)
+    if (axios.isAxiosError(error)) {
+       console.log(error.response?.data?.message)
+        return error.response?.data?.message || error.message;
+        } else {
+          console.error(error);
+        }    
+      
   }
 }
 
@@ -26,7 +43,12 @@ export const getpasteAppoinments = async () => {
     console.log(response.data)
     return response.data 
   } catch (error) {
-    console.log(error);
+    if (axios.isAxiosError(error)) {
+          
+        return error.response?.data?.message || error.message;
+        } else {
+          console.error(error);
+        }
   }
 }
 

@@ -6,28 +6,32 @@ const messageSchema = new Schema<Message>(
     senderId: {
       type: String,
       required: true,
-      // refPath: 'senderModel',
     },
     recieverId: {
       type: String,
       required: true,
-      // refPath: 'recieverModel',
+    },
+    messageType: {
+      type: String,
+      enum: ['text', 'image'],
+      required: true,
     },
     message: {
       type: String,
-      required: true,
+      required: function () {
+        return this.messageType === 'text';
+      },
     },
-    read: { type: Boolean, default: false },
-    // senderModel: {
-    //   type: String,
-    //   required: true,
-    //   enum: ['User', 'Doctor'],
-    // },
-    // recieverModel: {
-    //   type: String,
-    //   required: true,
-    //   enum: ['User', 'Doctor'],
-    // },
+    image: {
+      type: String,
+      required: function () {
+        return this.messageType === 'image';
+      },
+    },
+    read: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

@@ -1,11 +1,11 @@
 import { appointmentRepository  } from '../../../domain/repository/appoinment-rep';
 import { slotRepository } from '../../../domain/repository/slot-repository';
-import { Appointment } from '../../../domain/entities/appoinment';
+import {AppointmentDTO} from '../../../dto/slot.dto'
 export class GetdoctorAppointment {
   constructor(private appointmentRepo: appointmentRepository,) {}
-   async getallappoinment(doctorid:string):Promise<Appointment[]>{
+   async getallappoinment(doctorid:string,page:number,limit:number):Promise<{ total: number; appointments: AppointmentDTO[] }>{
        try{
-           const result=await this.appointmentRepo.getappinmentbydoctor(doctorid)
+           const result=await this.appointmentRepo.getappinmentbydoctor(doctorid,page,limit)
           return result
        }
        catch(error)

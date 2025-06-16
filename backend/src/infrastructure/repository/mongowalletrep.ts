@@ -2,9 +2,9 @@ import { WalletRepository } from "../../domain/repository/wallet-repo";
 import { AdminWallet, AdminWalletTransaction } from '../../domain/entities/adminwallet';
 import {AdminWalletModel} from "../database/models/adminwallet";
 import {DoctorWalletModel} from "../database/models/doctorwallet";
-import{Transaction} from '../../domain/entities/doctorwallet';
 import { AppointmentModel} from '../database/models/appoinment';
 import {UserwalletModel} from "../database/models/userwallet";
+import {WalletTransactionDto,AdminWalletTransactionDto,DoctorTransactionDTO} from '../../dto/wallet.dto'
 import mongoose from 'mongoose';
 
 export class MongoWalletRepository implements WalletRepository {
@@ -18,12 +18,12 @@ export class MongoWalletRepository implements WalletRepository {
        const transaction: AdminWalletTransaction = {
         type: 'credit',
         amount,
-        from: userid,               // string
+        from: userid,               
         to: 'platform',
         toModel:'Platform',
-        doctorId:doctorid ,            // string
+        doctorId:doctorid ,            
         appointmentId: appid, 
-        paymentstatus:false,             // string
+        paymentstatus:false,           
         date: new Date()
       };
 
@@ -53,10 +53,36 @@ export class MongoWalletRepository implements WalletRepository {
     }
   }
 
- async getdminwallet(): Promise<any> {
+ async  getdminwallet(
+  page: number,
+  limit: number
+): Promise<{ transaction: AdminWalletTransactionDto[]; balance: number; total: number }> {
   try {
-    const wallet = await AdminWalletModel.find().populate({path:'transactions.doctorId'})
-    return wallet
+    const wallet = await AdminWalletModel.findOne(); 
+
+    if (!wallet) {
+      throw new Error('Admin wallet not found');
+    }
+    const allTransactions = wallet.transactions || [];
+    const total = allTransactions.length;
+    const start = (page - 1) * limit;
+    const paginated = allTransactions.slice(start, start + limit);
+
+    const transaction: AdminWalletTransactionDto[] = paginated.map((txn: any) => ({
+      _id: txn._id,
+      amount: txn.amount,
+      from: txn.from,
+      to: txn.to,
+      toModel:txn.toModel,
+      type: txn.type,
+      date: txn.date,
+    }));
+
+    return {
+      transaction,
+      balance: wallet.balance,
+      total,
+    };
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(error.message);
@@ -66,19 +92,31 @@ export class MongoWalletRepository implements WalletRepository {
   }
 }
 
-async getRefundTransactions():Promise<any>
-{
+async getRefundTransactions(): Promise<AdminWalletTransactionDto[]> {
   try {
-     const wallet = await AdminWalletModel.findOne({'transactions.paymentstatus':false}).populate({
+    const wallet = await AdminWalletModel.findOne({ 'transactions.paymentstatus': false }).populate({
       path: 'transactions.appointmentId',
       match: { status: 'cancelled', payment_status: 'paid' },
     });
+
     if (!wallet) {
       throw new Error('No wallet found');
-    
     }
-     const filteredTransactions = wallet.transactions.filter(txn => txn.appointmentId !== null);
-    return filteredTransactions
+
+    const filteredTransactions: AdminWalletTransactionDto[] = wallet.transactions
+      .filter((txn: any) => txn.appointmentId !== null)
+      .map((txn: any) => ({
+        _id: txn._id.toString(), 
+        amount: txn.amount,
+        date: txn.date,
+        from: txn.from,
+        to: txn.to,
+        toModel: txn.toModel,
+        type: txn.type,
+        paymentstatus: txn.paymentstatus,
+      }));
+
+    return filteredTransactions;
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(error.message);
@@ -88,7 +126,7 @@ async getRefundTransactions():Promise<any>
   }
 }
 
-async getPayoutinfor(): Promise<any[]> {
+async getPayoutinfor(): Promise<AdminWalletTransactionDto[]> {
   try {
     const wallet = await AdminWalletModel.findOne().populate({
       path: 'transactions.appointmentId',
@@ -102,11 +140,19 @@ async getPayoutinfor(): Promise<any[]> {
       throw new Error('No matching wallet or transactions found');
     }
 
-    const filteredTransactions = wallet.transactions.filter(
-      (txn: any) => txn.paymentstatus === false && txn.appointmentId !== null
-    );
-
-    return filteredTransactions;
+   const filteredTransactions: AdminWalletTransactionDto[] = wallet.transactions
+  .filter((txn: any) => txn.appointmentId !== null && txn.paymentstatus === false)
+  .map((txn: any) => ({
+    _id: txn._id.toString(), 
+    amount: txn.amount,
+    date: txn.date,
+    from: txn.from,
+    to: txn.to,
+    toModel: txn.toModel,
+    type: txn.type,
+    paymentstatus: txn.paymentstatus,
+  }));
+  return filteredTransactions
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(error.message);
@@ -118,18 +164,36 @@ async getPayoutinfor(): Promise<any[]> {
 
 
 
-async getdoctorwallet(doctorId:string):Promise<any>{
-  try{
-    const wallet=await DoctorWalletModel.findOne({doctorId:doctorId})
-    if(!wallet)
-    {
-       throw new Error('No matching wallet or transactions found');
+async getdoctorwallet(
+  doctorId: string,
+  page: number,
+  limit: number
+): Promise<{ balance: number; transaction: DoctorTransactionDTO[]; total: number }> {
+  try {
+    const wallet = await DoctorWalletModel.findOne({ doctorId });
+
+    if (!wallet) {
+      throw new Error('No matching wallet or transactions found');
     }
-    return wallet
-  }
-  catch(error)
-  {
-     if (error instanceof Error) {
+
+    const balance = wallet.balance;
+    const total = wallet.transactions.length;
+
+    const start = (page - 1) * limit;
+    const end = start + limit;
+
+    const paginatedTransactions = wallet.transactions.slice(start, end);
+
+    const transaction: DoctorTransactionDTO[] = paginatedTransactions.map((txn) => ({
+      type: txn.type,
+      amount: txn.amount,
+      appointmentId: txn.appointmentId?.toString(),
+      date: txn.date,
+    }));
+
+    return { balance, transaction, total };
+  } catch (error) {
+    if (error instanceof Error) {
       throw new Error(error.message);
     } else {
       throw new Error('An unknown error occurred');
@@ -139,8 +203,6 @@ async getdoctorwallet(doctorId:string):Promise<any>{
 
 async addpaytodoctor(transactionId: string, doctorid: string): Promise<{ message: string }> {
   try {
-   
-
     const wallet = await AdminWalletModel.findOne();
     if (!wallet) {
       throw new Error('Admin wallet not found');
@@ -275,19 +337,32 @@ async addrefund(transactionId:string):Promise<string> {
   }
 }
 
-async getuserwallet(userid:string):Promise<any>{
-  try{
-   const userwallet=await UserwalletModel.findOne({userId:userid})
-   if(!userwallet)
-   {
-    throw new Error('no wallet available')
-   }
-   return userwallet
-  }
- catch(error)
-  {
+async  getuserwallet(userid: string, page: number, limit: number): Promise<{ balance: number;  transactions: WalletTransactionDto[] }> {
+  try {
+    const userwallet = await UserwalletModel.findOne({ userId: userid });
+
+    if (!userwallet) {
+      throw new Error('No wallet available');
+    }
+    const totalTransactions = userwallet.transactions.length;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    const paginatedTransactions: WalletTransactionDto[] = userwallet.transactions
+  .slice(startIndex, endIndex)
+  .map((tx) => ({
+    type: tx.type,
+    amount: tx.amount,
+    date: tx.date,
+  }));
+
+    return {
+      balance: userwallet.balance,
+      transactions: paginatedTransactions
+    };
+  } catch (error) {
     if (error instanceof Error) {
-      console.log(error)
+      console.log(error);
       throw new Error(error.message);
     } else {
       throw new Error('An unknown error occurred');
