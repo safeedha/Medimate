@@ -38,7 +38,7 @@ function Doctor() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [modalIsOpen, setIsOpen] = useState(false);
   const subtitleRef = useRef<HTMLHeadingElement>(null);
-  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   
   useEffect(() => {
@@ -74,7 +74,7 @@ function Doctor() {
   };
 
   const blockHandle = async (id: string) => {
-    try {
+ 
       const result = await Swal.fire({
         title: 'Are you sure?',
         text: 'Do you want to change status?',
@@ -90,9 +90,7 @@ function Doctor() {
         setDoctors(updatedDoctors);
         toast.success('Status is updated');
       }
-    } catch (error) {
-      toast.error('Failed to update status');
-    }
+   
   };
 
   const totalPages = Math.ceil(totalDoctors / itemsPerPage);

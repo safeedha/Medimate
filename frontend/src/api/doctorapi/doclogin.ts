@@ -49,6 +49,8 @@ export const signup = async(
     fee,
     profilePicture,
    medicalLicence)
+
+  
   const response = await doctorInstance.post("/signup", {
     firstname,
     lastname,
@@ -67,6 +69,7 @@ export const signup = async(
  }
  catch (error) {
   if (axios.isAxiosError(error)) {
+    console.log(error)
     console.log(error.response?.data?.message);
     return error.response?.data?.message || error.message;
   } else if (error instanceof Error) {
@@ -101,7 +104,7 @@ export const  login = async (email: string, password: string,dispatch:AppDispatc
 
 export const  logout = async () => {
   try {
-    const response = await doctorInstance.get("/logout");
+    await doctorInstance.get("/logout");
    
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -157,9 +160,11 @@ export const verifydoctorotp = async (email:string,otp:string) => {
 }
 
 
-export const profileUpdate=async(data:{firstname:string,lastname:string,experience:number,fee:number,image:string,email:string| undefined,phone:string,specialisation:string,qualification:string},updata:Idoctor,dispatch:AppDispatch)=>
+export const profileUpdate=async(data:{firstname:string,lastname:string,experience:number,fee:number,image:string,email:string| undefined,phone:string,specialisation:string,qualification:string,
+medicalLicence:string},updata:Idoctor,dispatch:AppDispatch)=>
 {
   try{
+
        const response = await doctorInstance.post("/update", data);
        dispatch(setDoctorDetails(updata))
        return response.data.message
@@ -180,6 +185,7 @@ export const profileUpdate=async(data:{firstname:string,lastname:string,experien
 export const reappliction=async(email:string,specialisation:string,experience:number,fee:number,medicalLicence:string)=>
 {
   try{
+       console.log(specialisation)
          const response = await doctorInstance.put("/reapply",{email,specialisation,experience,fee,medicalLicence});
          console.log(response)
          return response.data.message

@@ -7,6 +7,7 @@ import {useNavigate} from 'react-router-dom'
 import axios from 'axios'
 interface DepartmentProps {
   _id: string;
+  id :string;
   deptname: string;
   description: string;
   createdAt: string;   
@@ -149,7 +150,7 @@ function Reapplication() {
           >
             <option  disabled value="">Select a department</option>
             {departments.map((dept) => (
-              <option key={dept._id} value={dept._id}>
+              <option key={dept.id} value={dept.id}>
                 {dept.deptname}
               </option>
             ))}

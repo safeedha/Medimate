@@ -25,6 +25,10 @@ import {GetSingleappoinment} from  '../../application/usecase/appoinment/getSing
 import {Getallunblockeddept} from '../../application/usecase/dept/getunblocked';
 import {Getunreadcount} from '../../application/usecase/conversation/getunreadcount';
 import {Reshedule} from '../../application/usecase/appoinment/reshedule'
+import {GetdoctorAppointmentCount} from '../../application/usecase/appoinment/getCount'
+import {GetFilterfordoc} from '../../application/usecase/appoinment/getfilterfordoc'
+import {Createfollowup } from '../../application/usecase/appoinment/createfolloup'
+import {GetPage} from '../../application/usecase/appoinment/getPage'
 interface CustomRequest extends Request {
   id?: string;
 }
@@ -34,7 +38,8 @@ export class DoctorController {
      private docreapply:DocReapply,private otpdoccreation:OtpdocCretion, private createslot:CreateSlot,private getallrecslot:GetRecurringSlot,private getdoctorAppointment:GetdoctorAppointment,
      private cancelRecurringSlot:CancelRecurringSlot,private changestatusAppointment:ChangestatusAppointment,private getsingleUser:GetsingleUser,private getslotbydate:GetSlotByDate,private cancelSlot:CancelSlot,
      private getUser:GetUser, private getallmessage:GetAllmessage,private addreport:Addreport,private getDoctorWallet:GetDoctorWallet,private getSingleappoinment:GetSingleappoinment,private getallunblockeddept:Getallunblockeddept,
-     private getunreadcount:Getunreadcount,private reshedule:Reshedule
+     private getunreadcount:Getunreadcount,private reshedule:Reshedule,private getdoctorAppointmentCount:GetdoctorAppointmentCount,private getFilterfordoc:GetFilterfordoc,private createfollowup:Createfollowup,
+     private getPage:GetPage
   ) {}
   
 
@@ -167,8 +172,8 @@ export class DoctorController {
 
   async updatedocprofile(req: Request, res: Response): Promise<void> {
     try {
-       const {firstname,lastname,experience,fee,image,email,phone,specialisation,qualification} = req.body;
-         await this.docprofile.updateprofile(firstname,lastname,experience,fee,image,email,phone,specialisation,qualification)
+       const {firstname,lastname,experience,fee,image,email,phone,specialisation,qualification,medicalLicence} = req.body;
+         await this.docprofile.updateprofile(firstname,lastname,experience,fee,image,email,phone,specialisation,qualification,medicalLicence)
         res.status(200).json({ message: 'Profile updated suceesfully' });
       } catch (error) {
       const errorMessage = error instanceof Error
@@ -184,7 +189,7 @@ export class DoctorController {
 
   async getAllDept(req: Request, res: Response): Promise<void> {
       try {
-      console.log('from dept')
+  
       const result = await this.getallunblockeddept.getAllunblockedDept();
 
       res.status(200).json(result);
@@ -211,13 +216,28 @@ export class DoctorController {
      }
   }
 
+   async createfollowp(req: CustomRequest, res: Response):Promise<void>{
+    try{
+           const {slotId,appoinmentId}=req.body
+           const result=await this.createfollowup.createfollowpappinment(slotId,appoinmentId)
+          res.status(201).json(result)
+      }
+      catch(error)
+      {
+        const errorMessage = error instanceof Error
+          ? error.message
+          : 'Internal server error';
+        res.status(400).json({ message: errorMessage });
+      }
+  
+    }
 
   async createAppoinment(req: Request, res: Response):Promise<void>{
     try{
        const {doctorId}=req.body
         const {startDate,endDate,selectedDays,startTime,endTime,interval,frequency}=req.body
         const result=await this.createslot.createSlots(doctorId,startDate,endDate,selectedDays,startTime,endTime,interval,frequency)
-        console.log(result)
+ 
       res.status(201).json(result)
     }
     catch(error)
@@ -270,7 +290,6 @@ export class DoctorController {
       return;
     }
     const appointments = await this.getdoctorAppointment.getallappoinment(id,page,limit)
-    console.log(appointments)
     res.status(200).json({appoi: appointments} );
   } catch (error) {
     console.error("Error fetching appointments:", error);
@@ -315,13 +334,30 @@ async changestatusappoinment(req: CustomRequest, res: Response): Promise<void> {
   }
 }
 
+async getpage(req: CustomRequest, res: Response): Promise<void> {
+  try {
+   const { id } = req;
+   const  originalId=req.query.originalId as string
+    const limit=parseInt(req.query.limit as string)
+     const result=await this.getPage.getpage(id!,originalId,limit)
+    res.status(200).json(result)
+
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal server error";
+    res.status(500).json({ message: errorMessage });
+  }
+}
+
 async createresedule(req: CustomRequest, res: Response): Promise<void> {
   try{
     
      const {canceledslot,reason,userid,email,newslot}=req.body
      console.log(reason)
     const status: 'pending' |  'cancelled' | 'completed'= 'cancelled';
-    const result=await this.changestatusAppointment.changestus(canceledslot,status)
+    const reschedule=true
+    const result=await this.changestatusAppointment.changestus(canceledslot,status,reschedule)
     const response=await this.reshedule.createresedule(canceledslot,newslot)
     let subject:string="Reason for  appoinment Cancellation"
     await sendMail(email, undefined,subject,reason);
@@ -332,6 +368,7 @@ async createresedule(req: CustomRequest, res: Response): Promise<void> {
   {
      const errorMessage =
         error instanceof Error ? error.message : 'Internal server error';
+        console.log(errorMessage)
       res.status(400).json({ message: errorMessage });
   }
 }
@@ -354,6 +391,41 @@ async getsingleappoinment(req: CustomRequest, res: Response): Promise<void> {
   try {
    const {id}=req.params 
     const result=await this.getSingleappoinment.getsingleappoinment(id)   
+    res.status(200).json(result)
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal server error";
+    res.status(500).json({ message: errorMessage });
+  }
+}
+
+async getOverview(req: CustomRequest, res: Response): Promise<void> {
+  try {
+   const {id}=req 
+   console.log('hey',id)
+    const result=await this.getdoctorAppointmentCount.getcountofappoinment(id!)   
+    res.status(200).json(result)
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal server error";
+    res.status(500).json({ message: errorMessage });
+  }
+}
+
+async getfilter(req: CustomRequest, res: Response): Promise<void> {
+  try {
+    console.log("hello world")
+   const {id}=req 
+    const { status, start, end } = req.query;
+    if (!status || !start || !end) {
+      res.status(400).json({ message: 'Missing status, start, or end date' });
+      return;
+    }
+    const startDate = new Date(start as string);
+    const endDate = new Date(end as string);
+    const result=await this.getFilterfordoc.getappoinmentrange( status as 'completed' | 'cancelled' | 'pending',startDate,endDate,id!)   
     res.status(200).json(result)
   } catch (error) {
     console.error("Error fetching appointments:", error);

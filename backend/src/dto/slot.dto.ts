@@ -45,6 +45,11 @@ export interface AppointmentDTO  {
   payment_status: string;
   reportAdded: boolean;
   schedule: ScheduleDTO;
+  followup_id?:string|AppointmentDTO
+  followup_status?:boolean
+   rescheduled_to?: string| AppointmentDTO ,
+  isRescheduled?:boolean;
+
 }
 
 

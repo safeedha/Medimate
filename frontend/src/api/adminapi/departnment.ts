@@ -16,20 +16,15 @@ export const createDepartment = async (deptname: string, description: string) =>
   try {
     const response = await adminInstance.post("/department", { deptname, description });
     return { success: true, data: response.data };
-  } catch (error: unknown) {
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "response" in error &&
-      (error as any).response?.data?.message
-    ) {
-      return {
-        success: false,
-        message: (error as any).response.data.message,
-      };
-    } else {
-      return { success: false, message: "Something went wrong." };
-    }
+  } catch (error) {
+     if (axios.isAxiosError(error)) {
+    console.log(error.response?.data?.message);
+    return error.response?.data?.message || error.message;
+  } else if (error instanceof Error) {
+    return error.message;
+  } else {
+    return 'Internal server error';
+  }
   }
 };
 
@@ -41,7 +36,6 @@ export const Editdepartnemt = async (id:string,deptname: string, description: st
   return response.data.message;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-    console.log(error.response?.data?.message);
     return error.response?.data?.message || error.message;
   } else if (error instanceof Error) {
     return error.message;
@@ -59,7 +53,6 @@ export const blockdepartnemt = async (id:string) => {
   return response.data.message;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-    console.log(error.response?.data?.message);
     return error.response?.data?.message || error.message;
   } else if (error instanceof Error) {
     return error.message;

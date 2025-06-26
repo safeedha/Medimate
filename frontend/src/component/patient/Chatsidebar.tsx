@@ -1,10 +1,10 @@
-import {useEffect,useState}from 'react'
+import {useEffect,useState,memo}from 'react'
 import { getAlldoctors } from '../../api/userapi/doctor';
 import {getUnreadCounts} from '../../api/userapi/chat'
 import type{Idoctor} from '../../Interface/interface'
 import { socket } from '../../socket';
 
-function Chatsidebar({getUserId,onlineuser}:{getUserId:(id:string,name:string)=>void,onlineuser:string[]}) {
+function Chatsidebar ({getUserId,onlineuser}:{getUserId:(id:string,name:string)=>void,onlineuser:string[]}) {
   type UnreadCounts = {
   [key: string]: number;
 };
@@ -12,7 +12,7 @@ function Chatsidebar({getUserId,onlineuser}:{getUserId:(id:string,name:string)=>
     const[unreadcount,setUnreadcount]=useState<UnreadCounts>({});
       
     const [doctors, setDoctors] = useState<Idoctor[] | null>(null);
- useEffect(() => {
+    useEffect(() => {
      const fetchDoctors = async () => {
        const doctorData = await getAlldoctors(0,0,'All doctor',search);
        setDoctors(doctorData.data);
@@ -117,4 +117,4 @@ const person = doctors?.map((item) => (
   )
 }
 
-export default Chatsidebar
+export default memo(Chatsidebar);

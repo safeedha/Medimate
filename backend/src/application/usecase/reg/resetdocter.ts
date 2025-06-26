@@ -1,11 +1,12 @@
 import { RegRepository  } from "../../../domain/repository/reg-repository"
-
+import bcrypt from 'bcrypt';
 export class DocPassrest {
   constructor(private regRepository: RegRepository) {}
 
   async passwordrest( email: string, password: string): Promise<{ message: string }> {
     try {
-       await this.regRepository.resetdoctor(email,password);
+          const hashedPassword = await bcrypt.hash(password, 10);
+       await this.regRepository.resetdoctor(email,hashedPassword);
       return { message: "Password updated" };
     } catch (error) {
       if (error instanceof Error) {

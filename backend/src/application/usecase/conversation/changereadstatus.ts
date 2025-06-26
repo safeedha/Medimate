@@ -1,5 +1,6 @@
 
 import {ConversationRepository} from '../../../domain/repository/conver-repo'
+import {Message} from '../../../domain/entities/messages'
 
 
 export class Messageread{
@@ -7,9 +8,9 @@ export class Messageread{
   {
    
   }
-  async readmessage(senderId:string,recieverId:string):Promise<string>
+  async readmessage(messageId:string):Promise<Message>
   {
-    const result=await this.conversationrepository.changereadstatus(senderId,recieverId)
+    const result=await this.conversationrepository.changereadstatus(messageId)
     return result
   }
 

@@ -7,11 +7,10 @@ import type {
   
 } from "axios";
 
-interface AdminResponseData {
-  data: any; 
+interface AdminResponseData<T = unknown> {
+  data: T;
   status: number;
 }
-
 
 interface AdminErrorData {
   message: string;
@@ -27,10 +26,6 @@ const adminInstance: AxiosInstance = axios.create({
 adminInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
   
-    // const token = localStorage.getItem("adminToken");
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
     return config;
   },
   (error: unknown) => {

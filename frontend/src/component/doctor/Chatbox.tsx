@@ -5,10 +5,12 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../../app/store';
 import axios from 'axios';
 import EmojiPicker from 'emoji-picker-react'
+import type { Message,MessagePayload} from '../../Interface/interface';
+
 
 function Chatbox({ userid, name }: { userid: string; name: string }) {
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [imageurl, setImageurl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -21,21 +23,28 @@ function Chatbox({ userid, name }: { userid: string; name: string }) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+
+const getAllMessages = async () => {
+  const result = await geteverymessage(userid);
+  if (result === 'No conversation found') {
+    setMessages([]);
+  } else {
+    setMessages(result);
+  }
+};
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   useEffect(() => {
-    const getAllMessages = async () => {
-      const result = await geteverymessage(userid);
-      if (result === 'No conversation found') {
-        setMessages([]);
-      } else {
-        setMessages(result);
-      }
-    };
-    getAllMessages();
-  }, [userid]);
+  getAllMessages();
+}, [userid]);
+
+  useEffect(() => {
+    if (!userid || !user?._id) return;  
+   socket.emit('read', `${userid}_${user?._id}`)
+}, [user?._id, userid]);
 
 
   useEffect(() => {
@@ -60,6 +69,13 @@ function Chatbox({ userid, name }: { userid: string; name: string }) {
       socket.off('privateMessage');
     };
   }, []);
+
+   useEffect(() => {
+  socket.on('messageReaded', getAllMessages);
+  return () => {
+    socket.off('messageReaded', getAllMessages);
+  };
+}, []);
 
   const filehandle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -99,7 +115,7 @@ function Chatbox({ userid, name }: { userid: string; name: string }) {
     }
 
     const roomId = [user?._id, userid].sort().join('_');
-    const newMessage: any = {
+    const newMessage:MessagePayload = {
       from: user?._id,
       to: userid,
       roomId,
@@ -142,7 +158,7 @@ function Chatbox({ userid, name }: { userid: string; name: string }) {
               ⬇ Download
             </a>
             {/* Read receipt for image-only messages (if no text) */}
-            {!item.message && isSender && (
+            { isSender && (
               <span className="text-xs text-gray-400 mt-1 block text-right">
                 {item.read ? '✓✓ Read' : '✓ Sent'}
               </span>

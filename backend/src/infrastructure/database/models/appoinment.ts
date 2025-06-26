@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { Appointment } from '../../../domain/entities/appoinment';
 
-const AppointmentSchema = new Schema<Appointment >({
+const AppointmentSchema = new Schema<Appointment>({
   user_id: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -49,22 +49,34 @@ const AppointmentSchema = new Schema<Appointment >({
     enum: ['paid', 'unpaid'],
     default: 'unpaid',
   },
-    reportAdded:{
-    type:Boolean,
-    default:false
+  reportAdded: {
+    type: Boolean,
+    default: false,
   },
-   rescheduled_to:{
+  rescheduled_to: {
     type: Schema.Types.ObjectId,
-    ref: 'Slot',
+    ref: 'Appointment',
   },
-  isRescheduled:{
+  isRescheduled: {
+    type: Boolean,
+    default: false,
+  },
+
+  // 🔽 New fields for follow-up
+  followup_id: {
+    type: Schema.Types.ObjectId,
+    ref: 'Appointment', // Reference to the original appointment
+    default: null,
+  },
+  followup_status: {
     type: Boolean,
     default: false,
   }
-   
+
 }, {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 });
 
 export const AppointmentModel = model('Appointment', AppointmentSchema);
+
 

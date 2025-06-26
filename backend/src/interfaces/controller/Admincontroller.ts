@@ -295,15 +295,15 @@ async getWalletinformation(req: Request, res: Response): Promise<void> {
   }
 }
 
-async getRefundinformation(req: Request, res: Response): Promise<void> {
-  try {
-    const result=await this.getrefund.getrefundable()
-    res.status(200).json(result);
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
-  }
-}
+// async getRefundinformation(req: Request, res: Response): Promise<void> {
+//   try {
+//     // const result=await this.getrefund.getrefundable()
+//     res.status(200).json(result);
+//   } catch (error) {
+//     const errorMessage = error instanceof Error ? error.message : "Internal server error";
+//     res.status(400).json({ message: errorMessage });
+//   }
+// }
 
 async payoutinformation(req: Request, res: Response):Promise<void> {
     try {

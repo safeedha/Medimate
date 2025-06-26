@@ -33,9 +33,7 @@ export const changeStatus = async (id: string) => {
 
 export const getsingleuser = async (id: string) => {
   try {
-    console.log(id)
     const response = await adminInstance.patch(`/user/${id}`);
-    console.log(response.data)
      return response.data;
   } catch (error) {
     if(axios.isAxiosError(error)) {
@@ -45,14 +43,3 @@ export const getsingleuser = async (id: string) => {
   }
 }
 
-export const gettotalappoinment=async()=>{
-   try {
-
-    const response = await adminInstance.get(`/appoinment`);
-  } catch (error) {
-    if(axios.isAxiosError(error)) {
-      console.log(error.response?.data?.message);
-      return error.response?.data?.message || error.message;
-    }
-  }
-}

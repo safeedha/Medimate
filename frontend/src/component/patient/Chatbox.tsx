@@ -1,13 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef,memo } from 'react';
 import { socket } from '../../socket';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../app/store';
 import { geteverymessage } from '../../api/userapi/chat';
 import axios from 'axios';
 import EmojiPicker from 'emoji-picker-react'
+import type { Message,MessagePayload} from '../../Interface/interface';
 
 function Chatbox({ userid, name }: { userid: string; name: string }) {
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [imageurl, setImageurl] = useState<string | null>(null);
@@ -24,17 +25,36 @@ function Chatbox({ userid, name }: { userid: string; name: string }) {
     scrollToBottom();
   }, [messages]);
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      const result = await geteverymessage(userid);
-      setMessages(result === 'No conversation found' ? [] : result);
-    };
-    fetchMessages();
-  }, [user?._id, userid]);
+
+ const fetchMessages = async () => {
+  if (!userid) return;
+  const result = await geteverymessage(userid);
+  setMessages(result === 'No conversation found' ? [] : result);
+};
+
+useEffect(() => {
+  fetchMessages();
+}, [user?._id, userid]);
+
+useEffect(() => {
+  socket.on('messageReaded', fetchMessages);
+  return () => {
+    socket.off('messageReaded', fetchMessages);
+  };
+}, []);
+
+
+
 
   useEffect(() => {
-    if (!userid || !user?._id) return;
-    
+    if (!userid || !user?._id) return;  
+   socket.emit('read', `${userid}_${user?._id}`)
+}, [user?._id, userid]);
+
+
+
+  useEffect(() => {
+    if (!userid || !user?._id) return;    
     socket.emit('participant',{participantId: `${user?._id}_${userid}` })
     const roomId = [userid, user._id].sort().join('_');
     socket.emit('joinRoom', { roomId });
@@ -86,7 +106,7 @@ function Chatbox({ userid, name }: { userid: string; name: string }) {
     }
 
     const roomId = [user?._id, userid].sort().join('_');
-    const newMessage: any = {
+    const newMessage: MessagePayload = {
       from: user?._id,
       to: userid,
       roomId,
@@ -112,7 +132,7 @@ function Chatbox({ userid, name }: { userid: string; name: string }) {
       className={`flex ${isSender ? 'justify-end' : 'justify-start'} mb-2`}
     >
       <div className="flex flex-col items-start max-w-xs">
-    
+        {/* Image Message */}
         {item?.image && (
           <div className="relative group mb-1 max-w-[200px] max-h-[200px]">
             <img
@@ -130,29 +150,30 @@ function Chatbox({ userid, name }: { userid: string; name: string }) {
           </div>
         )}
 
+        {/* Message Bubble */}
         {item?.message && (
-          <div className="flex flex-col gap-[2px] items-end">
-            <div
-              className={`px-4 py-2 rounded-lg break-words ${
-                isSender
-                  ? 'bg-blue-500 text-white self-end'
-                  : 'bg-gray-200 text-black self-start'
-              }`}
-            >
-              {item.message}
-            </div>
-
-            {isSender && (
-              <span className="text-xs text-gray-400 mt-[2px]">
-                {item.read ? '✓✓ Read' : '✓ Sent'}
-              </span>
-            )}
+          <div
+            className={`px-4 py-2 rounded-lg break-words ${
+              isSender
+                ? 'bg-blue-500 text-white self-end'
+                : 'bg-gray-200 text-black self-start'
+            }`}
+          >
+            {item.message}
           </div>
+        )}
+
+        {/* ✅ Read Receipt: shows for sender, even if just image */}
+        {isSender && (
+          <span className="text-xs text-gray-400 mt-1 self-end">
+            {item.read ? '✓✓ Read' : '✓ Sent'}
+          </span>
         )}
       </div>
     </div>
   );
 });
+
 
   const roomId = user?._id && userid ? [user._id, userid].sort().join('-') : '';
 
@@ -257,4 +278,4 @@ function Chatbox({ userid, name }: { userid: string; name: string }) {
   );
 }
 
-export default Chatbox;
+export default memo(Chatbox);

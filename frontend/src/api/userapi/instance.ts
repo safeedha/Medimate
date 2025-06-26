@@ -1,22 +1,21 @@
 import axios from "axios";
-
 import type {
   AxiosInstance,
   AxiosResponse,
-  InternalAxiosRequestConfig
-  
+  InternalAxiosRequestConfig,
 } from "axios";
 
-interface AdminResponseData {
-  data: any; 
+interface UserResponseData<T = unknown> {
+  data: T;
   status: number;
 }
 
 
-interface AdminErrorData {
+interface UserErrorData {
   message: string;
   code?: string;
 }
+
 
 const userInstance: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_USER_API,
@@ -26,30 +25,37 @@ const userInstance: AxiosInstance = axios.create({
 
 userInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
-  
-    // const token = localStorage.getItem("adminToken");
+    // Optional: Attach token if needed
+    // const token = localStorage.getItem("userToken");
     // if (token) {
     //   config.headers.Authorization = `Bearer ${token}`;
     // }
     return config;
   },
-  (error: unknown) => {
-    console.error("Request error:", error);
+  (error) => {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios Request Error:", error.message);
+    } else if (error instanceof Error) {
+      console.error("Request Error:", error.message);
+    } else {
+      console.error("Unknown Request Error:", error);
+    }
     return Promise.reject(error);
   }
 );
 
-
 userInstance.interceptors.response.use(
-  (response: AxiosResponse<AdminResponseData>) => {
+  (response: AxiosResponse<UserResponseData>) => {
     return response;
   },
-  (error: unknown) => {
-    if (axios.isAxiosError<AdminErrorData>(error)) {
-      console.error("API Error Message:", error.response?.data.message);
+  (error) => {
+    if (axios.isAxiosError<UserErrorData>(error)) {
+      console.error("User API Error Message:", error.response?.data.message);
       console.error("Error Status Code:", error.response?.status);
+    } else if (error instanceof Error) {
+      console.error("Unexpected User Error:", error.message);
     } else {
-      console.error("Unexpected Error:", error);
+      console.error("Unknown User Error:", error);
     }
     return Promise.reject(error);
   }

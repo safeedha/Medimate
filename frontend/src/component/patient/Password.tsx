@@ -24,7 +24,7 @@ function Password() {
         toast.error('Password must be at least 5 characters long and contain letters and numbers');
         return;
       }
-      const result=await userpasswordRest(user?.email!,newPassword )
+      await userpasswordRest(user?.email as string,newPassword )
       toast.success("Password changed")
   
   };

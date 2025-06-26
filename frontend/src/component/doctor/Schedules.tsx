@@ -78,7 +78,7 @@ function Schedules() {
 
   const handleClose = async () => {
     const daysOfWeek: DayOfWeek[] = Object.entries(selectedDays)
-      .filter(([_, isSelected]) => isSelected)
+      .filter(([, isSelected]) => isSelected)
       .map(([day]) => day as DayOfWeek);
 
     const today = new Date();

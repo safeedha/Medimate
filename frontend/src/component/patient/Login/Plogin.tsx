@@ -38,12 +38,11 @@ function Plogin() {
     }
   };
   
-  const responseMessage = async(response:any) => {
-        console.log(response);
-        console.log(jwtDecode(response.credential))
-        await googleLogin(response.credential,dispatch)
-        toast.success('Login successful');
-        navigate("/home")
+   const responseMessage = async (response: { credential: string }) => {
+      console.log(jwtDecode(response.credential));
+      await googleLogin(response.credential, dispatch);
+      toast.success('Login successful');
+      navigate("/home");
     };
     const errorMessage = () => {
         console.log("failed")

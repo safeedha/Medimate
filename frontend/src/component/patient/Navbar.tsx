@@ -2,15 +2,14 @@ import { Link ,useNavigate} from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import {logoutUser} from '../../feature/userslice'
 import type{ AppDispatch} from '../../app/store'
-import {useState,useEffect} from 'react'
-import { socket } from '../../socket';
+import {useEffect,memo} from 'react'
+
 import {getuserdetail,logout} from '../../api/userapi/register'
 
 
-const Navbar = () => {
+const Navbar = memo(() => {
   const navigate=useNavigate();
-  
-   const [unreadCount, setUnreadCount] = useState(0);
+  const dispatch=useDispatch<AppDispatch>()
     useEffect(()=>{
       const setuserdetail=async()=>{
        const result=await getuserdetail()
@@ -22,14 +21,14 @@ const Navbar = () => {
        }
       }
       setuserdetail()
-    },[])
+    },[dispatch,navigate])
  
   const handlelogout= async() => {
     //  await logout()
      dispatch(logoutUser())
     navigate('/login');
   };
-   const dispatch=useDispatch<AppDispatch>()
+  
   return (
     <nav className="bg-gradient-to-r from-blue-500 to-green-400 p-4 shadow-lg flex justify-between items-center z-50 w-full fixed top-0 left-0">
       {/* Left: Logo and Web Name */}
@@ -73,11 +72,11 @@ const Navbar = () => {
         </Link>
 
         {/* Notification Count Badge */}
-        {unreadCount > 0 && (
+        {/* {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-full">
             {unreadCount}
           </span>
-        )}
+        )} */}
       </div>
 
         <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition" onClick={handlelogout}>
@@ -86,6 +85,6 @@ const Navbar = () => {
       </div>
     </nav>
   );
-};
+});
 
 export default Navbar;

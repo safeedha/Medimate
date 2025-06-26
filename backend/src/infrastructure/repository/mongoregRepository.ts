@@ -26,6 +26,7 @@ interface DecodedGoogleToken {
 export class MongoRegRepository implements RegRepository {
   async docRegister(data: Idoctor): Promise<void> {
     try {
+      console.log(data)
       const mail = data.email;
       const phone = data.phone;
       const existingPhone = await Doctor.findOne({ phone: phone });
@@ -107,16 +108,28 @@ export class MongoRegRepository implements RegRepository {
         throw new Error('User with this phone number already exists');
       }
       const existingUser = await User.findOne({ email: mail });
-      if (existingUser) {
-        throw new Error('User with this email already exists');
+     if (existingUser) {
+      if (existingUser.password) {
+        throw new Error('Email is already registered');
       }
+      else{
+         existingUser.firstname=data.firstname
+         existingUser.lastname=data.lastname
+         existingUser.phone=data.phone
+         existingUser.isBlocked =data.isBlocked
+         existingUser.gender=data.gender
+         await existingUser.save()
+      }
+    }
+    else{
       const newUser = new User(data);
       await newUser.save()
+    }
 
     }
     catch (error) {
       if (error instanceof Error) {
-        throw new Error(error.message); // or just: throw error;
+        throw new Error(error.message);
       }
       throw new Error('Unexpected error occurred during user registration');
     }
@@ -126,8 +139,8 @@ export class MongoRegRepository implements RegRepository {
   async usergoogleLogin(credential:string):Promise<Iuser>{
     try{
               const decoded = jwtDecode<DecodedGoogleToken>(credential);
-              console.log(decoded)
-               const existingUser = await User.findOne({  googleIds: decoded?.sub });
+             
+               const existingUser = await User.findOne({  email: decoded?.email });
                if(!existingUser)
                {
               
@@ -138,6 +151,15 @@ export class MongoRegRepository implements RegRepository {
                   user.email=decoded.email
                   await user.save()
                }
+               else{
+                  if(existingUser?.isBlocked === true) {
+                  throw new Error('this account is blocked');
+                 }
+                 else{
+                   existingUser.googleIds=decoded?.sub
+                   await existingUser.save()
+                 }
+                }
               const user = await User.findOne({ googleIds: decoded?.sub });
             if (!user) {
               throw new Error("User creation failed");
@@ -147,7 +169,7 @@ export class MongoRegRepository implements RegRepository {
     catch(error)
     {
        if (error instanceof Error) {
-        throw new Error(error.message); // or just: throw error;
+        throw new Error(error.message);
       }
       throw new Error('Unexpected error occurred during user login');
     }
@@ -193,7 +215,7 @@ export class MongoRegRepository implements RegRepository {
       }
       const existOtp = await Otp.findOne({ email: mail });
        if (existOtp) {
-         throw new Error('Otp already exists for this email')
+             await existOtp.deleteOne();
         }
        const otp = new Otp(data)
        await otp.save()
@@ -239,13 +261,14 @@ async verifyOtp(email: string, otp: string): Promise<void> {
   try{
       const mail=email
       const existingOtp = await Otp.findOne({ email: mail });
+      console.log(existingOtp)
       if (!existingOtp) {
         throw new Error('this email not registered for otp')
       }
       if (existingOtp.otp !== otp) {
         throw new Error('invalid otp')
       }
-      const user=await User.findOne({email:mail,googleIds:null})
+      const user=await User.findOne({email:mail})
        if (!user) {
        throw new Error("User not found");
       }

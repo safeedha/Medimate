@@ -1,16 +1,13 @@
-import { Appointment } from '../../../domain/entities/appoinment';
+
 import { WalletRepository } from '../../../domain/repository/wallet-repo';
-import { AdminWallet } from '../../../domain/entities/adminwallet';
-import{AdminWalletTransactionDto} from '../../../dto/wallet.dto'
+
 export class Getrefund {
   constructor(private walletRepository: WalletRepository) {}
 
-  async getrefundable(): Promise<AdminWalletTransactionDto[]> {
+  async getrefundable(appoinmentId:string): Promise<string> {
     try {
-      const refunds = await this.walletRepository.getRefundTransactions();
-
-      
-      return refunds;
+      const refunds = await this.walletRepository.getRefundTransaction(appoinmentId);
+       return refunds;
 
     } catch (error) {
       if (error instanceof Error) {

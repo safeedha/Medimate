@@ -96,7 +96,7 @@ router.get("/appoinment/count",verifyAdminAuth,(req, res) => admin.getCountforDo
 router.get("/appoinment/filter",verifyAdminAuth,(req, res) => admin.getAppointmentsFiltered(req, res))
 
 router.get("/wallet",verifyAdminAuth,(req, res) => admin.getWalletinformation(req, res))
-router.get("/wallet/refund",verifyAdminAuth,(req, res) => admin.getRefundinformation(req, res))
+// router.get("/wallet/refund",verifyAdminAuth,(req, res) => admin.getRefundinformation(req, res))
 router.get("/wallet/pay",verifyAdminAuth,(req, res) => admin.payoutinformation(req, res))
 router.post("/wallet/pay",verifyAdminAuth,(req, res) => admin.payouttodoctor(req, res))
 router.post("/wallet/refund",verifyAdminAuth,(req, res) => admin.refundhandl(req, res))

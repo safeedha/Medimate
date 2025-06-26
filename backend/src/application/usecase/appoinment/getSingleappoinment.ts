@@ -1,5 +1,4 @@
 import { appointmentRepository  } from '../../../domain/repository/appoinment-rep';
-import { slotRepository } from '../../../domain/repository/slot-repository';
 import { Appointment } from '../../../domain/entities/appoinment';
 export class GetSingleappoinment {
   constructor(private appointmentRepo: appointmentRepository,) {}

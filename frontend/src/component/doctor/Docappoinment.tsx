@@ -1,19 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState,useRef ,useCallback} from 'react';
 import DoctorSidebar from './Docsidebar';
-import { getallappoinment, cancelAppoinment, completeappoinment ,reshecdule} from '../../api/doctorapi/appoinment';
+import { getallappoinment, cancelAppoinment, completeappoinment ,reshecdule,followup,getPage} from '../../api/doctorapi/appoinment';
 import { toast, Toaster } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Pagination from '../../component/common/Pgination';
-import type { IndividualSlot } from '../../Interface/interface';
+import type { IndividualSlot ,Appointment} from '../../Interface/interface';
 import { getSlotedoctor} from '../../api/doctorapi/appoinment';
 
+
 function Docappoinment() {
-  const [appointments, setAppointments] = useState<any[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
  const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [userid, setUserid] = useState<string | null>(null);
-    const [slot, setSlot] = useState<IndividualSlot[]>([]);
+  const [slot, setSlot] = useState<IndividualSlot[]>([]);
   const [reason, setReason] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [render, setRender] = useState(false);
@@ -21,6 +22,10 @@ function Docappoinment() {
   const [total, setTotal] = useState(0);
   const [currentpage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [showFollowupModal, setShowFollowupModal] = useState(false);
+  const [targetIdToScroll, setTargetIdToScroll] = useState<string | null>(null);
+  const [followupAppointmentId, setFollowupAppointmentId] = useState<string | null>(null);
+ const rowRefs = useRef<{ [key: string]: HTMLTableRowElement | null }>({});
   const limit = 3;
 
   const today = new Date();
@@ -29,30 +34,36 @@ function Docappoinment() {
   const formatDate = (date: Date) => date.toISOString().split('T')[0];
   const minDate = formatDate(today);
 
+  const handleFollowUp = (appoinmentid:string) => {
+   setFollowupAppointmentId(appoinmentid)
+    setShowFollowupModal(true)
 
-  const fetchAppointments = async () => {
-    try {
-      const result = await getallappoinment(currentpage, limit);
-      setAppointments(result.appointments);
-      setTotal(result.total);
-    } catch (error) {
-      console.error('Error fetching appointments:', error);
-    }
   };
+  
+  const fetchAppointments = useCallback(async () => {
+  try {
+    const result = await getallappoinment(currentpage, limit);
+    setAppointments(result.appointments);
+    setTotal(result.total);
+  } catch (error) {
+    console.error('Error fetching appointments:', error);
+  }
+}, [currentpage, limit]);
    const getSlot=async(e: React.ChangeEvent<HTMLInputElement>)=>{
       console.log(e.target.value)
       const selectedDate = new Date(e.target.value);
       const slots = await getSlotedoctor(selectedDate);
-      console.log(slots)
       setSlot(slots);
    }
-  useEffect(() => {
-    fetchAppointments();
-  }, [render, currentpage]);
+
+   useEffect(() => {
+  fetchAppointments();
+}, [fetchAppointments, render]);
 
   const openCancelModal = (id: string, userid: string, email: string) => {
     setSelectedId(id);
     setReason('');
+    setSlot([]);
     setShowModal(true);
     setUserid(userid);
     setMail(email);
@@ -67,11 +78,12 @@ function Docappoinment() {
     try {
       const result = await cancelAppoinment(selectedId!, reason, userid!, mail);
       if (result === "Status updated") {
-        toast.success("Appointment cancelled. Reason mailed to patient.");
+        toast.success("Appointment cancelled. Reason mailed to patient inbox");
         setRender(!render);
         setShowModal(false);
       }
     } catch (error) {
+      console.log(error)
       toast.error("Failed to cancel appointment.");
     } finally {
       setLoading(false);
@@ -89,11 +101,12 @@ function Docappoinment() {
      {
        toast.success("Appointment cancelled.and also resheduled");
        setShowModal(false);
+       setRender(!render)
      }
     }
     catch(error)
     {
-
+     console.log(error)
     }
   }
   const confirmHandle = async (apptid: string) => {
@@ -113,10 +126,69 @@ function Docappoinment() {
         setRender(!render);
         Swal.fire('Confirmed!', 'The appointment has been marked as complete.', 'success');
       } catch (error) {
+        console.log(error)
         Swal.fire('Error!', 'Something went wrong.', 'error');
       }
     }
   };
+
+  const createfollowup=async()=>{
+      const result=await followup(selectedSlot as string,followupAppointmentId as string)
+      if(result==='followup appoinment created')
+      {
+         setShowFollowupModal(false)
+         toast.success("followup appoinment created");
+         setRender(!render)
+      }
+  }
+
+  const scrollToreschedule=async(originalId: string) =>{
+    const followup = appointments.find(a => a._id === originalId);
+
+  if (followup && rowRefs.current[followup._id]) {
+    rowRefs.current[followup._id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    rowRefs.current[followup._id]?.classList.add('bg-orange-500');
+    setTimeout(() => {
+      rowRefs.current[followup._id]?.classList.remove('bg-orange-500');
+    }, 2000);
+  } else {
+    const page = await getPage(originalId, limit);
+    setCurrentPage(page);
+    setTargetIdToScroll(originalId); 
+  }
+  }
+
+ const scrollToFollowUp = async (originalId: string) => {
+  const followup = appointments.find(a => a._id === originalId);
+
+  if (followup && rowRefs.current[followup._id]) {
+    rowRefs.current[followup._id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    rowRefs.current[followup._id]?.classList.add('bg-yellow-100');
+    setTimeout(() => {
+      rowRefs.current[followup._id]?.classList.remove('bg-yellow-100');
+    }, 2000);
+  } else {
+    const page = await getPage(originalId, limit);
+    setCurrentPage(page);
+    setTargetIdToScroll(originalId); 
+  }
+}
+
+
+useEffect(() => {
+  if (targetIdToScroll && appointments.length > 0) {
+    const target = appointments.find(a => a._id === targetIdToScroll);
+    if (target && rowRefs.current[target._id]) {
+      rowRefs.current[target._id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      rowRefs.current[target._id]?.classList.add('bg-yellow-100');
+      setTimeout(() => {
+        rowRefs.current[target._id]?.classList.remove('bg-yellow-100');
+      }, 2000);
+      setTargetIdToScroll(null); 
+    }
+  }
+}, [appointments, targetIdToScroll]);
+
 
   return (
     <div className="flex min-h-screen overflow-hidden font-sans">
@@ -147,7 +219,7 @@ function Docappoinment() {
               </thead>
               <tbody>
                 {appointments.map((appt) => (
-                  <tr key={appt._id} className="border-t border-gray-200">
+                  <tr key={appt._id} className="border-t border-gray-200" ref={(el) => { rowRefs.current[appt._id] = el; }}>
                     <td className="px-4 py-2">{appt.patient_name}</td>
                     <td className="px-4 py-2">{appt.patient_email}</td>
                     <td className="px-4 py-2">{appt.patient_age}</td>
@@ -157,38 +229,68 @@ function Docappoinment() {
                     <td className="px-4 py-2">{appt.schedule?.startingTime} - {appt.schedule?.endTime}</td>
                     <td className="px-4 py-2 font-semibold">{appt.status}</td>
                     <td className="px-4 py-2 space-y-1">
-                      {appt.status === 'completed' ? (
-                        appt.reportAdded === false ? (
-                          <Link
-                            to="/doctor/addreport"
-                            state={{ appointmentId: appt._id, userId: appt.user_id }}
-                            className="inline-block px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs"
-                          >
-                            Add Report
-                          </Link>
-                        ) : (
-                          <span className="inline-block px-3 py-1 bg-gradient-to-r from-green-200 via-green-300 to-green-400 text-green-900 border border-green-600 text-xs shadow-sm">
-                            Report Added
-                          </span>
-                        )
-                      ) : appt.status === 'cancelled' ? (
-                        <span className="text-gray-500 text-xs">No actions</span>
-                      ) : (
-                        <>
-                          <button
-                            onClick={() => openCancelModal(appt._id, appt.user_id, appt.patient_email)}
-                            className="block w-full px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs mb-1"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            onClick={() => confirmHandle(appt._id)}
-                            className="block w-full px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs"
-                          >
-                            Complete
-                          </button>
-                        </>
-                      )}
+                    {appt.status === 'completed' ? (
+  appt.reportAdded === false ? (
+    <Link
+      to="/doctor/addreport"
+      state={{ appointmentId: appt._id, userId: appt.user_id }}
+      className="inline-block px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs"
+    >
+      Add Report
+    </Link>
+  ) : (
+    <span className="inline-block px-3 py-1 bg-gradient-to-r from-green-200 via-green-300 to-green-400 text-green-900 border border-green-600 text-xs shadow-sm">
+      Report Added
+    </span>
+  )
+) : appt.status === 'cancelled' ? (
+  <span className="text-gray-500 text-xs">No actions</span>
+) : (
+  <>
+    <button
+      onClick={() => openCancelModal(appt._id, appt.user_id, appt.patient_email)}
+      className="block w-full px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs mb-1"
+    >
+      Cancel
+    </button>
+    <button
+      onClick={() => confirmHandle(appt._id)}
+      className="block w-full px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs mb-1"
+    >
+      Complete
+    </button>
+  </>
+)}
+
+{/* ✅ Follow-up Section */}
+{appt.status === 'completed' && (
+  appt.followup_status === false ? (
+    <button
+        onClick={() => handleFollowUp(appt._id)}
+        className="inline-block px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 text-xs mt-1"
+      >
+        Create Follow-up
+      </button>
+    ) : (
+    <span className="inline-block px-3 py-1 bg-purple-100 text-purple-700 border border-purple-300 text-xs mt-1" onClick={() => scrollToFollowUp(appt.followup_id)}>
+      Follow-up Added
+    </span>
+  )
+)}
+
+    {appt.status === 'cancelled' && (
+      appt.isRescheduled === true ? (
+        <button
+      className="inline-block px-3 py-1 bg-emerald-500 text-white rounded hover:bg-emerald-600 text-xs mt-1"
+      onClick={() => scrollToreschedule(appt.rescheduled_to)}
+    >
+      Reschedule Added
+    </button>
+        ) : (
+        <></>
+      )
+    )}
+
                       <Link
                         to="/doctor/chat"
                         state={{ userId: appt.user_id }}
@@ -213,40 +315,26 @@ function Docappoinment() {
         )}
       </div>
 
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-2xl p-6 shadow-lg w-full max-w-md">
-            <h2 className="text-xl font-semibold mb-4">Cancel & Reschedule Appointment</h2>
+  {showFollowupModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-white rounded-2xl p-6 shadow-lg w-full max-w-md">
+      <h2 className="text-xl font-semibold mb-4">Create Follow-up</h2>
 
-            <label className="text-sm text-gray-700 mb-1">Reason for cancellation (optional)</label>
-            <textarea
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              className="w-full border rounded-md p-2 mb-4 resize-none"
-              rows={3}
-              placeholder="Write reason..."
-            />
-
-            <label className="text-sm text-gray-700 mb-1">Reschedule to</label>
-            <div className="flex gap-2 mb-4">
-  <input
-    type="date"
-    className="border p-2 rounded-md flex-1"
-    min={minDate}
-    onChange={getSlot}
-  />
-</div>
-
-
-    <div className="grid grid-cols-2 gap-4">
-     <div className="flex flex-col gap-2">
+      <label className="text-sm text-gray-700 mb-1">Select Follow-up Date</label>
+      <input
+        type="date"
+        onChange={getSlot}
+        min={minDate}
+        className="w-full border p-2 rounded-md mb-4"
+      />
+         <div className="flex flex-col gap-2">
   {slot.filter((slo) => slo.status === 'available').length > 0 ? (
     slot
       .filter((slo) => slo.status === 'available')
       .map((slo) => (
         <label
           key={slo._id}
-          className="flex items-center gap-3 p-3 rounded-2xl bg-green-100 text-green-700 shadow-md cursor-pointer max-w-xs"
+          className="flex items-center gap-1 p-3 rounded-2xl bg-green-100 text-green-700 shadow-md cursor-pointer max-w-xs"
         >
           <input
             type="radio"
@@ -266,33 +354,111 @@ function Docappoinment() {
     </div>
   )}
 </div>
+
+      <div className="flex justify-between mt-3">
+        <button
+          onClick={() => setShowFollowupModal(false)}
+          className="px-4 py-2 border rounded-md hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+        <button
+          className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50"
+          onClick={createfollowup}
+        >
+          Confirm
+        </button>
+      </div>
     </div>
+  </div>
+)}
 
+      {showModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="relative bg-white rounded-2xl p-6 shadow-lg w-full max-w-md">
+      {/* ❌ Close Button */}
+      <button
+        onClick={() => setShowModal(false)}
+        className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
+      >
+        &times;
+      </button>
 
-            <p className="text-sm text-gray-600 mb-4">
-              This appointment will be canceled and rescheduled.<br />
-              The patient will be notified.
-            </p>
+      <h2 className="text-xl font-semibold mb-4">Cancel & Reschedule Appointment</h2>
 
-            <div className="flex justify-between">
-              <button
-                onClick={handleCancelSubmit}
-                disabled={loading}
-                className="px-4 py-2 border rounded-md hover:bg-gray-100 disabled:opacity-50"
-              >
-                Cancel Only
-              </button>
-              <button
-                onClick={Reschedule}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+      <label className="text-sm text-gray-700 mb-1">Reason for cancellation (optional)</label>
+      <textarea
+        value={reason}
+        onChange={(e) => setReason(e.target.value)}
+        className="w-full border rounded-md p-2 mb-4 resize-none"
+        rows={3}
+        placeholder="Write reason..."
+      />
 
-              >
-                Cancel & Reschedule
-              </button>
+      <label className="text-sm text-gray-700 mb-1">Reschedule to</label>
+      <div className="flex gap-2 mb-4">
+        <input
+          type="date"
+          className="border p-2 rounded-md flex-1"
+          min={minDate}
+          onChange={getSlot}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="flex flex-col gap-2">
+          {slot.filter((slo) => slo.status === 'available').length > 0 ? (
+            slot
+              .filter((slo) => slo.status === 'available')
+              .map((slo) => (
+                <label
+                  key={slo._id}
+                  className="flex items-center gap-3 p-3 rounded-2xl bg-green-100 text-green-700 shadow-md cursor-pointer max-w-xs"
+                >
+                  <input
+                    type="radio"
+                    name="selectedSlot"
+                    value={slo._id}
+                    className="accent-green-600"
+                    onChange={() => setSelectedSlot(slo._id ?? null)}
+                  />
+                  <span className="text-sm font-medium">
+                    {slo.startingTime} - {slo.endTime}
+                  </span>
+                </label>
+              ))
+          ) : (
+            <div className="text-gray-500  py-4">
+              No available slots for the selected date.
             </div>
-          </div>
+          )}
         </div>
-      )}
+      </div>
+
+      <p className="text-sm text-gray-600 mb-4">
+        This appointment will be canceled and rescheduled.<br />
+        The patient will be notified.
+      </p>
+
+      <div className="flex justify-between">
+        <button
+          onClick={handleCancelSubmit}
+          disabled={loading}
+          className="px-4 py-2 border rounded-md hover:bg-gray-100 disabled:opacity-50"
+        >
+          Cancel Only
+        </button>
+        <button
+          onClick={Reschedule}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        >
+          Cancel & Reschedule
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

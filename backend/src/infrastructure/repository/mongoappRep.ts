@@ -4,6 +4,7 @@ import { AppointmentModel} from '../database/models/appoinment';
 import {ScheduleDTO,AppointmentDTO,AppointmentCountByDate} from '../../dto/slot.dto'
 import mongoose from "mongoose";
 
+
 export class MongoAppointmentRepository implements appointmentRepository {
   async createappoinment(data: Appointment): Promise<Appointment> {
     try {
@@ -16,7 +17,33 @@ export class MongoAppointmentRepository implements appointmentRepository {
     }
   }
 
-   async getfilteredapooinment(
+   async getcountofappoinmentofdoctor(id: string): Promise<Record<string, number>> {
+  let pending = 0;
+  let completed = 0;
+  let cancelled = 0;
+  let total=0
+  const result = await AppointmentModel.find({ doctor_id: id });
+
+  result.forEach((appointment) => {
+    if (appointment.status === 'pending') {
+      pending++;
+    } else if (appointment.status === 'completed') {
+      completed++;
+    } else if (appointment.status === 'cancelled') {
+      cancelled++;
+    }
+  });
+
+  return {
+    total: result.length,
+    completed,
+    cancelled,
+    pending,
+  };
+}
+
+
+  async getfilteredapooinment(
   status: 'completed' | 'cancelled' | 'pending',
   start: Date,
   end: Date
@@ -25,6 +52,56 @@ export class MongoAppointmentRepository implements appointmentRepository {
     const result = await AppointmentModel.aggregate([
       {
         $match: { status }
+      },
+      {
+        $lookup: {
+          from: "slots",
+          localField: "schedule_id",
+          foreignField: "_id",
+          as: "slot"
+        }
+      },
+      { $unwind: "$slot" },
+      {
+        $match: {
+          "slot.date": {
+            $gte: start,
+            $lte: end
+          }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$slot.date"
+            }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { _id: 1 } 
+      }
+    ]);
+
+    return result;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error("Error in fetching appointments");
+  }
+}
+
+async getfilteredapooinmentfordoc(status: 'completed' | 'cancelled' | 'pending',start: Date,end: Date,id:string):Promise<AppointmentCountByDate[]>{
+ try {
+    const objId = new mongoose.Types.ObjectId(id)
+    const result = await AppointmentModel.aggregate([
+      {
+        $match: { status, doctor_id: objId },
+
       },
       {
         $lookup: {
@@ -177,26 +254,57 @@ export class MongoAppointmentRepository implements appointmentRepository {
   }
 }
 
-  async getfutureappoinment(userid: string): Promise<Appointment[]> {
+  async getpageforuserId( id:string,originalId:string,limit:number):Promise<number>{
+    try{
+          const appointments = await AppointmentModel.find({ 
+      user_id: id, 
+      }).populate({
+        path: 'schedule_id',
+      }).populate({
+        path:'doctor_id'
+      }).sort({created_at:-1});
+      const futureAppointments = appointments.filter(app => app.schedule_id);
+     const index = futureAppointments.findIndex(app => app._id.toString() === originalId);
+
+    if (index === -1) {
+      throw new Error('Appointment not found');
+    }
+    const page = Math.floor(index / limit) + 1;
+    return page;
+    }
+    catch(error)
+    {
+    console.error('Error fetching past appointments:', error);
+    throw new Error('Failed to get page');
+    }
+  }
+
+  async getfutureappoinment(userid: string,page:number,limit:number): Promise<{total:number,appoi:Appointment[]}> {
   try {
     const now = new Date();
 
     const appointments = await AppointmentModel.find({ 
   user_id: userid, 
-  // status: { $in: ['pending', 'cancelled'] } 
    }).populate({
         path: 'schedule_id',
-        match: {
-          date: { $gte: now }  // dates in future or now
-        }
       }).populate({
         path:'doctor_id'
       }).sort({created_at:-1});
 
   
     const futureAppointments = appointments.filter(app => app.schedule_id);
+       const total = futureAppointments.length;
 
-    return futureAppointments;
+    // Apply pagination using slice
+    const startIndex = (page - 1) * limit;
+    const paginatedAppointments = futureAppointments.slice(startIndex, startIndex + limit);
+
+    return {
+      total,
+      appoi: paginatedAppointments
+    };
+
+    
   } catch (error) {
     console.error('Error fetching future appointments:', error);
     throw new Error('Failed to fetch future appointments');
@@ -221,6 +329,37 @@ async changestatus(id:string,status:'pending' |  'cancelled' | 'completed'):Prom
          }
          throw Error("error in updating")
   }
+}
+async getpageforId( id:string,originalId:string,limit:number):Promise<number>{
+    const doctorObjectId = new mongoose.Types.ObjectId(id);
+    const originalObjectId = new mongoose.Types.ObjectId(originalId);
+     const appointments = await AppointmentModel.aggregate([
+      {
+        $match: {
+          doctor_id: doctorObjectId,
+        },
+      },
+      {
+        $lookup: {
+          from: "slots",
+          localField: "schedule_id",
+          foreignField: "_id",
+          as: "schedule",
+        },
+      },
+      { $unwind: "$schedule" },
+      {
+        $sort: {
+          "schedule.date": 1,
+        },
+      }])
+       const index = appointments.findIndex(item => item._id.toString() === originalObjectId.toString());
+       if (index === -1) throw new Error("Appointment not found");
+
+
+      const page = Math.floor(index / limit) + 1;
+      return page;
+
 }
 
 async  getappinmentbydoctor(
@@ -287,6 +426,10 @@ async  getappinmentbydoctor(
         endTime: item.schedule.endTime,
         status: item.schedule.status,
       },
+      followup_id:item.followup_id?.toString(),
+      followup_status:item.followup_status,
+       rescheduled_to: item.rescheduled_to?.toString(),
+      isRescheduled:item?.isRescheduled
     }));
 
     return {
@@ -302,7 +445,29 @@ async  getappinmentbydoctor(
 }
 
 
+async createfollowp(appoinmentId:string,followupid:string):Promise<string>{
+  try{
+   const appointments = await AppointmentModel.findOne({_id:appoinmentId})
 
+   console.log(appointments)
+   if(!appointments )
+   {
+    throw new Error('this appoinments not exist')
+   }
+    appointments.followup_status=true
+    appointments.followup_id=followupid
+    await appointments.save()
+   return 'followup appoinment created'
+  }
+  catch(error)
+  {
+    if (error instanceof Error)
+         {
+          throw Error(error.message)
+         }
+    throw Error("error in updating")
+  }
+}
 
 
 async getallappinmentfordoctor(doctorid:string):Promise<Appointment[]>{

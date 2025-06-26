@@ -266,14 +266,14 @@ function Docverify() {
                 className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
                 onClick={() => {
                   setSubIsOpen(true)
-                  setSelected(selectedDoctor?._id!)
+                  setSelected(selectedDoctor?._id as string)
                 }}
               >
                 Reject
               </button>
               <button
                 className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
-                onClick={() => ApproveHandler(selectedDoctor?._id!)}
+                onClick={() => ApproveHandler(selectedDoctor?._id as string)}
               >
                 Approve
               </button>

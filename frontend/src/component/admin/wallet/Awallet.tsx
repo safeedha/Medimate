@@ -3,10 +3,8 @@ import Sidebar from '../Sidebar'
 import { Toaster } from 'react-hot-toast'
 import {
   walletInformation,
-  refundInformation,
   payoutrequst,
   pyoutpayment,
-  handlerefundforuser,
 } from '../../../api/adminapi/wallet'
 import { getsingleuser } from '../../../api/adminapi/user'
 import { getsingleDoctor } from '../../../api/adminapi/doctor'
@@ -17,24 +15,22 @@ function Awallet() {
   const [transactions, setTransactions] = useState([])
   const [user, setUser] = useState([])
   const [doctor, setDoctor] = useState([])
-  const [refund, setRefund] = useState([])
   const [message, setMessage] = useState('')
   const [payout, setPayout] = useState([])
   const [modal, setModal] = useState(false)
   const [modal2, setModal2] = useState(false)
   const [render, setRender] = useState(false)
-  const [rmessagae, setRmessage] = useState('')
-  const [total,setTotal]=useState(0)
-  const [currentpage,setCurrentpage]=useState(1)
-  const limit=3
+  const [total, setTotal] = useState(0)
+  const [currentpage, setCurrentpage] = useState(1)
+  const limit = 3
 
   useEffect(() => {
     const getWallet = async () => {
       try {
-        const wallet = await walletInformation(currentpage,limit)
+        const wallet = await walletInformation(currentpage, limit)
         if (wallet === 'no wallet available') {
           setMessage(wallet)
-        } else  {
+        } else {
           setBalance(wallet.balance)
           setTransactions(wallet.transaction)
           setTotal(wallet.total)
@@ -44,23 +40,7 @@ function Awallet() {
       }
     }
     getWallet()
-  }, [render,currentpage])
-
-  useEffect(() => {
-    const getrefund = async () => {
-      try {
-        const wallet = await refundInformation()
-        if (wallet === 'No wallet found') {
-          setRmessage(wallet)
-        } else {
-          setRefund(wallet)
-        }
-      } catch (error) {
-        console.error('Failed to fetch refund info:', error)
-      }
-    }
-    getrefund()
-  }, [render])
+  }, [render, currentpage])
 
   useEffect(() => {
     const getpayout = async () => {
@@ -117,36 +97,8 @@ function Awallet() {
     }
   }
 
-  const handlerefund = async (r: string) => {
-    const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to proceed with the refund?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#10b981',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, refund it!',
-    })
-
-    if (result.isConfirmed) {
-      try {
-        await handlerefundforuser(r)
-        Swal.fire('Refunded!', 'The amount has been refunded successfully.', 'success')
-        setRender(!render)
-      } catch (error) {
-        console.error(error)
-        Swal.fire('Error!', 'Refund process failed. Try again.', 'error')
-      }
-    }
-  }
-
-  const handleClose = () => {
-    setModal(false)
-  }
-
-  const handleCloseDoc = () => {
-    setModal2(false)
-  }
+  const handleClose = () => setModal(false)
+  const handleCloseDoc = () => setModal2(false)
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -200,6 +152,7 @@ function Awallet() {
           <p className="text-lg text-gray-500">Current Balance</p>
           <h1 className="text-4xl font-bold text-green-600">₹ {balance < 0 ? 0 : balance}</h1>
         </div>
+
         <div className="bg-white rounded-2xl shadow p-6 flex flex-col gap-4">
           <h3 className="text-xl font-semibold">Recent Transactions</h3>
 
@@ -246,6 +199,7 @@ function Awallet() {
                   ))}
                 </tbody>
               </table>
+
               {total > limit && (
                 <div className="flex justify-center mt-4 space-x-2">
                   <button
@@ -273,48 +227,6 @@ function Awallet() {
                   </button>
                 </div>
               )}
-
-            </div>
-          )}
-        </div>
-
-        {/* Refund Requests */}
-        <div className="bg-white rounded-2xl shadow p-6 flex flex-col gap-4 text-center">
-          <h3 className="text-xl font-semibold">Refund Requests</h3>
-          {rmessagae ? (
-            <div>No new refund requests.</div>
-          ) : refund.length === 0 ? (
-            <p className="text-gray-500">No new refund requests.</p>
-          ) : (
-            <div className="overflow-auto max-h-[40vh] rounded-lg border">
-              <table className="w-full divide-y divide-gray-200 text-sm">
-                <thead className="bg-gray-100 sticky top-0 z-10">
-                  <tr>
-                    <th className="px-4 py-3 text-left font-medium text-gray-700 uppercase tracking-wider">Amount</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-700 uppercase tracking-wider">To</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-700 uppercase tracking-wider">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {refund.map((r) => (
-                    <tr key={r?._id}>
-                      <td className="px-4 py-3 text-left text-gray-800">₹ {r.amount}</td>
-                      <td className="px-4 py-3 text-left text-gray-800">
-                        {r.from ? (
-                          <button className="text-blue-600 hover:underline" onClick={() => userHandele(r.from)}>
-                            View user
-                          </button>
-                        ) : 'Unknown'}
-                      </td>
-                      <td className="px-4 py-3 text-left">
-                        <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700" onClick={() => handlerefund(r._id)}>
-                          Pay Amount
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
           )}
         </div>

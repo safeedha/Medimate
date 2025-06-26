@@ -15,9 +15,12 @@ export interface Appointment {
 
   status: 'pending' |  'cancelled' | 'completed';
   payment_status: 'paid' | 'unpaid';
-  rescheduled_to?: string| IndividualSlot
+  rescheduled_to?: string| Appointment,
   isRescheduled?:boolean;
- reportAdded?: boolean; 
+  reportAdded?: boolean; 
+  followup_id?:string|Appointment,
+  followup_status?:boolean
+
    
   created_at?: Date;
   updated_at?: Date;

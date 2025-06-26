@@ -33,7 +33,7 @@ function Otp() {
       }
     };
     otpcreation();
-  }, [email]);
+  }, [email,role]);
 
   useEffect(() => {
     if (timer > 0) {
@@ -109,14 +109,14 @@ function Otp() {
           We sent an OTP to: <span className="font-semibold">{email}</span>
         </p>
 
-        <input
-          type="text"
-          placeholder="Enter OTP"
-          value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-          maxLength={6}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-center text-lg mt-4"
-        />
+       <input
+      type="text"
+      placeholder="Enter OTP"
+      value={otp}
+      onChange={(e) => setOtp(e.target.value)}
+      maxLength={6}
+      className="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-center text-lg mt-4"
+    />
 
         {!resendVisible && (
           <button

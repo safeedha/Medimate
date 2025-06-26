@@ -36,6 +36,10 @@ import {GetSingleappoinment} from  '../../application/usecase/appoinment/getSing
 import {Getallunblockeddept}from '../../application/usecase/dept/getunblocked';
 import {Getunreadcount} from '../../application/usecase/conversation/getunreadcount';
 import {Reshedule} from '../../application/usecase/appoinment/reshedule'
+import {GetdoctorAppointmentCount} from '../../application/usecase/appoinment/getCount'
+import {GetFilterfordoc} from '../../application/usecase/appoinment/getfilterfordoc'
+import {Createfollowup } from '../../application/usecase/appoinment/createfolloup'
+import {GetPage} from '../../application/usecase/appoinment/getPage'
 const mongoregrepository=new MongoRegRepository()
 const mongoslotrepository=new MongoSlotRepostory()
 const  mongoapporespository=new MongoAppointmentRepository()
@@ -44,6 +48,10 @@ const mongoConversationRepo=new MongoConversationRepo()
 const mongoreportRepository=new MongoreportRepository()
 const mongoWalletRepository=new MongoWalletRepository()
 
+const getPage=new GetPage(mongoapporespository)
+const createfollowup=new Createfollowup(mongoapporespository,mongoslotrepository)
+const getFilterfordoc=new GetFilterfordoc( mongoapporespository)
+const getdoctorAppointmentCount=new GetdoctorAppointmentCount( mongoapporespository)
 const reshedule=new Reshedule(mongoapporespository,mongoslotrepository)
 const getunreadcount=new Getunreadcount(mongoConversationRepo)
 const getsingleappoinment=new GetSingleappoinment( mongoapporespository)
@@ -51,7 +59,7 @@ const getDoctorWallet=new GetDoctorWallet(mongoWalletRepository)
 const addreport=new Addreport(mongoreportRepository)
 const cancelslot=new CancelSlot(mongoslotrepository)
 const getslotbydate=new GetSlotByDate(mongoslotrepository)
-const changestatusAppointment=new ChangestatusAppointment(mongoapporespository,mongoslotrepository)
+const changestatusAppointment=new ChangestatusAppointment(mongoapporespository,mongoslotrepository,mongoWalletRepository)
 const getsingleUser=new GetsingleUser(mongoUserrepository)
 const docsignup=new DocRegister(mongoregrepository)
 const doclogin=new DoctorLogin(mongoregrepository)
@@ -70,7 +78,7 @@ const docprofile=new Docprofile(mongodocrepository)
 const getdoctorAppointment=new GetdoctorAppointment(mongoapporespository)
 const cancelRecurringSlot=new CancelRecurringSlot(mongoslotrepository)
 const getUser=new GetUser(mongoUserrepository)
-const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation,createslot,getrecSlot,getdoctorAppointment,cancelRecurringSlot,changestatusAppointment,getsingleUser,getslotbydate,cancelslot,getUser,getallmessage,addreport,getDoctorWallet,getsingleappoinment,getallunblockeddept,getunreadcount,reshedule)
+const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docprofile,docpassreset,docreapply,otpdoccreation,createslot,getrecSlot,getdoctorAppointment,cancelRecurringSlot,changestatusAppointment,getsingleUser,getslotbydate,cancelslot,getUser,getallmessage,addreport,getDoctorWallet,getsingleappoinment,getallunblockeddept,getunreadcount,reshedule,getdoctorAppointmentCount,getFilterfordoc,createfollowup,getPage)
 interface CustomRequest extends Request {
   id: string;
 }
@@ -88,15 +96,19 @@ router.get("/department", (req, res) => doctor.getAllDept(req, res))
  
 
 router.post("/slot/recurring",verifyDoctorToken, (req, res) => doctor.createAppoinment(req, res)) 
-
+router.get("/page",verifyDoctor,(req, res) => doctor.getpage(req, res)) 
 router.post('/appoinment/reshedule',verifyDoctor,(req, res) => doctor.createresedule(req as CustomRequest, res))
 router.get("/slots/recurring/:id",(req, res) => doctor.getAllrecurringslots(req, res)) 
 router.get("/appoinment",verifyDoctor,(req, res) => doctor.getAllappoinment(req as CustomRequest, res)) 
 router.delete('/slots/recurring/:id',verifyDoctor,(req, res) => doctor.cancelappoinment(req as CustomRequest, res))
 router.patch("/appoinment/:id/:userid",verifyDoctor,(req, res) => doctor.changestatusappoinment(req as CustomRequest, res)) 
 router.patch("/appoinment/:id",verifyDoctor,(req, res) => doctor.changecompletstatusappoinment(req as CustomRequest, res)) 
-router.get("/appoinment/:id",verifyDoctor,(req, res) => doctor.getsingleappoinment(req as CustomRequest, res)) 
-
+router.get("/appoinment/count",verifyDoctor,(req, res) => doctor.getOverview(req as CustomRequest, res)) 
+router.get("/appoinment/filter",verifyDoctor,(req, res) => doctor.getfilter(req as CustomRequest, res)) 
+router.get("/appoinment/:id",verifyDoctor,(req, res) => doctor.getsingleappoinment(req as CustomRequest, res))
+router.post(`/appoinment/followup`, verifyDoctor, (req, res) => {
+  doctor.createfollowp(req as CustomRequest, res);
+})
 router.get("/slots",verifyDoctor,(req, res) => doctor.getSlotsofdoctor(req as CustomRequest, res)) 
 router.delete("/slots/:slotid",verifyDoctor,(req, res) => doctor.cancelSlots(req as CustomRequest, res))
 

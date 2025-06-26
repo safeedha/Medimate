@@ -295,7 +295,8 @@ async changeStatus(id: string): Promise<DoctorDTO[]> {
   email: string,
   phone: string,
  specialisation:string,
- qualification:string
+ qualification:string,
+ medicalLicence:string
 ): Promise<{ message: string }> {
   try {
     const doctor = await Doctor.findOne({ email });
@@ -322,6 +323,7 @@ async changeStatus(id: string): Promise<DoctorDTO[]> {
     doctor.profilePicture = image;
     doctor.qualification=qualification,
     doctor.specialisation=specialisation
+    doctor.medicalLicence=medicalLicence
 
     await doctor.save();
 

@@ -3,6 +3,7 @@ import { Message } from '../../../domain/entities/messages';
 
 const messageSchema = new Schema<Message>(
   {
+    
     senderId: {
       type: String,
       required: true,

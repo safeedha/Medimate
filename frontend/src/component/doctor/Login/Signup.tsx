@@ -8,6 +8,7 @@ import {signup} from "../../../api/doctorapi/doclogin"
 import {useNavigate} from 'react-router-dom'
 interface DepartmentProps {
   _id: string;
+  id?:string;
   deptname: string;
   description: string;
   createdAt: string;   
@@ -42,7 +43,9 @@ function Signup() {
       getAllDepartment();
     }, []);
 
-
+      useEffect(()=>{
+      console.log(specialisation)
+      },[specialisation])
 
    const navigate=useNavigate()
 
@@ -289,7 +292,7 @@ function Signup() {
           >
             <option  disabled value="">Select a department</option>
             {departments.map((dept) => (
-              <option key={dept._id} value={dept._id}>
+              <option key={dept._id} value={dept?.id}>
                 {dept.deptname}
               </option>
             ))}

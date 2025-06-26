@@ -3,10 +3,10 @@ import DoctorSidebar from './Docsidebar';
 import { toast, Toaster } from 'react-hot-toast';
 import { walletInformation } from '../../api/doctorapi/wallet';
 import { getsingleappoinment } from '../../api/doctorapi/appoinment';
-
+import type{Appointment,Transaction} from '../../Interface/interface'
 function Docwallet() {
-  const [walletData, setWalletData] = useState<any>([]);
-  const [appoinment, setAppoinment] = useState<any>(null);
+  const [walletData, setWalletData] = useState<Transaction[]>([]);
+  const [appoinment, setAppoinment] = useState<Appointment>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [balance, setBalance] = useState(0);
   const [total, setTotal] = useState(0);
@@ -84,15 +84,15 @@ function Docwallet() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {walletData.map((txn: any) => (
+                  {walletData.map((txn: Transaction) => (
                     <tr key={txn._id}>
                       <td className="px-6 py-4 text-gray-800 capitalize">{txn.type}</td>
                       <td className="px-6 py-4 text-gray-800">₹ {txn.amount}</td>
                       <td
                         className="px-6 py-4 text-blue-600 hover:underline cursor-pointer"
-                        onClick={() => getAppoinmentInformation(txn.appointmentId)}
+                        onClick={() => getAppoinmentInformation(txn.appointmentId as string)}
                       >
-                        {txn.appointmentId}
+                        {txn.appointmentId as string}
                       </td>
                       <td className="px-6 py-4 text-gray-800">
                         {new Date(txn.date).toLocaleString()}
@@ -149,8 +149,8 @@ function Docwallet() {
               <p><strong>Age:</strong> {appoinment.patient_age}</p>
               <p><strong>Gender:</strong> {appoinment.patient_gender}</p>
               <p><strong>Reason:</strong> {appoinment.reason}</p>
-              <p><strong>Starting time:</strong> {appoinment.schedule_id.startingTime}</p>
-              <p><strong>End time:</strong> {appoinment.schedule_id.endTime}</p>
+              <p><strong>Starting time:</strong> {appoinment.schedule_id?.startingTime}</p>
+              <p><strong>End time:</strong> {appoinment.schedule_id?.endTime}</p>
               <p><strong>Status:</strong> {appoinment.status}</p>
               <p><strong>Payment:</strong> {appoinment.payment_status}</p>
             </div>

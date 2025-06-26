@@ -4,7 +4,7 @@ import { toast, Toaster } from 'react-hot-toast'
 import { getAllDoctor } from '../../../api/adminapi/doctor'
 import { getAllappoinment } from '../../../api/adminapi/appoinment'
 import Modal from 'react-modal'
-import type { Idoctor } from '../../../Interface/interface'
+import type { Idoctor,Appointment } from '../../../Interface/interface'
 
 const customStyles = {
   content: {
@@ -34,7 +34,7 @@ function Appoinment() {
   const [doctors, setDoctors] = useState<Idoctor[]>([])
   const [modalIsOpen, setIsOpen] = useState(false)
   const subtitleRef = useRef<HTMLHeadingElement>(null)
-  const [appoinment, setAppoinment] = useState<any[]>([])
+  const [appoinment, setAppoinment] = useState<Appointment[]>([])
   const [doc, setDoc] = useState<string>('')
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [itemsPerPage] = useState<number>(4)
@@ -132,7 +132,7 @@ function Appoinment() {
                   <p className="text-sm font-semibold text-gray-700">
                     Date:{' '}
                     <span className="font-normal">
-                      {new Date(item.schedule?.date).toLocaleDateString()}
+                      {new Date(item.schedule?.date as Date).toLocaleDateString()}
                     </span>
                   </p>
                   <p className="text-sm font-semibold text-gray-700">

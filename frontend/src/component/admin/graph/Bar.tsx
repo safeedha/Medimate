@@ -13,7 +13,17 @@ import type { AppointmentCountByDate } from '../../../Interface/interface'
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend)
 
-export default function DashboardBarChart() {
+export default function DashboardBarChart({
+  setAppointmentCountfordash,
+  setType,
+  startdate,
+  enddate
+}: {
+  setAppointmentCountfordash: React.Dispatch<React.SetStateAction<AppointmentCountByDate[]>>,
+  setType: React.Dispatch<React.SetStateAction<'completed' | 'cancelled' | 'pending'>>,
+  startdate:React.Dispatch<React.SetStateAction<string>>,
+  enddate:React.Dispatch<React.SetStateAction<string>>
+}) {
   const [status, setStatus] = useState<'completed' | 'cancelled' | 'pending'>('completed')
   const [appointmentCount, setAppointmentCount] = useState<AppointmentCountByDate[]>([])
   const [startDate, setStartDate] = useState('')
@@ -31,7 +41,11 @@ export default function DashboardBarChart() {
     setEndDate(endStr)
 
     getAppointmentsFiltered('completed', lastWeek, today).then((result) => {
-      if (result) setAppointmentCount(result)
+      if (result) 
+      {
+        setAppointmentCount(result)
+      setAppointmentCountfordash(result)
+      }
     })
   }, [])
 
@@ -50,7 +64,12 @@ export default function DashboardBarChart() {
     }
 
     const result = await getAppointmentsFiltered(status, start, end)
-    if (result) setAppointmentCount(result)
+    if (result) 
+    {
+      console.log(result)
+      setAppointmentCount(result)
+    setAppointmentCountfordash(result)
+    }
   }
 
   const data = {
@@ -92,24 +111,35 @@ export default function DashboardBarChart() {
       <div className="flex flex-wrap gap-4 mt-5 mb-2 items-end">
         {/* Status Buttons */}
         <div className="flex gap-2">
-          <button
-            onClick={() => setStatus('completed')}
-            className={`px-4 py-1 rounded ${status === 'completed' ? 'bg-green-500 text-white' : 'bg-gray-200'}`}
-          >
-            Completed
-          </button>
-          <button
-            onClick={() => setStatus('cancelled')}
-            className={`px-4 py-1 rounded ${status === 'cancelled' ? 'bg-red-500 text-white' : 'bg-gray-200'}`}
-          >
-            Cancelled
-          </button>
-          <button
-            onClick={() => setStatus('pending')}
-            className={`px-4 py-1 rounded ${status === 'pending' ? 'bg-yellow-400 text-white' : 'bg-gray-200'}`}
-          >
-            Pending
-          </button>
+        <button
+          onClick={() => {
+            setStatus('completed');
+            setType('completed');
+          }}
+          className={`px-4 py-1 rounded ${status === 'completed' ? 'bg-green-500 text-white' : 'bg-gray-200'}`}
+        >
+          Completed
+        </button>
+
+        <button
+          onClick={() => {
+            setStatus('cancelled');
+            setType('cancelled');
+          }}
+          className={`px-4 py-1 rounded ${status === 'cancelled' ? 'bg-red-500 text-white' : 'bg-gray-200'}`}
+        >
+          Cancelled
+        </button>
+
+        <button
+          onClick={() => {
+            setStatus('pending');
+            setType('pending');
+          }}
+          className={`px-4 py-1 rounded ${status === 'pending' ? 'bg-yellow-400 text-white' : 'bg-gray-200'}`}
+        >
+          Pending
+</button>
         </div>
 
         {/* Date Pickers */}
@@ -122,7 +152,10 @@ export default function DashboardBarChart() {
               id="start-date"
               type="date"
               value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={(e) => {
+                setStartDate(e.target.value)
+               startdate(e.target.value)
+              }}
               className="border p-1 rounded"
             />
           </div>
@@ -135,7 +168,10 @@ export default function DashboardBarChart() {
               id="end-date"
               type="date"
               value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              onChange={(e) => {
+                setEndDate(e.target.value)
+                 enddate(e.target.value)
+              }}
               className="border p-1 rounded"
             />
           </div>

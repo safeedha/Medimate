@@ -5,14 +5,15 @@ import { getCountforDoc } from '../../../api/adminapi/appoinment'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
-export default function DoctorCompletedPieChart() {
-  const [doctorData, setDoctorData] = useState<Record<string,string>>([])
+export default function DoctorCompletedPieChart({setDoctorDatafordash}:{setDoctorDatafordash: React.Dispatch<React.SetStateAction<Record<string,string>>>}) {
+  const [doctorData, setDoctorData] = useState<Record<string,string>>({})
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result=await getCountforDoc()
         setDoctorData(result)
+        setDoctorDatafordash(result)
       } catch (error) {
         console.error('Failed to fetch doctor appointment counts:', error)
       }

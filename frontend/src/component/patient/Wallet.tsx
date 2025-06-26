@@ -3,6 +3,7 @@ import UserSidebar from './UserSidebar';
 import { getwallet } from '../../api/userapi/wallet';
 import Navbar from './Navbar';
 import Pagination from '../../component/common/Pgination';
+import type{Transaction} from '../../Interface/interface'
 
 function Wallet() {
   const [walletData, setWalletData] = useState([]);
@@ -59,7 +60,7 @@ function Wallet() {
                 </tr>
               </thead>
               <tbody>
-                {walletData.map((tx: any, index: number) => (
+                {walletData.map((tx:Transaction, index: number) => (
                   <tr key={index} className="hover:bg-gray-100">
                     <td className="border px-4 py-2">
                       {(currentPage - 1) * itemsPerPage + index + 1}

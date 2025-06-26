@@ -1,4 +1,5 @@
 import userInstance from "./instance";
+import axios from "axios";
 
 export const getAlldoctors = async (page:number,limit:number,singledepartment:string,search:string) => {
   try {
@@ -10,11 +11,16 @@ export const getAlldoctors = async (page:number,limit:number,singledepartment:st
       limit
     }
   });
-    console.log('fvf')
-    console.log(response.data)
+
     return response.data; 
   } catch (error) {
-    console.log(error);
+    if (axios.isAxiosError(error)) {
+      return error.response?.data?.message || error.message;
+    } else if (error instanceof Error) {
+      return error.message;
+    } else {
+      return 'Internal server error';
+    }
   }
 }
 
@@ -24,7 +30,13 @@ export const getDepartnment = async () => {
     const response = await userInstance.get("/department");
     return response.data 
   } catch (error) {
-    console.log(error);
+    if (axios.isAxiosError(error)) {
+      return error.response?.data?.message || error.message;
+    } else if (error instanceof Error) {
+      return error.message;
+    } else {
+      return 'Internal server error';
+    }
   }
 }
 
@@ -34,7 +46,13 @@ export const getSingledoctor = async (id:string) => {
     console.log(response.data)
     return response.data; 
   } catch (error) {
-    console.log(error);
+    if (axios.isAxiosError(error)) {
+      return error.response?.data?.message || error.message;
+    } else if (error instanceof Error) {
+      return error.message;
+    } else {
+      return 'Internal server error';
+    }
   }
 }
 export const  getSlotedoctor=async(id:string,date:Date)=>{
@@ -45,151 +63,181 @@ export const  getSlotedoctor=async(id:string,date:Date)=>{
     console.log(response.data)
     return response.data; 
   } catch (error) {
-    console.log(error);
+    if (axios.isAxiosError(error)) {
+      return error.response?.data?.message || error.message;
+    } else if (error instanceof Error) {
+      return error.message;
+    } else {
+      return 'Internal server error';
+    }
   }
 }
 
 
-// export const handlePayment = async (Razorpay:any,amount:number,toast:any ):Promise<any> => {
-//   try {
-//     const RAZORPAY_KEY_ID = "rzp_test_RmHsQLbeIzESnC";
-//     console.log(amount)
-//     const response = await userInstance.post("/bookappoinment", {
-//       amount: amount * 100,
-//     });
 
-//     const order = response.data;
 
-//     const options = {
-//       key: RAZORPAY_KEY_ID,
-//       amount: order.amount,
-//       currency: order.currency,
-//       name: "Medimate",
-//       description: "Payment for your booking",
-//       order_id: order.id,
-//       handler: async (response:any) => {
-//         try {
-          
-//           const verifyResponse = await userInstance.post("verify-payment", {
-//             razorpay_order_id: response.razorpay_order_id,
-//             razorpay_payment_id: response.razorpay_payment_id,
-//             razorpay_signature: response.razorpay_signature,
-//           });
+// export const handlePayment = async (Razorpay: any, amount: number): Promise<string> => {
+//   return new Promise(async (resolve) => {
+//     try {
+//       const RAZORPAY_KEY_ID = "rzp_test_RmHsQLbeIzESnC";
 
-//           const verifyResult = verifyResponse.data;
-//           console.log("Verify Response Status:", verifyResponse.status);
-//           console.log("Verify Response Body:", verifyResult);
-//           // return verifyResult.message; 
-//           if (verifyResult.message === "Payment verified successfully") {
-            
-//             alert("Payment successful and verified!");
-           
-//           } else {
-//             toast.error("Payment verification failed!");
-            
+//       const response = await userInstance.post("/bookappoinment", {
+//         amount: amount * 100,
+//       });
+
+//       const order = response.data;
+
+//       const options = {
+//         key: RAZORPAY_KEY_ID,
+//         amount: order.amount,
+//         currency: order.currency,
+//         name: "Medimate",
+//         description: "Payment for your booking",
+//         order_id: order.id,
+//         handler: async (response:any) => {
+//           try {
+//             const verifyResponse = await userInstance.post("verify-payment", {
+//               razorpay_order_id: response.razorpay_order_id,
+//               razorpay_payment_id: response.razorpay_payment_id,
+//               razorpay_signature: response.razorpay_signature,
+//             });
+
+//             const verifyResult = verifyResponse.data;
+
+//             if (verifyResult.message === "Payment verified successfully") {
+//               resolve("success");
+//             } else {
+//               resolve("failed");
+//             }
+//           } catch (err) {
+//             console.error("Verification error:", err);
+//             resolve("failed");
 //           }
-//         } catch (err) {
-//           console.error("Error verifying payment:", err);
-//           toast.error("Payment verification failed!");
-//         }
-//       },
-//       prefill: {
-//         name: "John Doe",
-//         email: "john@example.com",
-//         contact: "9999999999",
-//       },
-//       notes: {
-//         address: "Razorpay Corporate Office",
-//       },
-//       theme: {
-//         color: "#3399cc",
-//       },
-//     };
+//         },
+//         prefill: {
+//           name: "John Doe",
+//           email: "john@example.com",
+//           contact: "9999999999",
+//         },
+//         notes: {
+//           address: "Razorpay Corporate Office",
+//         },
+//         theme: {
+//           color: "#3399cc",
+//         },
+//       };
 
-//     // Step 3: Instantiate Razorpay
-//     const rzpay = new Razorpay(options);
+//       const rzpay = new Razorpay(options);
 
-//     // Step 4: Handle payment failure
-//     rzpay.on('payment.failed', async (response:any) => {
-//       try {
+//       rzpay.on('payment.failed', function (response: any) {
+//         console.error("Payment failed:", response.error.description);
+//         resolve("failed");
+//       });
 
-//         toast.error(`Payment failed: ${response.error.description}`);
-//       } catch (error) {
-//         console.error("Error updating payment status:", error);
-//       }
-//     });
-
-//     rzpay.open();
-//   } catch (err) {
-//     console.error("Error creating order:", err);
-
-//   }
+//       rzpay.open();
+//     } catch (err) {
+//       console.error("Error creating order:", err);
+//       resolve("failed");
+//     }
+//   });
 // };
 
-
-export const handlePayment = async (Razorpay: any, amount: number): Promise<string> => {
-  return new Promise(async (resolve,reject) => {
-    try {
-      const RAZORPAY_KEY_ID = "rzp_test_RmHsQLbeIzESnC";
-
-      const response = await userInstance.post("/bookappoinment", {
-        amount: amount * 100,
-      });
-
-      const order = response.data;
-
-      const options = {
-        key: RAZORPAY_KEY_ID,
-        amount: order.amount,
-        currency: order.currency,
-        name: "Medimate",
-        description: "Payment for your booking",
-        order_id: order.id,
-        handler: async (response: any) => {
-          try {
-            const verifyResponse = await userInstance.post("verify-payment", {
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-            });
-
-            const verifyResult = verifyResponse.data;
-
-            if (verifyResult.message === "Payment verified successfully") {
-              resolve("success");
-            } else {
-              resolve("failed");
-            }
-          } catch (err) {
-            console.error("Verification error:", err);
-            resolve("failed");
-          }
-        },
-        prefill: {
-          name: "John Doe",
-          email: "john@example.com",
-          contact: "9999999999",
-        },
-        notes: {
-          address: "Razorpay Corporate Office",
-        },
-        theme: {
-          color: "#3399cc",
-        },
-      };
-
-      const rzpay = new Razorpay(options);
-
-      rzpay.on('payment.failed', function (response: any) {
-        console.error("Payment failed:", response.error.description);
-        resolve("failed");
-      });
-
-      rzpay.open();
-    } catch (err) {
-      console.error("Error creating order:", err);
-      resolve("failed");
-    }
-  });
+type RazorpayOptions = {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  handler: (response: RazorpayPaymentResponse) => void;
+  prefill: {
+    name: string;
+    email: string;
+    contact: string;
+  };
+  notes: {
+    address: string;
+  };
+  theme: {
+    color: string;
+  };
 };
 
+interface RazorpayPaymentResponse {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
+
+interface RazorpayInstance {
+  open(): void;
+  on(event: string, callback: (response: { error: { description: string } }) => void): void;
+}
+
+export const handlePayment = (RazorpayConstructor: new (options: RazorpayOptions) => RazorpayInstance, amount: number): Promise<string> => {
+  return new Promise((resolve) => {
+    (async () => {
+      try {
+        const RAZORPAY_KEY_ID = "rzp_test_RmHsQLbeIzESnC";
+
+        const response = await userInstance.post("/bookappoinment", {
+          amount: amount * 100,
+        });
+
+        const order = response.data;
+
+        const options: RazorpayOptions = {
+          key: RAZORPAY_KEY_ID,
+          amount: order.amount,
+          currency: order.currency,
+          name: "Medimate",
+          description: "Payment for your booking",
+          order_id: order.id,
+          handler: async (response: RazorpayPaymentResponse) => {
+            try {
+              const verifyResponse = await userInstance.post("verify-payment", {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              });
+
+              const verifyResult = verifyResponse.data;
+
+              if (verifyResult.message === "Payment verified successfully") {
+                resolve("success");
+              } else {
+                resolve("failed");
+              }
+            } catch (err) {
+              console.error("Verification error:", err);
+              resolve("failed");
+            }
+          },
+          prefill: {
+            name: "John Doe",
+            email: "john@example.com",
+            contact: "9999999999",
+          },
+          notes: {
+            address: "Razorpay Corporate Office",
+          },
+          theme: {
+            color: "#3399cc",
+          },
+        };
+
+        const rzpay = new RazorpayConstructor(options);
+
+        rzpay.on("payment.failed", (response) => {
+          console.error("Payment failed:", response.error.description);
+          resolve("failed");
+        });
+
+        rzpay.open();
+      } catch (err) {
+        console.error("Error creating order:", err);
+        resolve("failed");
+      }
+    })();
+  });
+};

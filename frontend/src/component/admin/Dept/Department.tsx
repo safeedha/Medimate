@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import Sidebar from '../Sidebar';
 import Modal from 'react-modal';
 import { toast, Toaster } from 'react-hot-toast';
@@ -33,19 +33,19 @@ function Department() {
   const [searchTerm, setSearchTerm] = useState('');
   const itemsPerPage = 3;
 
-  useEffect(() => {
-    fetchDepartments();
-  }, [isBlocked, currentPage, searchTerm]);
+ const fetchDepartments = useCallback(async () => {
+  try {
+    const result = await getDepartment(currentPage, itemsPerPage, searchTerm);
+    setDepartments(result?.item);
+    setTotalPages(Math.ceil(result?.total / itemsPerPage));
+  } catch (error) {
+    console.error('Error fetching departments:', error);
+  }
+}, [currentPage, itemsPerPage, searchTerm]); 
 
-  const fetchDepartments = async () => {
-    try {
-      const result = await getDepartment(currentPage, itemsPerPage, searchTerm);
-      setDepartments(result?.item);
-      setTotalPages(Math.ceil(result?.total / itemsPerPage));
-    } catch (error) {
-      console.error('Error fetching departments:', error);
-    }
-  };
+useEffect(() => {
+  fetchDepartments();
+}, [fetchDepartments, isBlocked]);
 
   const handleBlock = async (id: string) => {
     const result = await Swal.fire({
@@ -58,19 +58,15 @@ function Department() {
       confirmButtonText: 'Yes, change it!',
     });
 
-    if (result.isConfirmed) {
-      try {
+    if (result.isConfirmed) {  
         await blockdepartnemt(id);
         setIsBlocked((prev) => !prev);
         Swal.fire('Updated!', 'Department status has been changed.', 'success');
-      } catch (error) {
-        Swal.fire('Error!', 'Something went wrong while updating the status.', 'error');
-      }
     }
   };
 
   const handleEdit = (dept: IDepartment) => {
-    setDeptid(dept._id);
+    setDeptid(dept._id!);
     setDeptname(dept.deptname);
     setDescription(dept?.description || '');
     setIsOpen(true);

@@ -19,8 +19,13 @@ const dispatch=useDispatch<AppDispatch>()
 
       <nav className="flex-1 py-6 px-4 space-y-4 text-lg font-medium">
         <Link to="/doctor/home" className="block hover:text-cyan-200">
-          🏠 Dashboard
+          🏠 Home
         </Link>
+        <Link to="/doctor/dashboard" className="block hover:text-cyan-200">
+        📊 Dashboard
+      </Link>
+
+
         <Link to="/doctor/profile" className="block hover:text-cyan-200">
           ⚙️ Profile
         </Link>

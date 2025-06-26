@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import { useSelector } from 'react-redux';
@@ -16,6 +16,7 @@ function Meetingroom() {
   const user = useSelector((state: RootState) => state.user.userInfo);
   const doctor = useSelector((state: RootState) => state.doctor.doctorInfo);
 
+  // 🔧 Redirect if not authenticated
   useEffect(() => {
     if (!role || !userId) {
       navigate('/login');
@@ -26,9 +27,11 @@ function Meetingroom() {
     }
   }, [role, userId, user, doctor, navigate]);
 
-  const mymeeting = () => {
+
+  const mymeeting = useCallback(() => {
     const appID = 704835633;
     const serverSecret = 'a349c1095b022eafdb7d770fdd9dd942';
+
     const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
       appID,
       serverSecret,
@@ -38,6 +41,7 @@ function Meetingroom() {
     );
 
     const zp = ZegoUIKitPrebuilt.create(kitToken);
+
     zp.joinRoom({
       container: videocontainerRef.current,
       sharedLinks: [
@@ -55,7 +59,7 @@ function Meetingroom() {
         mode: ZegoUIKitPrebuilt.OneONoneCall,
       },
     });
-  };
+  }, [roomId, role, userId]);
 
   useEffect(() => {
     if (
@@ -64,7 +68,7 @@ function Meetingroom() {
     ) {
       mymeeting();
     }
-  }, [role, userId, user, doctor]);
+  }, [role, userId, user, doctor, mymeeting]);
 
   return <div ref={videocontainerRef} />;
 }

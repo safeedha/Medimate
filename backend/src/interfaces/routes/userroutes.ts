@@ -35,6 +35,12 @@ import {GetUserallet} from '../../application/usecase/wallet/getuserwallet'
 import{CreateLockslot} from '../../application/usecase/appoinment/createlockslot'
 import {Getallunblockeddept}from '../../application/usecase/dept/getunblocked';
 import {Getunreadcount} from '../../application/usecase/conversation/getunreadcount';
+import {Createreview} from '../../application/usecase/review/createReview'
+import {MongoReviewRepository}  from '../../infrastructure/repository/mongoreviewRep'
+import {GetAverage}  from '../../application/usecase/review/getAverage'
+import {Getreview} from '../../application/usecase/review/getReview'
+import {GetPage} from '../../application/usecase/appoinment/getpageforuser'
+
 export interface CustomRequest extends Request {
   id: string;
 }
@@ -46,7 +52,12 @@ const mongoslotRepository=new MongoSlotRepostory()
 const mongoappoinmentRepository=new MongoAppointmentRepository()
 const mongoWalletRepository=new MongoWalletRepository()
 const mongoreportRepository=new MongoreportRepository()
+const mongoReviewRepository=new MongoReviewRepository()
 
+const getPage=new GetPage(mongoappoinmentRepository)
+const getAverage=new GetAverage(mongoReviewRepository)
+const getreview=new Getreview(mongoReviewRepository) 
+const createreview=new Createreview(mongoReviewRepository)
 const getunreadcount=new Getunreadcount(mongoConversationRepo)
 const createlockslot=new CreateLockslot(mongoslotRepository)
 const getUserallet=new GetUserallet(mongoWalletRepository)
@@ -63,17 +74,19 @@ const otpcration=new OtpCretion(mongoregRepository)
 const otpverify=new OtpVerify(mongoregRepository)
 
 const mongodeotrepository=new MongoDeptRepository()
+
+
 const getDept=new GetDept(mongodeotrepository)
 const getallunblockeddept=new Getallunblockeddept(mongodeotrepository)
 const getslotbydate=new GetSlotByDate(mongoslotRepository)
 const createappoinment=new CreateAppointment(mongoappoinmentRepository,mongoslotRepository,mongoWalletRepository)
 const getfutureAppointment=new GetfutureAppointment(mongoappoinmentRepository)
 const getpastAppointment=new GetpastAppointment(mongoappoinmentRepository)
-const changestatusAppointment=new ChangestatusAppointment(mongoappoinmentRepository,mongoslotRepository)
+const changestatusAppointment=new ChangestatusAppointment(mongoappoinmentRepository,mongoslotRepository,mongoWalletRepository)
 const getallmessage=new GetAllmessage(mongoConversationRepo)
 const getsingleUser=new GetsingleUser(mongouserRepository)
 const updateuser=new updatesingleUser(mongouserRepository)
-const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc,getslotbydate,createappoinment,getfutureAppointment,getpastAppointment,changestatusAppointment,getallmessage,streamToken,getreport,getUserallet,createlockslot,getallunblockeddept,getunreadcount)
+const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc,getslotbydate,createappoinment,getfutureAppointment,getpastAppointment,changestatusAppointment,getallmessage,streamToken,getreport,getUserallet,createlockslot,getallunblockeddept,getunreadcount,createreview,getAverage,getreview,getPage)
 
 
 
@@ -85,7 +98,6 @@ router.post("/sendotp", (req, res) => user.sendOtp(req, res))
 router.post("/verifyotp", (req, res) => user.verifyOtp(req, res))
 router.post("/reset",(req, res) => user.resetPassword(req, res))
 router.post("/googlelogin",(req, res) => user.googleLogin(req, res))
-
 router.get("/doctors",verifyUserAuth, (req, res) => user.getAllDoct(req, res)) 
 router.get("/doctor/:id",verifyUserAuth, (req, res) => user.getSingleDoct(req, res))
 router.get("/doctor/slot/:id",verifyUserAuth, (req, res) => user.getSlotedoctor(req, res)) 
@@ -115,9 +127,13 @@ router.post("/createappoinment", verifyUserAuth, (req, res) => {
 router.get("/appointments/future", verifyUserAuth, (req, res) => {
   user.getfutureAppoinment(req as CustomRequest, res);
 })
+router.get("/page", verifyUserAuth, (req, res) => {
+  user.getPages(req as CustomRequest, res);
+})
 router.get("/appointments/past", verifyUserAuth, (req, res) => {
   user.getpasteAppoinments(req as CustomRequest, res);
 })
+
 router.patch("/appointment", verifyUserAuth, (req, res) => {
   user.changestatusAppoinments(req as CustomRequest, res);
 })
@@ -150,4 +166,15 @@ router.get("/status", verifyUserAuth, (req, res) => {
 router.get("/messages/unread-counts", verifyUserAuth, (req, res) => {
   user.getUnreadcount(req as CustomRequest, res);
 })
+
+router.post("/review", verifyUserAuth, (req, res) => {
+  user.createReview(req as CustomRequest, res);
+})
+router.get("/review", verifyUserAuth, (req, res) => {
+  user.getreviews(req as CustomRequest, res);
+})
+router.get("/review/count", verifyUserAuth, (req, res) => {
+  user.average(req as CustomRequest, res);
+})
+
 export { router as userRouter };

@@ -4,6 +4,7 @@ import {ConversationModel}  from '../database/models/conversation';
 import {MessageModel} from '../database/models/message'
 import { Message } from '../../domain/entities/messages';
 import {UnreadCounts} from '../../dto/message.dto'
+import { Types } from 'mongoose';
 
 export class MongoConversationRepo implements ConversationRepository {
   constructor() {
@@ -33,13 +34,17 @@ export class MongoConversationRepo implements ConversationRepository {
     throw new Error("Something happened");
   }
 }
-  async changereadstatus(sender: string, receiver: string): Promise<string> {
-    console.log(sender,receiver)
-  await MessageModel.updateMany(
-    { senderId: sender, recieverId: receiver, read: false },
+  async changereadstatus(messageId:string): Promise<Message> {
+  await MessageModel.updateOne(
+    {_id:messageId},
     { $set: { read: true } } 
   );
-   return 'message red'
+   const message=await MessageModel.findOne({_id:messageId})
+   if(!message)
+   {
+    throw new Error('message not found')
+   }
+   return message
 }
 
   async messageSave(
@@ -82,7 +87,8 @@ export class MongoConversationRepo implements ConversationRepository {
     if (!newMessage) {
     throw new Error("Message creation failed unexpectedly");
   }
-  conversation.messages.push(newMessage._id);
+  const objectId = new Types.ObjectId(newMessage._id);
+  conversation.messages.push(objectId);
    await Promise.all([conversation.save(), newMessage.save()]);
   return newMessage;
 }

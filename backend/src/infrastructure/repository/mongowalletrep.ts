@@ -92,39 +92,34 @@ export class MongoWalletRepository implements WalletRepository {
   }
 }
 
-async getRefundTransactions(): Promise<AdminWalletTransactionDto[]> {
+async getRefundTransaction(appointmentId: string): Promise<string> {
   try {
-    const wallet = await AdminWalletModel.findOne({ 'transactions.paymentstatus': false }).populate({
-      path: 'transactions.appointmentId',
-      match: { status: 'cancelled', payment_status: 'paid' },
-    });
-
+    console.log(appointmentId)
+    const wallet = await AdminWalletModel.findOne();
     if (!wallet) {
-      throw new Error('No wallet found');
+      throw new Error('Wallet not found');
+    }
+    const refundTransaction = wallet.transactions.find(
+      (item: any) => item.appointmentId?.toString() === appointmentId
+    );
+
+    if (!refundTransaction) {
+      throw new Error('Refund transaction not found');
+    }
+        if (!refundTransaction._id) {
+      throw new Error('Refund transaction not found');
     }
 
-    const filteredTransactions: AdminWalletTransactionDto[] = wallet.transactions
-      .filter((txn: any) => txn.appointmentId !== null)
-      .map((txn: any) => ({
-        _id: txn._id.toString(), 
-        amount: txn.amount,
-        date: txn.date,
-        from: txn.from,
-        to: txn.to,
-        toModel: txn.toModel,
-        type: txn.type,
-        paymentstatus: txn.paymentstatus,
-      }));
-
-    return filteredTransactions;
+    return refundTransaction._id.toString();
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(error.message);
     } else {
-      throw new Error("An unknown error occurred");
+      throw new Error('An unknown error occurred');
     }
   }
 }
+
 
 async getPayoutinfor(): Promise<AdminWalletTransactionDto[]> {
   try {

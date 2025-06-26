@@ -9,7 +9,14 @@ export const creatAppoinment = async (doctorId:string,slot:string,name:string,em
     console.log(error);
   }
 }
-
+export const getPage=async (originalId:string,limit:number) => {
+  try {
+    const response = await userInstance.get("/page",{params:{originalId,limit}})
+    return response.data
+  } catch (error) {
+    console.log(error);
+  }
+}
 export const createlockslot=async(slotid:string,doctorid:string)=>
 {
     try {
@@ -27,9 +34,9 @@ export const createlockslot=async(slotid:string,doctorid:string)=>
   }
 }
 
-export const getfutureAppoinments = async () => {
+export const getfutureAppoinments = async (page:number,limit:number) => {
   try {
-    const response = await userInstance.get('/appointments/future')
+    const response = await userInstance.get('/appointments/future',{params:{page,limit}})
    console.log(response.data)
     return response.data 
   } catch (error) {

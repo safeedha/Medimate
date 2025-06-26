@@ -186,6 +186,7 @@ async  lockAvailableSlot(data: SlotLockDTO): Promise<string> {
       }
     
       await slot.save()
+      console.log(slot)
       return {message:`Slot status changed ${slot.status}`}
     }
     catch(error)

@@ -3,8 +3,8 @@ import { slotRepository } from '../../../domain/repository/slot-repository';
 import { Appointment } from '../../../domain/entities/appoinment';
 export class Reshedule{
 constructor(private appointmentRepo: appointmentRepository,private slotRepository:slotRepository) {}
-   async createresedule(canceledslot:string,newslot:string):Promise<String>{
-     const existing=await this.appointmentRepo.getsingleappoinment(canceledslot)
+   async createresedule(canceledappoinment:string,newslot:string):Promise<String>{
+     const existing=await this.appointmentRepo.getsingleappoinment(canceledappoinment)
      const data:Appointment={
         user_id: existing.user_id,
         doctor_id: existing.doctor_id,
@@ -18,7 +18,7 @@ constructor(private appointmentRepo: appointmentRepository,private slotRepositor
         payment_status: 'paid',
      }
       const appointment  = await this.appointmentRepo.createappoinment(data);
-      const result=await this.appointmentRepo.rescheduleStatus(canceledslot,newslot)
+      const result=await this.appointmentRepo.rescheduleStatus(canceledappoinment,appointment._id!)
       const p=await this.slotRepository.changeStatus(newslot)
 
       return 'Appoinment rescheduled'

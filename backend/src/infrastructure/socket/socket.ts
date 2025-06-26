@@ -24,6 +24,15 @@ export const registerSocketEvents = async(io: Server) => {
         io.emit('online-users',Object.keys(users))
       });
 
+    socket.on('read',(data)=>{
+      if (participant[data] && participant[data].length > 0)
+        {
+          const recieverSocket=participant[data]
+           recieverSocket.forEach((socketId) => {
+          io.to(socketId).emit('messageReaded' ,true);
+          });
+        }
+    })
       
   socket.on('participant', ({participantId}) => {  
   if (!participant[participantId]) {  
@@ -35,10 +44,12 @@ export const registerSocketEvents = async(io: Server) => {
   console.log(participant)
 });
 
+
+
 socket.on('leaveParticipant', ({participantId}) => {
   if (participant[participantId]) {
     participant[participantId] = participant[participantId].filter(id => id !== socket.id);
-    console.log('Participant list (after leave):', participant);
+  
   }
 });
 
@@ -55,7 +66,8 @@ socket.on('leaveParticipant', ({participantId}) => {
   });
       
     socket.on('privateMessage', async({ from, to, message=null,image=null, roomId }) => {
-        const messages=await savemessage.MessageSave(from,to,message,image)
+        let messages=await savemessage.MessageSave(from,to,message,image)
+        console.log('this is message',messages)
      if (!participant[`${to}_${from}`] || participant[`${to}_${from}`].length === 0)
         {
           const senderSockets = users[to] || [];
@@ -64,9 +76,7 @@ socket.on('leaveParticipant', ({participantId}) => {
           });
         } 
         else{
-          console.log('hey')
-          const result=await messageread.readmessage(from,to)
-          console.log(result)
+           messages=await messageread.readmessage(messages?._id!)
         }
    
     io.to(roomId).emit('privateMessage', messages);

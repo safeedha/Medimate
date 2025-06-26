@@ -26,6 +26,10 @@ import{Getreport} from '../../application/usecase/report/getreport'
 import{CreateLockslot} from '../../application/usecase/appoinment/createlockslot'
 import {Getallunblockeddept}from '../../application/usecase/dept/getunblocked';
 import {Getunreadcount} from '../../application/usecase/conversation/getunreadcount';
+import {Createreview} from '../../application/usecase/review/createReview'
+import {GetAverage}  from '../../application/usecase/review/getAverage'
+import {Getreview} from '../../application/usecase/review/getReview'
+import {GetPage} from '../../application/usecase/appoinment/getpageforuser'
 interface CustomRequest extends Request {
   id: string;
 }
@@ -36,7 +40,8 @@ export class UserController {
     private updatesingleUser:updatesingleUser,private getsingledoc:GetSingledoc,private getslotbydate:GetSlotByDate,private createAppointment:CreateAppointment,
     private getfutureAppointment:GetfutureAppointment,private getpastAppointment:GetpastAppointment,private changestatusAppointment:ChangestatusAppointment,
     private getallmessage:GetAllmessage,private streamToken:StreamToken,private getreport:Getreport,private getUserallet:GetUserallet,private createlockslot:CreateLockslot,
-    private getallunblockeddept:Getallunblockeddept,private getunreadcount:Getunreadcount
+    private getallunblockeddept:Getallunblockeddept,private getunreadcount:Getunreadcount,private createreview:Createreview,private getAverage:GetAverage,private getreview:Getreview,
+    private getPage:GetPage
     
   ) {}
 
@@ -330,7 +335,7 @@ async logout(req: Request, res: Response): Promise<void> {
   async createPayment(req: CustomRequest, res: Response): Promise<void> {
     try {
       const { amount } = req.body;
-      console.log("hello")
+      
       const order = await createPayment(amount);
 
       res.status(200).json(order);
@@ -376,7 +381,9 @@ async verifyPayment(req: CustomRequest, res: Response): Promise<void> {
   async getfutureAppoinment(req: CustomRequest, res: Response){
     try{
       const id=req.id
-      const result=await this.getfutureAppointment.getfutureappoinment(id)
+      const page = parseInt(req.query.page as string) 
+      const limit= parseInt(req.query.limit as string) 
+      const result=await this.getfutureAppointment.getfutureappoinment(id,page,limit)
       res.status(200).json(result)
     }
     catch(error)
@@ -387,6 +394,24 @@ async verifyPayment(req: CustomRequest, res: Response): Promise<void> {
       res.status(400).json({ message: errorMessage });
     }
   }
+
+  async getPages(req: CustomRequest, res: Response){
+    try{
+      const id=req.id
+      const originalId = (req.query.originalId as string) 
+      const limit= parseInt(req.query.limit as string) 
+      const result=await this.getPage.getpageforappoinment(id,originalId,limit)
+      res.status(200).json(result)
+    }
+    catch(error)
+    {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
+    }
+  }
+
 
     async getpasteAppoinments(req: CustomRequest, res: Response){
     try{
@@ -422,6 +447,9 @@ async verifyPayment(req: CustomRequest, res: Response): Promise<void> {
     }
 
   }
+
+ 
+
 
 
 async getAllmessages(req: CustomRequest, res: Response): Promise<void> {
@@ -520,6 +548,50 @@ async getUnreadcount(req: CustomRequest, res: Response): Promise<void> {
   }
 }
 
+
+async createReview(req: CustomRequest, res: Response): Promise<void> {
+  try {
+    const id = req.id as string;
+    const {comment,rating,doctorId}=req.body
+    const result=await this.createreview.create(id,comment,rating,doctorId)
+    console.log(result) 
+     res.status(200).json(result);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error';
+    res.status(400).json({ message: errorMessage });
+  }
+}
+
+async average(req: CustomRequest, res: Response): Promise<void> {
+  try {
+    const id = req.id as string;
+    const doctorId = req.query.doctorId as string 
+    const result=await this.getAverage.getaveragerating(doctorId)
+    console.log(result) 
+     res.status(200).json(result);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error';
+    res.status(400).json({ message: errorMessage });
+  }
+}
+
+async getreviews(req: CustomRequest, res: Response): Promise<void> {
+  try {
+    const id = req.id as string;
+    const page = parseInt(req.query.page as string) 
+    const limit= parseInt(req.query.limit as string)   
+    const doctorId = req.query.doctorId as string 
+    const result=await this.getreview.getreviews(doctorId,page,limit)
+    console.log(result) 
+     res.status(200).json(result);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error';
+    res.status(400).json({ message: errorMessage });
+  }
+}
 
 
 }

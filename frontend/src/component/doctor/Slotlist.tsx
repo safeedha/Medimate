@@ -21,7 +21,7 @@ function Slotlist({
   useEffect(() => {
     async function getAllRecurringslot() {
       try {
-        const result = await getrecurring(doctor?._id!, currentpage, limit);
+        const result = await getrecurring(doctor?._id as string, currentpage, limit);
         setSlot(result.data);
         setTotal(result.total);
       } catch (error) {

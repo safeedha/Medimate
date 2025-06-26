@@ -78,23 +78,35 @@ export interface IndividualSlot {
 
 export interface Appointment {
   _id?: string; 
-  user_id: string| Iuser; // User who booked the appointment
-  doctor_id: string| Idoctor; // Doctor for the appointment
-  schedule_id: string| IndividualSlot; // Schedule details for the appointment
-  
-
- 
+  user_id: string| Iuser; 
+  doctor_id: string| Idoctor; 
+  schedule_id: string| IndividualSlot; 
   patient_name: string;
   patient_email: string;
   patient_age: number;
   patient_gender: 'male' | 'female' | 'other';
   reason: string;
-  reportAdded:boolean
+
   status: 'pending' |  'cancelled' | 'completed';
   payment_status: 'paid' | 'unpaid';
+  rescheduled_to?: string| Appointment,
+  isRescheduled?:boolean;
+  reportAdded?: boolean; 
+  followup_id?:string|Appointment,
+  followup_status?:boolean
 
+   
   created_at?: Date;
   updated_at?: Date;
+}
+
+export interface Transaction {
+  _id:string,
+  type: 'credit' | 'debit';
+  amount: number;
+  appointmentId?: string|Appointment;
+  note?: string;
+  date: Date;
 }
 
 
@@ -107,4 +119,22 @@ export type LocationState = {
 export type AppointmentCountByDate = {
   _id: string;    
   count: number;
+};
+
+export interface Message {
+  senderId: string | Iuser | Idoctor;
+  recieverId: string | Idoctor | Iuser;
+  message?: string;
+  image?:string;
+  messageType:'text'|'image'
+  read?: boolean; 
+ 
+}
+
+export type MessagePayload = {
+  from: string | undefined;
+  to: string;
+  roomId: string;
+  message?: string;
+  image?: string;
 };
