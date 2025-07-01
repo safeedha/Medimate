@@ -20,6 +20,7 @@ const io = new Server(server, {
 registerSocketEvents(io);
 
 const port = process.env.PORT 
+console.log(port)
 
 connectToDatabase();
 
