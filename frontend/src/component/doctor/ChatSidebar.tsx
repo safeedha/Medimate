@@ -1,11 +1,11 @@
 
 import { useEffect, useState } from 'react';
 import type { Iuser } from '../../Interface/interface';
-import { getAlluser,getUnreadCounts } from '../../api/doctorapi/chat';
+import {getUnreadCounts,getAlluserbysort } from '../../api/doctorapi/chat';
 import { socket } from '../../socket';
 
 
-const ChatSidebar = ({getUserId,onlineuser}:{getUserId:(id:string,name:string)=>void,onlineuser:string[]}) => {
+const ChatSidebar = ({getUserId,onlineuser,sort}:{getUserId:(id:string,name:string)=>void,onlineuser:string[],sort:boolean}) => {
     type UnreadCounts = {
   [key: string]: number;
 };
@@ -16,7 +16,7 @@ const ChatSidebar = ({getUserId,onlineuser}:{getUserId:(id:string,name:string)=>
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getAlluser(search);
+        const response = await getAlluserbysort(search);
         if (response) {
           setUsers(response);
         } else {
@@ -28,7 +28,7 @@ const ChatSidebar = ({getUserId,onlineuser}:{getUserId:(id:string,name:string)=>
     };
 
     fetchData();
-  }, [search]);
+  }, [search,sort]);
 
   useEffect(() => {
   const fetchUnreadCounts = async () => {

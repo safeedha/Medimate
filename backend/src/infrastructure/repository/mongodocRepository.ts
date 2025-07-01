@@ -121,6 +121,53 @@ async getAllunverified(page: number, limit: number): Promise<{ doctors: DoctorDT
 }
 
  
+
+
+async getAllverifiedbysort(
+  search?: string
+): Promise<{ total: number; data: DoctorDTO[] }> {
+  try {
+  
+    let doctors = await Doctor.find({ status: 'Approved', isBlocked: false }).populate({
+      path: 'specialisation',
+      match: { isblocked: false },
+    });
+
+    if (search) {
+      doctors = doctors.filter((doc) =>
+        doc.firstname.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+      const total = doctors.length;
+     
+     doctors = doctors.sort((a, b) =>
+      new Date(b.lastMessage ?? 0).getTime() - new Date(a.lastMessage ?? 0).getTime()
+    );
+      const data: DoctorDTO[] = doctors.map((doc) => ({
+      _id: doc._id.toString(),
+      firstname: doc.firstname,
+      lastname: doc.lastname,
+      email: doc.email,
+      phone: doc.phone,
+      specialisation: doc.specialisation && typeof doc.specialisation === 'object'
+        ? {
+            deptname: doc.specialisation.deptname,
+            description: doc.specialisation.description,
+          }
+        : doc.specialisation?.toString() ?? null,
+      experience: doc.experience,
+      fee: doc.fee,
+      profilePicture: doc.profilePicture,
+    }));
+     return { total, data };
+
+  
+
+  } catch (error) {
+    console.error('Error fetching verified doctors:', error);
+    throw new Error('Database error');
+  }
+}
  
   async getAlldoctor(
   page: number,
@@ -203,7 +250,8 @@ async getAllunverified(page: number, limit: number): Promise<{ doctors: DoctorDT
         : null,
       fee: doctor.fee,
       experience: doctor.experience,
-      profilePicture: doctor.profilePicture
+      profilePicture: doctor.profilePicture,
+       isBlocked:doctor.isBlocked
     };
 
     return result;

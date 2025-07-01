@@ -12,6 +12,7 @@ const UserSchema: Schema<Iuser> = new Schema(
     googleIds: { type: String, default: null },
     isBlocked: { type: Boolean, required: true, default: false },
     googleVerified: { type: Boolean, default: false },
+    lastMessage:{type:Date,default:Date.now},
     gender: {
       type: String,
       enum: ['male', 'female', 'other'],

@@ -251,7 +251,15 @@ async getAllappoinment(req: Request, res: Response): Promise<void> {
 
 async getCountforDoc(req: Request, res: Response): Promise<void> {
   try {
-    const result = await this.getCountofappforeachDoc.getcount()
+    const {status}=req.query
+      console.log(status)
+      if (typeof status !== 'string' || !['completed', 'pending', 'cancelled'].includes(status)) {
+       res.status(400).json({ message: 'Invalid status value' });
+       return
+    }
+
+
+    const result = await this.getCountofappforeachDoc.getcount(status as 'completed'|'pending'|'cancelled');
     res.status(200).json(result);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Internal server error";

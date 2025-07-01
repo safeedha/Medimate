@@ -17,7 +17,8 @@ export interface Idoctor{
   qualification?:string,
   additionalInfo?:string,
   profilePicture?:string,
-  medicalLicence?:string
+  medicalLicence?:string,
+  lastMessage?:Date
 
 
 }

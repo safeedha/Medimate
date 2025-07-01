@@ -40,7 +40,10 @@ import {MongoReviewRepository}  from '../../infrastructure/repository/mongorevie
 import {GetAverage}  from '../../application/usecase/review/getAverage'
 import {Getreview} from '../../application/usecase/review/getReview'
 import {GetPage} from '../../application/usecase/appoinment/getpageforuser'
-
+import{RefreshToken} from '../../application/usecase/user/refreshtoken'
+import {Deletemessage} from '../../application/usecase/conversation/deletemessage'
+import {MessageTimeUpdation} from '../../application/usecase/conversation/messagetimeuser'
+import {GetAllSort}  from '../../application/usecase/doctor/getSort'
 export interface CustomRequest extends Request {
   id: string;
 }
@@ -54,6 +57,9 @@ const mongoWalletRepository=new MongoWalletRepository()
 const mongoreportRepository=new MongoreportRepository()
 const mongoReviewRepository=new MongoReviewRepository()
 
+const getAllSort=new GetAllSort(mongodocRepository)
+const messageTimeUpdation=new MessageTimeUpdation(mongoConversationRepo)
+const deletemessage=new Deletemessage(mongoConversationRepo)
 const getPage=new GetPage(mongoappoinmentRepository)
 const getAverage=new GetAverage(mongoReviewRepository)
 const getreview=new Getreview(mongoReviewRepository) 
@@ -75,7 +81,7 @@ const otpverify=new OtpVerify(mongoregRepository)
 
 const mongodeotrepository=new MongoDeptRepository()
 
-
+const refreshToken=new RefreshToken()
 const getDept=new GetDept(mongodeotrepository)
 const getallunblockeddept=new Getallunblockeddept(mongodeotrepository)
 const getslotbydate=new GetSlotByDate(mongoslotRepository)
@@ -86,19 +92,22 @@ const changestatusAppointment=new ChangestatusAppointment(mongoappoinmentReposit
 const getallmessage=new GetAllmessage(mongoConversationRepo)
 const getsingleUser=new GetsingleUser(mongouserRepository)
 const updateuser=new updatesingleUser(mongouserRepository)
-const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc,getslotbydate,createappoinment,getfutureAppointment,getpastAppointment,changestatusAppointment,getallmessage,streamToken,getreport,getUserallet,createlockslot,getallunblockeddept,getunreadcount,createreview,getAverage,getreview,getPage)
+const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userrest,userdoc,usergoogle,getsingleUser,updateuser,getsingledoc,getslotbydate,createappoinment,getfutureAppointment,getpastAppointment,changestatusAppointment,getallmessage,streamToken,getreport,getUserallet,createlockslot,getallunblockeddept,getunreadcount,createreview,getAverage,getreview,getPage,refreshToken,deletemessage,messageTimeUpdation,getAllSort)
 
 
 
 router.get("/department", (req, res) => user.getAllDept(req, res)) 
 router.post("/register", (req, res) => user.register(req, res)) 
 router.post("/login", (req, res) => user.login(req, res)) 
-router.get("/logout", (req, res) => user.logout(req, res)) 
+router.get("/logout", (req, res) => user.logout(req, res))
+router.post("/refresh-token", (req, res) => user.refreshTokencontroller(req, res))
+
 router.post("/sendotp", (req, res) => user.sendOtp(req, res))
 router.post("/verifyotp", (req, res) => user.verifyOtp(req, res))
 router.post("/reset",(req, res) => user.resetPassword(req, res))
 router.post("/googlelogin",(req, res) => user.googleLogin(req, res))
-router.get("/doctors",verifyUserAuth, (req, res) => user.getAllDoct(req, res)) 
+router.get("/doctors",verifyUserAuth, (req, res) => user.getAllDoct(req, res))
+router.get("/doctors/sort",verifyUserAuth, (req, res) => user.getAllDoctbySort(req, res))  
 router.get("/doctor/:id",verifyUserAuth, (req, res) => user.getSingleDoct(req, res))
 router.get("/doctor/slot/:id",verifyUserAuth, (req, res) => user.getSlotedoctor(req, res)) 
 router.get("/department",verifyUserAuth, (req, res) => user.getAllDept(req, res)) 
@@ -106,7 +115,7 @@ router.get("/profile", verifyUserAuth, (req, res) => {
   user.getUserdetail(req as CustomRequest, res);
 });
 
-
+router.patch('/doctor/:reciever',verifyUserAuth, (req, res) => user.updatemessagetime(req as CustomRequest, res))
 router.post("/profile", verifyUserAuth, (req, res) => {
   user.updateUserdetail(req as CustomRequest, res);
 });
@@ -140,6 +149,9 @@ router.patch("/appointment", verifyUserAuth, (req, res) => {
 
 router.get("/messages", verifyUserAuth, (req, res) => {
   user.getAllmessages(req as CustomRequest, res);
+})
+router.delete("/messages/:messageid", verifyUserAuth, (req, res) => {
+  user.deletemessages(req as CustomRequest, res);
 })
 
 router.get("/gettoken", verifyUserAuth, (req, res) => {

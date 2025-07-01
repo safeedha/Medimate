@@ -8,7 +8,8 @@ export class MongoUserRepository implements UserRepository {
 async getAlluser(
   page: number,
   limit: number,
-  search: string | undefined
+  search: string | undefined,
+  
 ): Promise<{ users: UserDTO[]; total: number }> {
   try {
 
@@ -66,6 +67,40 @@ async getAlluser(
       throw new Error(error.message);
     }
     throw new Error('Unknown error occurred');
+  }
+}
+
+
+async getAlluserbysort(search?: string): Promise<{ users: UserDTO[]; total: number }> {
+  try {
+    const baseFilter: any = { isBlocked: false };
+
+    if (search && search.trim() !== '') {
+      baseFilter.$or = [
+        { firstname: { $regex: search, $options: 'i' } },
+        { lastname: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    const userDocs = await User.find(baseFilter).sort({ lastMessage: -1 });
+    const total = userDocs.length;
+
+    const users: UserDTO[] = userDocs.map(doc => ({
+      _id: doc._id.toString(),
+      firstname: doc.firstname,
+      lastname: doc.lastname,
+      email: doc.email,
+      phone: doc.phone ?? null,
+      googleVerified: doc.googleVerified,
+      isBlocked: doc.isBlocked,
+      gender: doc.gender,
+      age: doc.age,
+    }));
+
+    return { users, total };
+  } catch (error) {
+    throw new Error(error instanceof Error ? error.message : 'Unknown error occurred');
   }
 }
 

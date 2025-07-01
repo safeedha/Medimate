@@ -12,7 +12,7 @@ function Doclist() {
   const [search, setSearch] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState<number>(0);
-  const itemsPerPage = 3;
+  const itemsPerPage = 6;
 
   const navigate = useNavigate();
 

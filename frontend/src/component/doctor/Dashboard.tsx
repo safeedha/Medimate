@@ -34,12 +34,10 @@ function Dashboard() {
     lastWeek.setDate(today.getDate() - 6)
     const startStr = lastWeek.toISOString().split('T')[0]
     const endStr = today.toISOString().split('T')[0]
-
     setStartDate(startStr)
     setEndDate(endStr)
   }, [])
 
-  // useCallback memoized functions
   const memoizedSetAppointmentCountfordash = useCallback((data: AppointmentCountByDate[]) => {
     setAppointmentCountfordash(data)
   }, [])
@@ -65,7 +63,6 @@ function Dashboard() {
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
       }
-
       html2pdf().set(opt).from(contentRef.current).save()
     }
   }
@@ -74,21 +71,28 @@ function Dashboard() {
     <div className="flex min-h-screen bg-gradient-to-br from-white via-emerald-50 to-cyan-100">
       <DoctorSidebar />
       <div className="ml-64 flex-1 p-10">
-        <h2 className="text-xl font-medium text-center text-emerald-700 mb-6">
-          📊 Appointment Overview
-        </h2>
 
+        {/* Header with Button */}
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-semibold text-emerald-700">📊 Appointment Overview</h2>
+          <button
+            onClick={handleDownloadPDF}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded shadow-md transition"
+          >
+            Download PDF
+          </button>
+        </div>
+
+        {/* Hidden PDF content */}
         <div className="hidden">
-          <div ref={contentRef} className="p-6 text-sm font-sans">
+          <div ref={contentRef} className="p-6 text-sm font-sans bg-white">
             <h2 className="text-2xl font-bold text-center mb-4 text-emerald-700">Dashboard Detail</h2>
-
             <div className="mb-4">
               <p><strong>Total Appointments:</strong> {count.total}</p>
               <p><strong>Completed:</strong> {count.completed}</p>
               <p><strong>Pending:</strong> {count.pending}</p>
               <p><strong>Cancelled:</strong> {count.cancelled}</p>
             </div>
-
             <h3 className="text-lg font-semibold mt-4 mb-2 text-emerald-600">
               {type} Appointment from {startDate} to {endDate}
             </h3>
@@ -102,13 +106,13 @@ function Dashboard() {
               <tbody>
                 {appointmentCountfordash.length === 0 ? (
                   <tr>
-                    <td colSpan={2} className="border border-gray-400 px-2 py-1 text-center">No data available</td>
+                    <td colSpan={2} className="border px-2 py-1 text-center">No data available</td>
                   </tr>
                 ) : (
                   appointmentCountfordash.map((item, index) => (
                     <tr key={index}>
-                      <td className="border border-gray-400 px-2 py-1">{item._id}</td>
-                      <td className="border border-gray-400 px-2 py-1">{item.count}</td>
+                      <td className="border px-2 py-1">{item._id}</td>
+                      <td className="border px-2 py-1">{item.count}</td>
                     </tr>
                   ))
                 )}
@@ -117,7 +121,8 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white p-5 rounded-2xl shadow-md flex items-center gap-4 border-l-4 border-emerald-500">
             <FaClipboardList className="text-2xl text-emerald-500" />
             <div>
@@ -151,20 +156,40 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        {/* Chart & Table */}
+        <div className="mb-8">
           <DashboardBarChart
             setAppointmentCountfordash={memoizedSetAppointmentCountfordash}
             setType={memoizedSetType}
             startdate={memoizedSetStartDate}
             enddate={memoizedSetEndDate}
           />
-          <button
-            onClick={handleDownloadPDF}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md transition duration-200"
-          >
-            Download PDF
-          </button>
         </div>
+
+        {/* Table Section */}
+        {appointmentCountfordash.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold mt-4 mb-2 text-emerald-700">
+              {type} Appointment from {startDate} to {endDate}
+            </h3>
+            <table className="w-full border-collapse border border-gray-300 text-sm">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="border px-3 py-2 text-left">Date</th>
+                  <th className="border px-3 py-2 text-left">Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                {appointmentCountfordash.map((item, index) => (
+                  <tr key={index}>
+                    <td className="border px-3 py-1">{item._id}</td>
+                    <td className="border px-3 py-1">{item.count}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   )

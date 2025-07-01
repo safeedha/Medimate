@@ -145,6 +145,7 @@ async getPayoutinfor(): Promise<AdminWalletTransactionDto[]> {
     to: txn.to,
     toModel: txn.toModel,
     type: txn.type,
+    doctorId:txn.doctorId.toString(),
     paymentstatus: txn.paymentstatus,
   }));
   return filteredTransactions

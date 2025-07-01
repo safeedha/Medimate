@@ -10,7 +10,7 @@ import {ScheduleDTO,AppointmentDTO,AppointmentCountByDate} from '../../dto/slot.
    getsingleappoinment(id:string):Promise<Appointment>
    rescheduleStatus(id:string,resheduleid:string):Promise<Appointment>
    getdetails():Promise<{total:number,pending:number,completed:number,cancelled:number}>
-   getcountofappoinmentforeacdoc():Promise<Record<string, number>>
+   getcountofappoinmentforeacdoc(status:'completed'|'pending'|'cancelled'):Promise<Record<string, number>>
    getfilteredapooinment(status: 'completed' | 'cancelled' | 'pending',start: Date,end: Date):Promise<AppointmentCountByDate[]>
    getfilteredapooinmentfordoc(status: 'completed' | 'cancelled' | 'pending',start: Date,end: Date,id:string):Promise<AppointmentCountByDate[]>
    getcountofappoinmentofdoctor(id:string):Promise<Record<string, number>>

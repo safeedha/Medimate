@@ -36,7 +36,7 @@ export const payoutrequst=async()=>{
   try{
     console.log("hey")
     const response = await adminInstance.get(`/wallet/pay`);
-    console.log('data here')
+    console.log('data here,bjh')
     console.log(response.data)
     return response.data;
   }

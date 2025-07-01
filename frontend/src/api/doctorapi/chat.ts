@@ -1,7 +1,9 @@
 import doctorInstance from "./instance";
 import axios from "axios";
 
-export const getAlluser = async (search:string) => {
+
+
+export const getAlluserbysort  = async (search:string) => {
   try {
     const response = await doctorInstance.get("/user",{params:{search}});
     return response.data.users; 
@@ -39,6 +41,40 @@ export const getUnreadCounts=async () => {
     return response.data; 
   } catch (error) {
     if (axios.isAxiosError(error)) {
+          
+          return error.response?.data?.message || error.message;
+        } else {
+          console.error(error);
+        }
+  }
+}
+
+
+export const deletMessage=async(id:string,sender:string,reciever:string)=>{
+  try{
+   const response = await doctorInstance.delete(`/messages/${id}`,{params:{sender,reciever}})
+   return response.data
+  }
+  catch(error)
+  {
+     if (axios.isAxiosError(error)) {
+          
+          return error.response?.data?.message || error.message;
+        } else {
+          console.error(error);
+        }
+  }
+}
+
+
+export const Messagetimeadding=async(reciever:string)=>{
+  try{
+   const response = await doctorInstance.patch(`/user/${reciever}`)
+   return response.data
+  }
+  catch(error)
+  {
+     if (axios.isAxiosError(error)) {
           
           return error.response?.data?.message || error.message;
         } else {

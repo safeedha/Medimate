@@ -146,11 +146,11 @@ async getfilteredapooinmentfordoc(status: 'completed' | 'cancelled' | 'pending',
 }
 
 
-   async getcountofappoinmentforeacdoc(): Promise<Record<string, number>> {
+   async getcountofappoinmentforeacdoc(status:'completed'|'pending'|'cancelled'): Promise<Record<string, number>> {
   try {
     const result = await  AppointmentModel.aggregate([
       {
-        $match: { status: "completed" } 
+        $match: { status: status } 
       },
       {
         $lookup: {
@@ -393,7 +393,7 @@ async  getappinmentbydoctor(
       { $unwind: "$schedule" },
       {
         $sort: {
-          "schedule.date": 1,
+          "schedule.date": -1,
         },
       },
       {
@@ -491,7 +491,7 @@ async getallappinmentfordoctor(doctorid:string):Promise<Appointment[]>{
     {$unwind:"$schedule"},
     {
     $sort: {
-      "schedule.date": 1 // sort by schedule.date ascending
+      "schedule.date": -1 // sort by schedule.date ascending
     }
   }
  ]);

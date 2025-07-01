@@ -17,9 +17,11 @@ export const getAllappoinment = async (id: string) => {
   }
 };
 
-export const getCountforDoc = async () => {
+export const getCountforDoc = async (status:'completed'|'pending'|'cancelled') => {
   try {
-    const response = await adminInstance.get(`/appoinment/count`);
+   
+    const response = await adminInstance.get(`/appoinment/count`,{params:{status}});
+    console.log(response)
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

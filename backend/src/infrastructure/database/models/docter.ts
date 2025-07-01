@@ -23,6 +23,7 @@ const DoctorSchema: Schema<Idoctor> = new Schema(
     additionalInfo: { type: String },
     profilePicture: { type: String },
     medicalLicence: { type: String },
+    lastMessage:{type:Date,default:Date.now}
   },
   {
     timestamps: true, 

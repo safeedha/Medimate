@@ -26,6 +26,8 @@ function Password() {
       }
       await userpasswordRest(user?.email as string,newPassword )
       toast.success("Password changed")
+      setNewPassword('')
+      setConfirmPassword('')
   
   };
 

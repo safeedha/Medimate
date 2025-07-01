@@ -50,3 +50,38 @@ export const getUnreadCounts=async () => {
         }
   }
 }
+
+
+export const deletMessage=async(id:string,sender:string,reciever:string)=>{
+  try{
+   const response = await userInstance.delete(`/messages/${id}`,{params:{sender,reciever}})
+   return response.data
+  }
+  catch(error)
+  {
+     if (axios.isAxiosError(error)) {
+          
+          return error.response?.data?.message || error.message;
+        } else {
+          console.error(error);
+        }
+  }
+}
+
+
+export const Messagetimeadding=async(reciever:string)=>{
+  try{
+   const response = await userInstance.patch(`/doctor/${reciever}`)
+   console.log(response)
+   return response.data
+  }
+  catch(error)
+  {
+     if (axios.isAxiosError(error)) {
+          
+          return error.response?.data?.message || error.message;
+        } else {
+          console.error(error);
+        }
+  }
+}

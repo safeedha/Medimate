@@ -9,5 +9,6 @@ export interface Iuser{
   isBlocked:boolean,
   googleVerified?:boolean,
   gender?:"male"|"female"|"other",
-  age?:number
+  age?:number,
+  lastMessage?:Date
 }

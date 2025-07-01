@@ -44,6 +44,7 @@ export const login = async (email:string,password:string,dispatch: AppDispatch )
   try {
     const response = await userInstance.post("/login", {email,password  });
      dispatch(setUserDetails(response.data.user))
+     localStorage.setItem('userToken',response.data.accessusertoken);
     return response.data.message; 
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -120,6 +121,7 @@ export const googleLogin = async(credential:string,dispatch:AppDispatch) => {
  try{
        const response = await userInstance.post("/googlelogin", {credential})
        dispatch(setUserDetails(response.data.user))
+       localStorage.setItem('userToken',response.data.accessusertoken);
  }
  catch(error)
  {
@@ -176,6 +178,7 @@ export const setUserdetail=async(firstname:string,lastname:string,phone:string,a
 export const logout=async()=>{
   try{
         const response = await userInstance.get("/logout");
+        localStorage.removeItem('userToken');
         return response.data.message
        
   }

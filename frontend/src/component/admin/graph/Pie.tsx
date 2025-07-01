@@ -5,13 +5,14 @@ import { getCountforDoc } from '../../../api/adminapi/appoinment'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
-export default function DoctorCompletedPieChart({setDoctorDatafordash}:{setDoctorDatafordash: React.Dispatch<React.SetStateAction<Record<string,string>>>}) {
+export default function DoctorCompletedPieChart({setDoctorDatafordash,status}:{setDoctorDatafordash: React.Dispatch<React.SetStateAction<Record<string,string>>>,status:'completed' | 'cancelled' | 'pending'}) {
   const [doctorData, setDoctorData] = useState<Record<string,string>>({})
+  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result=await getCountforDoc()
+        const result=await getCountforDoc(status)
         setDoctorData(result)
         setDoctorDatafordash(result)
       } catch (error) {
@@ -20,13 +21,13 @@ export default function DoctorCompletedPieChart({setDoctorDatafordash}:{setDocto
     }
 
     fetchData()
-  }, [])
+  }, [status])
 
   const data = {
     labels: Object.keys(doctorData),
     datasets: [
       {
-        label: 'Completed Appointments',
+        label: `${status} Appointment`,
         data: Object.values(doctorData),
         backgroundColor: ['#60a5fa', '#34d399', '#facc15', '#f87171', '#a78bfa'], // Add more colors if needed
       },
@@ -45,9 +46,14 @@ export default function DoctorCompletedPieChart({setDoctorDatafordash}:{setDocto
   return (
     <div className="w-[300px] h-[300px] border p-4 rounded-md shadow-md mx-auto">
       <h2 className="text-center font-semibold mb-2">
-        Completed Appointments by Doctor
+        {status} Appointments by Doctor
       </h2>
-      <Pie data={data} options={options} />
+      {Object.keys(doctorData).length>0?
+       (<Pie data={data} options={options} />):
+       (<p className="text-center text-gray-500 mt-10">No data available for {status} appointments.</p>)
+      
+      }
+      {/* <Pie data={data} options={options} /> */}
     </div>
   )
 }

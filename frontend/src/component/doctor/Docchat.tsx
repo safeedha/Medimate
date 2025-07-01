@@ -15,6 +15,7 @@ function Docchat() {
  const[onlineuser,setOnlineuser]=useState([])
  const [userid,setUserid]=useState<string>("");
   const [name,setName]=useState<string>("");
+   const[sort,setSort]=useState<boolean>(false)
   
  useEffect(()=>{
   if(userId)
@@ -47,12 +48,12 @@ function Docchat() {
         <DoctorSidebar/>
       </div>
       <div className='ml-52'>
-        <ChatSidebar getUserId={getUserId} onlineuser={onlineuser}/>  
+        <ChatSidebar getUserId={getUserId} onlineuser={onlineuser} sort={sort}/>  
       </div>
       <div className='flex-1 mt-6'>
         {userid===""?
         <Nochatselected/>:
-         <Chatbox userid={userid} name={name}/>
+         <Chatbox userid={userid} name={name} setSort={setSort} />
         }
       </div>
     </div>

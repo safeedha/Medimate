@@ -8,4 +8,6 @@ export interface DoctorRepository {
   profileupdate(firstname: string, lastname: string, experience: number, fee: number, image: string, email: string, phone: string, specialisation: string, qualification: string,medicalLicence:string): Promise<{ message: string }>;
   getSingleDoctor(id: string): Promise<DoctorDTO>;
   getAlldoctor(page: number, limit: number, search: string): Promise<{ doctors: DoctorDTO[]; total: number }>;
+  getAllverifiedbysort(search?: string): Promise<{ total: number; data: DoctorDTO[] }> 
+
 }

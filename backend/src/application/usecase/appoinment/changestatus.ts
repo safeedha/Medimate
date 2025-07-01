@@ -8,6 +8,7 @@ export class ChangestatusAppointment {
    async changestus(appoinmentid:string,status: 'pending' |  'cancelled' | 'completed',reschedule=false):Promise<{message:string}>{
        try{
            const result=await this.appointmentRepo.changestatus(appoinmentid,status)
+           if(status==='cancelled'){
           const slotId = result.schedule_id?.toString();
           const r= await this.slotRepository.changeStatus(slotId);
           if(!reschedule)
@@ -15,6 +16,7 @@ export class ChangestatusAppointment {
           const refunds = await this.walletRepository.getRefundTransaction(appoinmentid);
           const response=await this.walletRepository.addrefund(refunds);
           }
+        }
           return {message:"Status updated"}
        }
        catch(error)

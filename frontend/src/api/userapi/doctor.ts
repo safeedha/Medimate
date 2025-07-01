@@ -25,6 +25,27 @@ export const getAlldoctors = async (page:number,limit:number,singledepartment:st
 }
 
 
+export const getAlldoctorsbysort=async(search:string)=>{
+   try {
+   const response = await userInstance.get("/doctors/sort", {
+    params: {
+      search:search,
+    }
+  });
+
+    return response.data; 
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.response?.data?.message || error.message;
+    } else if (error instanceof Error) {
+      return error.message;
+    } else {
+      return 'Internal server error';
+    }
+  }
+}
+
+
 export const getDepartnment = async () => {
   try {
     const response = await userInstance.get("/department");

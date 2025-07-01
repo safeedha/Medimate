@@ -13,6 +13,7 @@ function Chat() {
   const[onlineuser,setOnlineuser]=useState<string[]>([])
  const [userid,setUserid]=useState<string>("");
  const [name,setName]=useState<string>("");
+ const[sort,setSort]=useState<boolean>(false)
 
 
 
@@ -37,11 +38,11 @@ useEffect(() => {
     <>
     <Navbar/>
     <div className='flex flex-row mt-16'>
-      <Chatsidebar getUserId={getUserId} onlineuser={onlineuser} />
+      <Chatsidebar getUserId={getUserId} onlineuser={onlineuser} sort={sort}/>
       <div className='flex-1 bg-teal-50'>
         {userid===""?
         <Nochatselected/>:
-         <Chatbox userid={userid} name={name}/>
+         <Chatbox userid={userid} name={name} setSort={setSort}/>
         }
       
       </div>

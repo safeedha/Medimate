@@ -30,6 +30,10 @@ import {Createreview} from '../../application/usecase/review/createReview'
 import {GetAverage}  from '../../application/usecase/review/getAverage'
 import {Getreview} from '../../application/usecase/review/getReview'
 import {GetPage} from '../../application/usecase/appoinment/getpageforuser'
+import{RefreshToken} from '../../application/usecase/user/refreshtoken'
+import {Deletemessage} from '../../application/usecase/conversation/deletemessage'
+import {MessageTimeUpdation} from '../../application/usecase/conversation/messagetimeuser'
+import {GetAllSort}  from '../../application/usecase/doctor/getSort'
 interface CustomRequest extends Request {
   id: string;
 }
@@ -41,7 +45,7 @@ export class UserController {
     private getfutureAppointment:GetfutureAppointment,private getpastAppointment:GetpastAppointment,private changestatusAppointment:ChangestatusAppointment,
     private getallmessage:GetAllmessage,private streamToken:StreamToken,private getreport:Getreport,private getUserallet:GetUserallet,private createlockslot:CreateLockslot,
     private getallunblockeddept:Getallunblockeddept,private getunreadcount:Getunreadcount,private createreview:Createreview,private getAverage:GetAverage,private getreview:Getreview,
-    private getPage:GetPage
+    private getPage:GetPage,private refreshtoken:RefreshToken,private deletemessage:Deletemessage,private messageTimeUpdation:MessageTimeUpdation,private getAllSort:GetAllSort,
     
   ) {}
 
@@ -75,6 +79,39 @@ export class UserController {
       res.status(400).json({ message: errorMessage });
     }
   }
+
+  async getAllDoctbySort(req: Request, res: Response):Promise<void>{
+     try {
+      const search=req.query.search as string | undefined
+      const result = await this.getAllSort.getAlldoctor(search!);
+      res.status(200).json(result);
+    } catch (error) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
+    }
+  }
+
+    async updatemessagetime(req: CustomRequest, res: Response):Promise<void>{
+      try{
+         const {id}=req
+          const {reciever}=req.params
+         
+         const result=await this.messageTimeUpdation.update(id!,reciever)
+         console.log(result)
+   
+        res.status(201).json(result)
+      }
+      catch(error)
+      {
+           const errorMessage = error instanceof Error
+          ? error.message
+          : 'Internal server error';
+        res.status(400).json({ message: errorMessage });
+  
+      }
+    }
 
   async getSingleDoct(req: Request, res: Response):Promise<void>{
     try{
@@ -143,27 +180,25 @@ async login(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
     const result = await this.userlog.login({ email, password });
 
-    res.cookie("accessusertoken", result.accessToken, {
-      httpOnly: true,
-      secure: false, // true in production
-      maxAge: 15 * 60 * 1000, // 15 minutes
-    });
+    // res.cookie("accessusertoken", result.accessToken, {
+    //   httpOnly: true,
+    //   secure: false, // true in production
+    //   maxAge: 15 * 60 * 1000, // 15 minutes
+    // });
 
   
     res.cookie("refreshusertoken", result.refreshToken, {
       httpOnly: true,
       secure: false, // true in production
-      maxAge: 15 * 60 * 1000,  // 7 days
+      maxAge:7 * 24 * 60 * 60 * 1000, // 7 days
     });
-      res.cookie("refreshusertoken", result.refreshToken, {
-      httpOnly: true,
-      secure: false, // true in production
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    
 
     res.status(200).json({
       message: 'Login successful',
-      user: result.user
+      user: result.user,
+      accessusertoken:result.accessToken
+
     });
 
   } catch (error) {
@@ -176,10 +211,10 @@ async login(req: Request, res: Response): Promise<void> {
 
 async logout(req: Request, res: Response): Promise<void> {
   try {
-    res.clearCookie('accessusertoken',
-      { httpOnly: true,
-      secure: false, 
-    })
+    // res.clearCookie('accessusertoken',
+    //   { httpOnly: true,
+    //   secure: false, 
+    // })
       res.clearCookie("refreshusertoken",
       { httpOnly: true,
       secure: false, 
@@ -193,6 +228,24 @@ async logout(req: Request, res: Response): Promise<void> {
     res.status(400).json({ message: errorMessage });
   }
 }
+
+
+async refreshTokencontroller(req: Request, res: Response): Promise<void> {
+   try {
+            const token=req.cookies?.refreshusertoken;
+            console.log("refreshtokencontroller",token)
+            const newaccesstoken=await this.refreshtoken.refresh(token);
+            res.status(200).json({ token: newaccesstoken });
+        } catch (error) {
+          const errorMessage = error instanceof Error
+              ? error.message
+              : 'Internal server error';
+            console.log(errorMessage)
+            res.status(400).json({ message: errorMessage });
+        }
+
+}
+
 
 
 
@@ -255,11 +308,11 @@ async logout(req: Request, res: Response): Promise<void> {
           const {credential} = req.body
           console.log(credential)
           const result =await this.googleuser.login(credential)
-           res.cookie("accessusertoken", result.accessToken, {
-            httpOnly: true,
-            secure: false, // true in production
-            maxAge: 15 * 60 * 1000, // 15 minutes
-          });
+          //  res.cookie("accessusertoken", result.accessToken, {
+          //   httpOnly: true,
+          //   secure: false, // true in production
+          //   maxAge: 15 * 60 * 1000, // 15 minutes
+          // });
 
   
           res.cookie("refreshusertoken", result.refreshToken, {
@@ -268,7 +321,7 @@ async logout(req: Request, res: Response): Promise<void> {
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
           });
 
-          res.status(200).json({ message: 'Login successful', user: result.user });
+          res.status(200).json({ message: 'Login successful', user: result.user,accessusertoken:result.accessToken});
      }
      catch(error)
      {
@@ -475,6 +528,25 @@ async getAllmessages(req: CustomRequest, res: Response): Promise<void> {
     res.status(400).json({ message: errorMessage });
   }
 }
+
+async deletemessages(req: CustomRequest, res: Response): Promise<void> {
+  try {
+    const { messageid } = req.params;
+    const { sender, reciever } = req.query;
+
+    if (typeof sender !== 'string' || typeof reciever !== 'string') {
+      throw new Error('Invalid sender or receiver');
+    }
+
+    const result = await this.deletemessage.delete(messageid, sender, reciever);
+    res.status(200).json(result);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error';
+    res.status(400).json({ message: errorMessage });
+  }
+}
+
 
 async gettoken(req: CustomRequest, res: Response): Promise<void> {
   try{

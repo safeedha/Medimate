@@ -1,12 +1,27 @@
 import { Link} from 'react-router-dom';
 import {  logoutDoctor} from '../../feature/doctorslice'
-import {logout} from '../../api/doctorapi/doclogin'
+import {logout,getdetails} from '../../api/doctorapi/doclogin'
 import type{ AppDispatch} from '../../app/store'
 import { useDispatch } from 'react-redux';
+import {useEffect,useState} from 'react'
 function DoctorSidebar() {
+
+useEffect(()=>{ 
+const getStatus=async()=>{
+  const result =await getdetails()
+  if(result===true)
+  {
+  await logout()
+  dispatch( logoutDoctor())
+  }
+}
+getStatus()
+},[])
+
+
 const dispatch=useDispatch<AppDispatch>()
   const handleLogout = async() => {
-    await logout()
+  await logout()
   dispatch( logoutDoctor())
   };
 

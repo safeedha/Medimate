@@ -48,7 +48,8 @@ function Docappoinment() {
   } catch (error) {
     console.error('Error fetching appointments:', error);
   }
-}, [currentpage, limit]);
+}, [currentpage, limit])
+
    const getSlot=async(e: React.ChangeEvent<HTMLInputElement>)=>{
       console.log(e.target.value)
       const selectedDate = new Date(e.target.value);
@@ -228,77 +229,80 @@ useEffect(() => {
                     <td className="px-4 py-2">{new Date(appt.schedule?.date).toLocaleDateString()}</td>
                     <td className="px-4 py-2">{appt.schedule?.startingTime} - {appt.schedule?.endTime}</td>
                     <td className="px-4 py-2 font-semibold">{appt.status}</td>
-                    <td className="px-4 py-2 space-y-1">
-                    {appt.status === 'completed' ? (
-  appt.reportAdded === false ? (
-    <Link
-      to="/doctor/addreport"
-      state={{ appointmentId: appt._id, userId: appt.user_id }}
-      className="inline-block px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs"
-    >
-      Add Report
-    </Link>
-  ) : (
-    <span className="inline-block px-3 py-1 bg-gradient-to-r from-green-200 via-green-300 to-green-400 text-green-900 border border-green-600 text-xs shadow-sm">
-      Report Added
-    </span>
-  )
-) : appt.status === 'cancelled' ? (
-  <span className="text-gray-500 text-xs">No actions</span>
-) : (
-  <>
-    <button
-      onClick={() => openCancelModal(appt._id, appt.user_id, appt.patient_email)}
-      className="block w-full px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs mb-1"
-    >
-      Cancel
-    </button>
-    <button
-      onClick={() => confirmHandle(appt._id)}
-      className="block w-full px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs mb-1"
-    >
-      Complete
-    </button>
-  </>
-)}
+                      <td className="px-4 py-2">
+            <div className="flex flex-col gap-1 w-32">
 
-{/* ✅ Follow-up Section */}
-{appt.status === 'completed' && (
-  appt.followup_status === false ? (
-    <button
-        onClick={() => handleFollowUp(appt._id)}
-        className="inline-block px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 text-xs mt-1"
-      >
-        Create Follow-up
-      </button>
-    ) : (
-    <span className="inline-block px-3 py-1 bg-purple-100 text-purple-700 border border-purple-300 text-xs mt-1" onClick={() => scrollToFollowUp(appt.followup_id)}>
-      Follow-up Added
-    </span>
-  )
-)}
+              {appt.status === 'completed' ? (
+                appt.reportAdded === false ? (
+                  <Link
+                    to="/doctor/addreport"
+                    state={{ appointmentId: appt._id, userId: appt.user_id }}
+                    className="w-full px-3 py-1 bg-green-500 text-white rounded text-xs text-center hover:bg-green-600"
+                  >
+                    Add Report
+                  </Link>
+                ) : (
+                  <span className="w-full px-3 py-1 bg-gradient-to-r from-green-200 via-green-300 to-green-400 text-green-900 border border-green-600 rounded text-xs text-center shadow-sm">
+                    Report Added
+                  </span>
+                )
+              ) : appt.status === 'cancelled' ? (
+                <span className="text-gray-500 text-xs text-center">No actions</span>
+              ) : (
+                <>
+                  <button
+                    onClick={() => openCancelModal(appt._id, appt.user_id, appt.patient_email)}
+                    className="w-full px-3 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => confirmHandle(appt._id)}
+                    className="w-full px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+                  >
+                    Complete
+                  </button>
+                </>
+              )}
 
-    {appt.status === 'cancelled' && (
-      appt.isRescheduled === true ? (
-        <button
-      className="inline-block px-3 py-1 bg-emerald-500 text-white rounded hover:bg-emerald-600 text-xs mt-1"
-      onClick={() => scrollToreschedule(appt.rescheduled_to)}
-    >
-      Reschedule Added
-    </button>
-        ) : (
-        <></>
-      )
-    )}
+              {appt.status === 'completed' && (
+                appt.followup_status === false ? (
+                  <button
+                    onClick={() => handleFollowUp(appt._id)}
+                    className="w-full px-3 py-1 bg-purple-500 text-white rounded text-xs hover:bg-purple-600"
+                  >
+                    Follow-up
+                  </button>
+                ) : (
+                  <span
+                    className="w-full px-3 py-1 bg-purple-100 text-purple-700 border border-purple-300 rounded text-xs text-center cursor-pointer"
+                    onClick={() => scrollToFollowUp(appt.followup_id)}
+                  >
+                    Follow-up Added
+                  </span>
+                )
+              )}
 
-                      <Link
-                        to="/doctor/chat"
-                        state={{ userId: appt.user_id }}
-                        className="block w-full px-3 py-1 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 text-xs mt-1"
-                      >
-                        Chat
-                      </Link>
-                    </td>
+              {appt.status === 'cancelled' && appt.isRescheduled && (
+                <button
+                  className="w-full px-3 py-1 bg-emerald-500 text-white rounded text-xs hover:bg-emerald-600"
+                  onClick={() => scrollToreschedule(appt.rescheduled_to)}
+                >
+                  Rescheduled
+                </button>
+              )}
+
+              <Link
+                to="/doctor/chat"
+                state={{ userId: appt.user_id }}
+                className="w-full px-3 py-1 bg-gray-300 text-gray-800 rounded text-xs text-center hover:bg-gray-400"
+              >
+                Chat
+              </Link>
+
+            </div>
+          </td>
+
                   </tr>
                 ))}
               </tbody>

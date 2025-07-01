@@ -82,12 +82,12 @@ export const signup = async(
 
 
 
-export const  login = async (email: string, password: string,dispatch:AppDispatch) => {
+export const  login= async (email: string, password: string,dispatch:AppDispatch) => {
   try {
     const response = await doctorInstance.post("/login", { email, password });
     console.log(response.data.doctor)
     dispatch(setDoctorDetails(response.data.doctor))
-    dispatch( adddoctortoken(response.data.accessToken))
+    localStorage.setItem('doctorToken', response.data.accessToken);
     return response.data.message; 
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -101,10 +101,30 @@ export const  login = async (email: string, password: string,dispatch:AppDispatc
   }
 }
 
+export const getdetails=async()=>{
+  try{
+         const response = await doctorInstance.get('/status');
+         console.log(response.data)
+         return response.data.staus
+  }
+  catch(error)
+  {
+    if (axios.isAxiosError(error)) {
+      return error.response?.data?.message || error.message;
+    } else if (error instanceof Error) {
+      return error.message;
+    } else {
+      return 'Internal server error';
+    }
+  }
+  }
+
+
 
 export const  logout = async () => {
   try {
     await doctorInstance.get("/logout");
+    localStorage.removeItem('doctorToken');
    
   } catch (error) {
     if (axios.isAxiosError(error)) {

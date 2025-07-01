@@ -6,6 +6,7 @@ getAlluser(page:number,limit:number,search:string):Promise<{ users: UserDTO[]; t
 changeStatus(id:string):Promise<UserDTO[]>
 getsingleuser(id:string):Promise<UserDTO>
 updatesingleuser(id:string,firstname:string,lastname:string,phone:string,age:number,gender:"male"|"female"|"other"):Promise<string>
+getAlluserbysort(search?: string): Promise<{ users: UserDTO[]; total: number }> 
 
 
 

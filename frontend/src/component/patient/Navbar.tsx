@@ -24,7 +24,7 @@ const Navbar = memo(() => {
     },[dispatch,navigate])
  
   const handlelogout= async() => {
-    //  await logout()
+      await logout()
      dispatch(logoutUser())
     navigate('/login');
   };

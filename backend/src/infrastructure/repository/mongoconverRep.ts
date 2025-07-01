@@ -5,6 +5,8 @@ import {MessageModel} from '../database/models/message'
 import { Message } from '../../domain/entities/messages';
 import {UnreadCounts} from '../../dto/message.dto'
 import { Types } from 'mongoose';
+import {Doctor} from '../database/models/docter';
+import {User} from '../database/models/user';
 
 export class MongoConversationRepo implements ConversationRepository {
   constructor() {
@@ -34,6 +36,39 @@ export class MongoConversationRepo implements ConversationRepository {
     throw new Error("Something happened");
   }
 }
+
+ 
+
+
+async  messagedelete(messageId: string, sender: string, receiver: string): Promise<string> {
+  try {
+
+    await MessageModel.deleteOne({ _id: messageId });
+
+    const conversation = await ConversationModel.findOne({
+      participants: { $all: [sender, receiver] },
+    });
+
+    if (!conversation) {
+      throw new Error('Conversation not found');
+    }
+
+    const objectId = new Types.ObjectId(messageId);
+    conversation.messages = conversation.messages.filter((id) => !id.equals(objectId));
+    await conversation.save();
+
+    return 'Message deleted';
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error('Unexpected error occurred during delete message');
+  }
+}
+
+  
+
+
   async changereadstatus(messageId:string): Promise<Message> {
   await MessageModel.updateOne(
     {_id:messageId},
@@ -89,7 +124,8 @@ export class MongoConversationRepo implements ConversationRepository {
   }
   const objectId = new Types.ObjectId(newMessage._id);
   conversation.messages.push(objectId);
-   await Promise.all([conversation.save(), newMessage.save()]);
+
+   await Promise.all([conversation.save(), newMessage.save(),]);
   return newMessage;
 }
 
@@ -115,6 +151,38 @@ async getcount(recieverId:string):Promise<UnreadCounts>{
     }
   }
 
+
+  async messagetimeaddfromdoc(sender: string, receiver: string): Promise<string> {
+  try {
+    const now = new Date();
+
+    await Doctor.updateOne({ _id: sender }, { $set: { lastMessage: now } });
+    await User.updateOne({ _id: receiver }, { $set: { lastMessage: now } });
+
+    return 'message updated';
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error('Unexpected error occurred');
+  }
+}
+
+async messagetimeaddfromuser(sender: string, receiver: string): Promise<string> {
+  try {
+    const now = new Date();
+
+    await User.updateOne({ _id: sender }, { $set: { lastMessage: now } });
+    await Doctor.updateOne({ _id: receiver }, { $set: { lastMessage: now } });
+
+    return 'message updated';
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error('Unexpected error occurred');
+  }
+}
 
 }
 

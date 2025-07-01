@@ -1,0 +1,21 @@
+import {UserRepository} from '../../../domain/repository/user-repository';
+import {UserDTO} from '../../../dto/user.dto'
+
+export class GetUserBysort {
+
+  constructor(private userRepository: UserRepository) {}
+  async getAllSortUser(search:string): Promise<{ users: UserDTO[]; total: number }> {
+    try {
+      const users = await this.userRepository.getAlluserbysort(search);
+      return users;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      } else {
+        throw new Error("An unknown error occurred");
+      }
+    }
+
+ 
+  }
+}

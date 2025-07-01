@@ -29,6 +29,12 @@ import {GetdoctorAppointmentCount} from '../../application/usecase/appoinment/ge
 import {GetFilterfordoc} from '../../application/usecase/appoinment/getfilterfordoc'
 import {Createfollowup } from '../../application/usecase/appoinment/createfolloup'
 import {GetPage} from '../../application/usecase/appoinment/getPage'
+import {RefreshToken} from '../../application/usecase/doctor/refreshtoken'
+import {GetSingledoc} from '../../application/usecase/doctor/getSingledoc'
+import {Deletemessage} from '../../application/usecase/conversation/deletemessage'
+import {MessageTimeUpdation} from '../../application/usecase/conversation/messagtime'
+import {GetUserBysort} from '../../application/usecase/user/getallsort'
+
 interface CustomRequest extends Request {
   id?: string;
 }
@@ -39,7 +45,8 @@ export class DoctorController {
      private cancelRecurringSlot:CancelRecurringSlot,private changestatusAppointment:ChangestatusAppointment,private getsingleUser:GetsingleUser,private getslotbydate:GetSlotByDate,private cancelSlot:CancelSlot,
      private getUser:GetUser, private getallmessage:GetAllmessage,private addreport:Addreport,private getDoctorWallet:GetDoctorWallet,private getSingleappoinment:GetSingleappoinment,private getallunblockeddept:Getallunblockeddept,
      private getunreadcount:Getunreadcount,private reshedule:Reshedule,private getdoctorAppointmentCount:GetdoctorAppointmentCount,private getFilterfordoc:GetFilterfordoc,private createfollowup:Createfollowup,
-     private getPage:GetPage
+     private getPage:GetPage,private refreshtoken:RefreshToken,private getSingledoc:GetSingledoc,private deletemessage:Deletemessage,private messageTimeUpdation:MessageTimeUpdation,
+     private getUserBysort:GetUserBysort,
   ) {}
   
 
@@ -86,11 +93,11 @@ export class DoctorController {
         secure: false,
         maxAge: 7 * 24 * 60 * 60 * 1000, 
       });
-      res.cookie("accesstokendoctor", response.accessToken, {
-      httpOnly: true,     
-      secure: false,     
-      maxAge: 15 * 60 * 1000, 
-    });
+    //   res.cookie("accesstokendoctor", response.accessToken, {
+    //   httpOnly: true,     
+    //   secure: false,     
+    //   maxAge: 15 * 60 * 1000, 
+    // });
          res.status(200).json({message:response.message,doctor:response.doctor, accessToken:response.accessToken});
     } catch (error) {
       if (error instanceof Error) {
@@ -109,16 +116,27 @@ export class DoctorController {
       secure: false,
     });
 
-    res.clearCookie("accesstokendoctor", {
-      httpOnly: true,
-      secure: false,
-    });
+    // res.clearCookie("accesstokendoctor", {
+    //   httpOnly: true,
+    //   secure: false,
+    // });
 
     res.status(200).json({ message: "Logout successful" });
   } catch (error) {
     console.error("Logout error:", error);
     res.status(500).json({ message: "Internal server error during logout" });
   }
+}
+
+async refreshTokencontroller(req: Request, res: Response): Promise<void> {
+   try {
+            const token=req.cookies?.refreshtokendoctor;
+            const newaccesstoken=await this.refreshtoken.refresh(token);
+            res.status(200).json({ token: newaccesstoken });
+        } catch (err: any) {
+          res.status(400).json({ message: err.message });
+        }
+
 }
    
    async reapplication(req: Request, res: Response): Promise<void> {
@@ -201,6 +219,26 @@ export class DoctorController {
     }
   }
 
+   async getStatus(req: CustomRequest, res: Response):Promise<void>{
+    try{
+       const {id}=req
+        const result=await this.getSingledoc.getsingledoc(id!)
+
+ 
+      res.status(201).json({staus:result?.isBlocked})
+    }
+    catch(error)
+    {
+         const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
+
+    }
+  }
+
+
+
    async resetPassword(req: Request, res: Response):Promise<void>{
      try{
           const { email, password } = req.body
@@ -232,11 +270,33 @@ export class DoctorController {
   
     }
 
-  async createAppoinment(req: Request, res: Response):Promise<void>{
+    async updatemessagetime(req: CustomRequest, res: Response):Promise<void>{
     try{
-       const {doctorId}=req.body
+       const {id}=req
+        const {reciever}=req.params
+         if (typeof reciever !== 'string') {
+          res.status(400).json({ message: 'Invalid reciever ID' });
+          return;
+        }
+       const result=await this.messageTimeUpdation.update(id!,reciever)
+ 
+      res.status(201).json(result)
+    }
+    catch(error)
+    {
+         const errorMessage = error instanceof Error
+        ? error.message
+        : 'Internal server error';
+      res.status(400).json({ message: errorMessage });
+
+    }
+  }
+
+  async createAppoinment(req: CustomRequest, res: Response):Promise<void>{
+    try{
+       const {id}=req
         const {startDate,endDate,selectedDays,startTime,endTime,interval,frequency}=req.body
-        const result=await this.createslot.createSlots(doctorId,startDate,endDate,selectedDays,startTime,endTime,interval,frequency)
+        const result=await this.createslot.createSlots(id!,startDate,endDate,selectedDays,startTime,endTime,interval,frequency)
  
       res.status(201).json(result)
     }
@@ -253,7 +313,7 @@ export class DoctorController {
   async getAllUser(req: CustomRequest, res: Response): Promise<void> {
   try {
     const search=req.query.search as string
-    const result = await this.getUser.getAllUser(0,0,search);
+    const result = await this.getUserBysort.getAllSortUser(search);
     res.status(200).json(result);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Internal server error";
@@ -492,6 +552,23 @@ async getAllmessages(req: CustomRequest, res: Response): Promise<void> {
   }
 }
 
+async deletemessages(req: CustomRequest, res: Response): Promise<void> {
+  try {
+    const { messageid } = req.params;
+    const { sender, reciever } = req.query;
+
+    if (typeof sender !== 'string' || typeof reciever !== 'string') {
+      throw new Error('Invalid sender or receiver');
+    }
+
+    const result = await this.deletemessage.delete(messageid, sender, reciever);
+    res.status(200).json(result);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error';
+    res.status(400).json({ message: errorMessage });
+  }
+}
 
 async Addreport(req: CustomRequest, res: Response): Promise<void> {
   try {
