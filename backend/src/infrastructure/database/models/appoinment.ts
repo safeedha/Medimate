@@ -71,7 +71,11 @@ const AppointmentSchema = new Schema<Appointment>({
   followup_status: {
     type: Boolean,
     default: false,
-  }
+  },
+   followup_doc: {
+    type: Boolean,
+    default: false,
+  },
 
 }, {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },

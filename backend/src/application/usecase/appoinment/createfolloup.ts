@@ -20,6 +20,7 @@ export class Createfollowup {
                 reason:`followup for ${singleappoinment.reason}`,
                 status: 'pending',
                 payment_status: 'paid',
+                followup_doc:true
             }
             const appointment  = await this.appointmentRepo.createappoinment(data);
 

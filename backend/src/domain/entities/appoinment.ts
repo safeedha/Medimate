@@ -20,7 +20,8 @@ export interface Appointment {
   reportAdded?: boolean; 
   followup_id?:string|Appointment,
   followup_status?:boolean
-
+  
+  followup_doc?:boolean
    
   created_at?: Date;
   updated_at?: Date;

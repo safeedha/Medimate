@@ -11,11 +11,15 @@ export class ChangestatusAppointment {
            if(status==='cancelled'){
           const slotId = result.schedule_id?.toString();
           const r= await this.slotRepository.changeStatus(slotId);
+         if(!result.followup_doc)
+         {
           if(!reschedule)
           {
           const refunds = await this.walletRepository.getRefundTransaction(appoinmentid);
           const response=await this.walletRepository.addrefund(refunds);
+          return {message:"refund added"}
           }
+        }
         }
           return {message:"Status updated"}
        }
