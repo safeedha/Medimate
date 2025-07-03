@@ -1,4 +1,4 @@
-import React from 'react';
+
 import Navbar from './Navbar';
 import banner from '../../assets/homep.jpg'; // Importing the banner image
 

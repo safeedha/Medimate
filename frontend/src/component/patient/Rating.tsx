@@ -2,11 +2,12 @@ import { useState, useEffect,useCallback } from 'react'
 import Rating from '@mui/material/Rating'
 import toast, { Toaster } from 'react-hot-toast'
 import { createReview, getReview, getAverage } from '../../api/userapi/rating'
+import type {IDoctorReview } from '../../Interface/interface';
 
 export default function DoctorRating({ doctorId }: { doctorId: string }) {
   const [rating, setRating] = useState<number | null>(0)
   const [comment, setComment] = useState('')
-  const [reviews, setReviews] = useState([])
+  const [reviews, setReviews] = useState<IDoctorReview[]>([])
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [total, setTotal] = useState<number>(0)
   const [average, setAverage] = useState<number>(0)
@@ -61,7 +62,11 @@ useEffect(() => {
         {reviews.map((review, index) => (
           <div key={index} className="bg-gray-50 p-3 rounded shadow-sm">
             <div className="flex items-center justify-between mb-1">
-              <h3 className="font-semibold text-sm">{review?.userId?.firstname || 'Anonymous'}</h3>
+              <h3 className="font-semibold text-sm">
+              {typeof review?.userId === 'object' && review?.userId?.firstname
+                ? review.userId.firstname
+                : 'Anonymous'}
+            </h3>
               <Rating
                 name={`rating-${index}`}
                 value={review.rating}

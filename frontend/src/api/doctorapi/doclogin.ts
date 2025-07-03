@@ -3,24 +3,24 @@ import axios from "axios";
 import{setDoctorDetails}  from '../../feature/doctorslice';
 import type { AppDispatch } from '../../app/store';
 
- interface Idoctor{
-  _id?:string,
-  firstname:string,
-  lastname:string,
-  email:string,
-  password:string,
-  phone:string,
-  specialisation:string|null,
-  experience:number,
-  fee:number,
-  status:"Approved"|"Rejected"|"Pending",
-  isBlocked:boolean,
-  googleVerified?:boolean,
-  additionalInfo?:string,
-  profilePicture?:string,
-  medicalLicence?:string
+//  interface Idoctor{
+//   _id?:string,
+//   firstname:string,
+//   lastname:string,
+//   email:string,
+//   password:string,
+//   phone:string,
+//   specialisation:string|null,
+//   experience:number,
+//   fee:number,
+//   status:"Approved"|"Rejected"|"Pending",
+//   isBlocked:boolean,
+//   googleVerified?:boolean,
+//   additionalInfo?:string,
+//   profilePicture?:string,
+//   medicalLicence?:string
 
-}
+// }
 export const signup = async(
   firstname: string,
   lastname: string,

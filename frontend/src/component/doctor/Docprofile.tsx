@@ -17,7 +17,7 @@ interface DepartmentProps {
 
 function DoctorProfile() {
   const doctor = useSelector((state: RootState) => state.doctor.doctorInfo);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const [departments, setDepartments] = useState<DepartmentProps[]>([]);
   const [disabled, setDisabled] = useState<boolean>(true);

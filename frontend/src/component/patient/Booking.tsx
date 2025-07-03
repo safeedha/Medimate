@@ -207,7 +207,7 @@ const handleDownloadPDF = () => {
                     </thead>
                     <tbody>
                       {futur.map((appointment) => (
-                        <tr key={appointment._id} className="hover:bg-gray-50" ref={(el) => { rowRef.current[appointment._id] = el; }}>
+                        <tr key={appointment._id} className="hover:bg-gray-50" ref={(el) => { rowRef.current[appointment._id!] = el; }}>
                           <td className="border px-4 py-2">{appointment.patient_name}</td>
                           <td className="border px-4 py-2">
                             {typeof appointment.doctor_id !== 'string' ? appointment.doctor_id.firstname : ''}

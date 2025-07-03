@@ -87,7 +87,7 @@ const person = doctors?.map((item) => (
           </span>
         )}
       </div>
-      <p className={`text-xs font-semibold ${onlineuser.includes(item._id) ? 'text-green-500' : 'text-gray-500'}`}>
+      <p className={`text-xs font-semibold ${onlineuser.includes(item?._id!) ? 'text-green-500' : 'text-gray-500'}`}>
         {onlineuser.includes(item._id!) ? 'Online' : 'Offline'}
       </p>
     </div>

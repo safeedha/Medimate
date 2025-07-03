@@ -157,3 +157,13 @@ export interface Payout {
   amount: number;
   doctorId: string;
 }
+
+export interface IDoctorReview {
+  _id?: string;
+  doctorId: string|Idoctor;
+  userId: string|Iuser;      
+  rating: number;   
+  comment: string;  
+  createdAt?: Date;
+  updatedAt?: Date;
+}
