@@ -1,5 +1,5 @@
 import DoctorSidebar from './Docsidebar';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import type { RootState } from '../../app/store';
 import axios from 'axios';

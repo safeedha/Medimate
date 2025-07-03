@@ -111,11 +111,11 @@ useEffect(() => {
         <h2 className="text-sm font-medium text-gray-700">Leave a Review</h2>
 
         <Rating
-          name="new-rating"
-          value={rating}
-          precision={0.5}
-          onChange={(event, newValue) => setRating(newValue)}
-        />
+        name="new-rating"
+        value={rating}
+        precision={0.5}
+        onChange={(_, newValue) => setRating(newValue)}
+      />
 
         <textarea
           placeholder="Write your feedback..."
