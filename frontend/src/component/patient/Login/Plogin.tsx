@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../../../api/userapi/register';
 import { useDispatch } from 'react-redux';
 import {GoogleLogin} from '@react-oauth/google';
+import type{ CredentialResponse } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
 import {googleLogin} from '../../../api/userapi/register';
 
@@ -38,9 +39,9 @@ function Plogin() {
     }
   };
   
-   const responseMessage = async (response: { credential: string }) => {
-      console.log(jwtDecode(response.credential));
-      await googleLogin(response.credential, dispatch);
+   const responseMessage = async (response:CredentialResponse) => {
+      console.log(jwtDecode(response?.credential!));
+      await googleLogin(response?.credential!, dispatch);
       toast.success('Login successful');
       navigate("/home");
     };

@@ -1,6 +1,7 @@
 import userInstance from "./instance";
 import axios from "axios";
 
+
 export const getAlldoctors = async (page:number,limit:number,singledepartment:string,search:string) => {
   try {
    const response = await userInstance.get("/doctors", {
@@ -190,12 +191,12 @@ interface RazorpayPaymentResponse {
   razorpay_signature: string;
 }
 
-interface RazorpayInstance {
-  open(): void;
-  on(event: string, callback: (response: { error: { description: string } }) => void): void;
-}
+// interface RazorpayInstance {
+//   open(): void;
+//   on(event: string, callback: (response: { error: { description: string } }) => void): void;
+// }
 
-export const handlePayment = (RazorpayConstructor: new (options: RazorpayOptions) => RazorpayInstance, amount: number): Promise<string> => {
+export const handlePayment = (RazorpayConstructor:any, amount: number): Promise<string> => {
   return new Promise((resolve) => {
     (async () => {
       try {
