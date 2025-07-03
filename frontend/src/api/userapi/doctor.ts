@@ -191,6 +191,19 @@ interface RazorpayPaymentResponse {
   razorpay_signature: string;
 }
 
+type RazorpayPaymentErrorResponse = {
+  error: {
+    code: string;
+    description: string;
+    source: string;
+    step: string;
+    reason: string;
+    metadata: {
+      order_id: string;
+      payment_id: string;
+    };
+  };
+};
 // interface RazorpayInstance {
 //   open(): void;
 //   on(event: string, callback: (response: { error: { description: string } }) => void): void;
@@ -250,7 +263,7 @@ export const handlePayment = (RazorpayConstructor:any, amount: number): Promise<
 
         const rzpay = new RazorpayConstructor(options);
 
-        rzpay.on("payment.failed", (response) => {
+        rzpay.on("payment.failed", (response:RazorpayPaymentErrorResponse ) => {
           console.error("Payment failed:", response.error.description);
           resolve("failed");
         });
