@@ -4,7 +4,7 @@ export interface Iuser{
   lastname?:string,
   email:string,
   password?:string,
-  phone:string|null,
+  phone?:string|null,
   googleIds?:string|null,
   isBlocked:boolean,
   googleVerified?:boolean,
@@ -95,7 +95,7 @@ export interface Appointment {
   followup_id?:string|Appointment,
   followup_status?:boolean;
 
-   schedule?:string| IndividualSlot;
+  schedule?:string| IndividualSlot;
   created_at?: Date;
   updated_at?: Date;
 }
@@ -122,6 +122,7 @@ export type AppointmentCountByDate = {
 };
 
 export interface Message {
+  _id:string;
   senderId: string | Iuser | Idoctor;
   recieverId: string | Idoctor | Iuser;
   message?: string;
@@ -138,3 +139,21 @@ export type MessagePayload = {
   message?: string;
   image?: string;
 };
+
+export interface AdminWalletTransaction {
+  _id?: string;
+  type: 'credit' | 'debit'|'refund';             
+  amount: number;
+  from: string |Iuser;          
+  to: string | Idoctor; 
+  toModel:'User'| 'Doctor'| 'Platform'
+  doctorId:string|Idoctor          
+  appointmentId: string|Appointment; 
+  paymentstatus:boolean
+  date: Date;
+}
+export interface Payout {
+  _id: string;
+  amount: number;
+  doctorId: string;
+}

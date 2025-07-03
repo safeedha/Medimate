@@ -206,7 +206,7 @@ function Chatbox({ userid, name,setSort }: { userid: string; name: string,setSor
                 </button>
                 {item?.message && (
                   <button
-                    onClick={() => handleCopy(item.message)}
+                    onClick={() => handleCopy(item?.message!)}
                     className="w-full flex flex-col items-center justify-center py-2 hover:bg-gray-100 rounded-md"
                   >
                     <span className="text-lg">📋</span>

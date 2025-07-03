@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import  { useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import { useSelector } from 'react-redux';

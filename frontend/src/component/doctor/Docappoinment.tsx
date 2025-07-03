@@ -146,11 +146,11 @@ function Docappoinment() {
   const scrollToreschedule=async(originalId: string) =>{
     const followup = appointments.find(a => a._id === originalId);
 
-  if (followup && rowRefs.current[followup._id]) {
-    rowRefs.current[followup._id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    rowRefs.current[followup._id]?.classList.add('bg-orange-500');
+  if (followup && rowRefs.current[followup?._id!]) {
+    rowRefs.current[followup?._id!]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    rowRefs.current[followup?._id!]?.classList.add('bg-orange-500');
     setTimeout(() => {
-      rowRefs.current[followup._id]?.classList.remove('bg-orange-500');
+      rowRefs.current[followup?._id!]?.classList.remove('bg-orange-500');
     }, 2000);
   } else {
     const page = await getPage(originalId, limit);
@@ -162,11 +162,11 @@ function Docappoinment() {
  const scrollToFollowUp = async (originalId: string) => {
   const followup = appointments.find(a => a._id === originalId);
 
-  if (followup && rowRefs.current[followup._id]) {
-    rowRefs.current[followup._id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    rowRefs.current[followup._id]?.classList.add('bg-yellow-100');
+  if (followup && rowRefs.current[followup?._id!]) {
+    rowRefs.current[followup?._id!]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    rowRefs.current[followup?._id!]?.classList.add('bg-yellow-100');
     setTimeout(() => {
-      rowRefs.current[followup._id]?.classList.remove('bg-yellow-100');
+      rowRefs.current[followup?._id!]?.classList.remove('bg-yellow-100');
     }, 2000);
   } else {
     const page = await getPage(originalId, limit);
@@ -179,11 +179,11 @@ function Docappoinment() {
 useEffect(() => {
   if (targetIdToScroll && appointments.length > 0) {
     const target = appointments.find(a => a._id === targetIdToScroll);
-    if (target && rowRefs.current[target._id]) {
-      rowRefs.current[target._id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      rowRefs.current[target._id]?.classList.add('bg-yellow-100');
+    if (target && rowRefs.current[target?._id!]) {
+      rowRefs.current[target?._id!]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      rowRefs.current[target?._id!]?.classList.add('bg-yellow-100');
       setTimeout(() => {
-        rowRefs.current[target._id]?.classList.remove('bg-yellow-100');
+        rowRefs.current[target?._id!]?.classList.remove('bg-yellow-100');
       }, 2000);
       setTargetIdToScroll(null); 
     }
@@ -220,14 +220,22 @@ useEffect(() => {
               </thead>
               <tbody>
                 {appointments.map((appt) => (
-                  <tr key={appt._id} className="border-t border-gray-200" ref={(el) => { rowRefs.current[appt._id] = el; }}>
+                  <tr key={appt._id} className="border-t border-gray-200" ref={(el) => { rowRefs.current[appt?._id!] = el; }}>
                     <td className="px-4 py-2">{appt.patient_name}</td>
                     <td className="px-4 py-2">{appt.patient_email}</td>
                     <td className="px-4 py-2">{appt.patient_age}</td>
                     <td className="px-4 py-2">{appt.patient_gender}</td>
                     <td className="px-4 py-2">{appt.reason}</td>
-                    <td className="px-4 py-2">{new Date(appt.schedule?.date).toLocaleDateString()}</td>
-                    <td className="px-4 py-2">{appt.schedule?.startingTime} - {appt.schedule?.endTime}</td>
+                    {typeof appt?.schedule === 'object' && (
+                        <>
+                          <td className="px-4 py-2">
+                            {new Date(appt.schedule.date).toLocaleDateString()}
+                          </td>
+                          <td className="px-4 py-2">
+                            {appt.schedule.startingTime} - {appt.schedule.endTime}
+                          </td>
+                        </>
+                      )}
                     <td className="px-4 py-2 font-semibold">{appt.status}</td>
                       <td className="px-4 py-2">
             <div className="flex flex-col gap-1 w-32">
@@ -251,7 +259,7 @@ useEffect(() => {
               ) : (
                 <>
                   <button
-                    onClick={() => openCancelModal(appt._id, appt.user_id, appt.patient_email)}
+                    onClick={() => openCancelModal(appt?._id, appt?.user_id!, appt.patient_email)}
                     className="w-full px-3 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600"
                   >
                     Cancel

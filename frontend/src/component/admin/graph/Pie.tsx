@@ -2,6 +2,7 @@ import { Pie } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { useEffect, useState } from 'react'
 import { getCountforDoc } from '../../../api/adminapi/appoinment'
+import type{ ChartOptions } from 'chart.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -34,7 +35,7 @@ export default function DoctorCompletedPieChart({setDoctorDatafordash,status}:{s
     ],
   }
 
-  const options = {
+  const options: ChartOptions<'pie'> = {
     responsive: true,
     plugins: {
       legend: {

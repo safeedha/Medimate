@@ -20,10 +20,10 @@ export default function DashboardBarChart({
   startdate,
   enddate
 }: {
-  setAppointmentCountfordash: React.Dispatch<React.SetStateAction<AppointmentCountByDate[]>>,
-  setType: React.Dispatch<React.SetStateAction<'completed' | 'cancelled' | 'pending'>>,
-  startdate:React.Dispatch<React.SetStateAction<string>>,
-  enddate:React.Dispatch<React.SetStateAction<string>>
+    setAppointmentCountfordash: (data: AppointmentCountByDate[]) => void;
+  setType: (value: 'completed' | 'cancelled' | 'pending') => void;
+  startdate: (date: string) => void;
+  enddate: (date: string) => void;
 }) {
   const [status, setStatus] = useState<'completed' | 'cancelled' | 'pending'>('completed')
   const [appointmentCount, setAppointmentCount] = useState<AppointmentCountByDate[]>([])

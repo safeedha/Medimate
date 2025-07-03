@@ -9,14 +9,16 @@ import {
 import { getsingleuser } from '../../../api/adminapi/user'
 import { getsingleDoctor } from '../../../api/adminapi/doctor'
 import Swal from 'sweetalert2'
+import type { Iuser,Idoctor,AdminWalletTransaction,Payout} from '../../../Interface/interface'
+
 
 function Awallet() {
   const [balance, setBalance] = useState(0)
-  const [transactions, setTransactions] = useState([])
-  const [user, setUser] = useState([])
-  const [doctor, setDoctor] = useState([])
+  const [transactions, setTransactions] = useState<AdminWalletTransaction[]>([])
+  const [user, setUser] = useState<Iuser>()
+  const [doctor, setDoctor] = useState<Idoctor>()
   const [message, setMessage] = useState('')
-  const [payout, setPayout] = useState([])
+  const [payout, setPayout] = useState<Payout[]>([])
   const [modal, setModal] = useState(false)
   const [modal2, setModal2] = useState(false)
   const [render, setRender] = useState(false)
@@ -113,10 +115,10 @@ function Awallet() {
             </button>
             <h2 className="text-xl text-center font-semibold mb-4">User Details</h2>
             <div className="space-y-2 text-gray-700">
-              <p><span className="font-medium">Name:</span> {user.firstname} {user.lastname}</p>
-              <p><span className="font-medium">Email:</span> {user.email}</p>
-              <p><span className="font-medium">Number:</span> {user.phone}</p>
-              <p><span className="font-medium">Gender:</span> {user.gender}</p>
+              <p><span className="font-medium">Name:</span> {user?.firstname} {user?.lastname}</p>
+              <p><span className="font-medium">Email:</span> {user?.email}</p>
+              <p><span className="font-medium">Number:</span> {user?.phone}</p>
+              <p><span className="font-medium">Gender:</span> {user?.gender}</p>
             </div>
           </div>
         </div>
@@ -131,9 +133,9 @@ function Awallet() {
             </button>
             <h2 className="text-xl text-center font-semibold mb-4">Doctor Details</h2>
             <div className="space-y-2 text-gray-700">
-              <p><span className="font-medium">Name:</span> Dr. {doctor.firstname} {doctor.lastname}</p>
-              <p><span className="font-medium">Email:</span> {doctor.email}</p>
-              <p><span className="font-medium">Specialisation:</span> {doctor.specialisation?.deptname}</p>
+              <p><span className="font-medium">Name:</span> Dr. {doctor?.firstname} {doctor.lastname}</p>
+              <p><span className="font-medium">Email:</span> {doctor?.email}</p>
+              <p><span className="font-medium">Specialisation:</span> {doctor?.specialisation?.deptname}</p>
             </div>
           </div>
         </div>
