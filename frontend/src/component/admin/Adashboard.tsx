@@ -64,7 +64,7 @@ function Adashboard() {
     const fetchUsers = async () => {
       try {
         const response = await getAlluser(0, 0, '')
-        setTotalUsers(response.total || 0)
+        setTotalUsers(response?.total || 0)
       } catch (error) {
         console.error('Error fetching users:', error)
       }
@@ -145,8 +145,8 @@ function Adashboard() {
           <DashboardBarChart
             setAppointmentCountfordash={setAppointmentCountfordash}
             setType={setType}
-            startdate={startDate}
-            enddate={endDate}
+            startdate={setStartDate}
+            enddate={setEndDate}
           />
           <DoctorPieCharts
             setDoctorDatafordash={setDoctorDatafordash}

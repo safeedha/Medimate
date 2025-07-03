@@ -41,7 +41,7 @@ function Appoinment() {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [totalDoctors, setTotalDoctors] = useState<number>(0)
 
-  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const searchTimeoutRef = useRef<number | null>(null)
 
   useEffect(() => {
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current)
@@ -154,7 +154,7 @@ function Appoinment() {
                     </p>
                     {item.status === 'cancelled' && item.payment_status === 'paid' && (
                       <button
-                        onClick={() => handleRefund(item._id)}
+                        onClick={() => handleRefund(item?._id!)}
                         className="px-2 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
                       >
                         Refund

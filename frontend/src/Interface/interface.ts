@@ -93,9 +93,9 @@ export interface Appointment {
   isRescheduled?:boolean;
   reportAdded?: boolean; 
   followup_id?:string|Appointment,
-  followup_status?:boolean
+  followup_status?:boolean;
 
-   
+   schedule?:string| IndividualSlot;
   created_at?: Date;
   updated_at?: Date;
 }

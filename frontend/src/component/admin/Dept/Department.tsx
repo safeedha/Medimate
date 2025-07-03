@@ -127,7 +127,7 @@ useEffect(() => {
       toast.success(result);
       setEdit(false);
       closeModal();
-      fetchDepartments(currentPage, searchTerm);
+      fetchDepartments();
     } else {
       toast.error(result);
     }
@@ -177,7 +177,7 @@ useEffect(() => {
                 <td className="px-6 py-4 text-sm text-gray-800">{dept.description}</td>
                 <td className="px-6 py-4 text-sm text-gray-800 space-x-2">
                   <button
-                    onClick={() => handleBlock(dept._id)}
+                    onClick={() => handleBlock(dept!._id!)}
                     className={`px-3 py-1 rounded text-white ${
                       dept.isblocked ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'
                     }`}
