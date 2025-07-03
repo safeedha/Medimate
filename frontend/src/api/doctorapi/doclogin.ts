@@ -2,7 +2,6 @@ import doctorInstance from "./instance";
 import axios from "axios";
 import{setDoctorDetails}  from '../../feature/doctorslice';
 import type { AppDispatch } from '../../app/store';
-import { adddoctortoken} from '../../feature/tokenslice'
 
  interface Idoctor{
   _id?:string,
