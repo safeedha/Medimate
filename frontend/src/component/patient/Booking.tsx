@@ -69,11 +69,11 @@ function Booking() {
   const scrollToreschedule = async (originalId: string) => {
     const followup = futur.find(a => a._id === originalId);
 
-    if (followup && rowRef.current[followup._id]) {
-      rowRef.current[followup._id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      rowRef.current[followup._id]?.classList.add('bg-orange-500');
+    if (followup && rowRef.current[followup?._id!]) {
+      rowRef.current[followup._id!]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      rowRef.current[followup._id!]?.classList.add('bg-orange-500');
       setTimeout(() => {
-        rowRef.current[followup._id]?.classList.remove('bg-orange-500');
+        rowRef.current[followup._id!]?.classList.remove('bg-orange-500');
       }, 2000);
     } else {
       const page = await getPage(originalId, limit);
@@ -85,11 +85,11 @@ function Booking() {
   const scrollToFollowUp = async (originalId: string) => {
     const followup = futur.find(a => a._id === originalId);
 
-    if (followup && rowRef.current[followup._id]) {
-      rowRef.current[followup._id]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      rowRef.current[followup._id]?.classList.add('bg-yellow-100');
+    if (followup && rowRef.current[followup._id!]) {
+      rowRef.current[followup._id!]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      rowRef.current[followup._id!]?.classList.add('bg-yellow-100');
       setTimeout(() => {
-        rowRef.current[followup._id]?.classList.remove('bg-yellow-100');
+        rowRef.current[followup._id!]?.classList.remove('bg-yellow-100');
       }, 2000);
     } else {
       const page = await getPage(originalId, limit);
@@ -228,7 +228,11 @@ const handleDownloadPDF = () => {
                             {appointment.status === 'completed' ? (
                               appointment.reportAdded ? (
                                 <button
-                                  onClick={() => handleViewReport(appointment._id!,appointment.doctor_id.firstname)}
+                                onClick={() => {
+                                if (typeof appointment.doctor_id === 'object' && appointment.doctor_id !== null) {
+                                  handleViewReport(appointment._id!, appointment?.doctor_id?.firstname!);
+                                }
+                              }}
                                   className="min-w-[120px] px-3 py-1.5 rounded-md text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
                                 >
                                   View Report

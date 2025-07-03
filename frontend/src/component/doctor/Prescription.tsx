@@ -45,7 +45,7 @@ const Prescription = () => {
 
     if (confirm.isConfirmed) {
       try {
-        const result = await AddReport(htmlContent, appointmentId, userId)
+        const result = await AddReport(htmlContent as string, appointmentId, userId)
         if (result === 'report added successfully') {
           toast.success('Report added')
           setTimeout(() => navigate('/doctor/home'), 2000)

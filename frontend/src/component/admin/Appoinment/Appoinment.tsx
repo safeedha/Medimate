@@ -129,18 +129,23 @@ function Appoinment() {
                   <p className="text-sm font-semibold text-gray-700">
                     Gender: <span className="font-normal">{item.patient_gender}</span>
                   </p>
-                  <p className="text-sm font-semibold text-gray-700">
-                    Date:{' '}
-                    <span className="font-normal">
-                      {new Date(item.schedule?.date as Date).toLocaleDateString()}
-                    </span>
-                  </p>
-                  <p className="text-sm font-semibold text-gray-700">
-                    Time:{' '}
-                    <span className="font-normal">
-                      {item.schedule?.startingTime} to {item.schedule?.endTime}
-                    </span>
-                  </p>
+                 {typeof item.schedule === 'object' && (
+                  <>
+                    <p className="text-sm font-semibold text-gray-700">
+                      Date:{' '}
+                      <span className="font-normal">
+                        {new Date(item.schedule.date).toLocaleDateString()}
+                      </span>
+                    </p>
+                    <p className="text-sm font-semibold text-gray-700">
+                      Time:{' '}
+                      <span className="font-normal">
+                        {item.schedule.startingTime} to {item.schedule.endTime}
+                      </span>
+                    </p>
+                  </>
+                )}
+
                   <p className="text-sm font-semibold text-gray-700">
                     Reason: <span className="font-normal">{item.reason}</span>
                   </p>

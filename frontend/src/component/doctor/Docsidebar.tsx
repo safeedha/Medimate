@@ -3,7 +3,7 @@ import {  logoutDoctor} from '../../feature/doctorslice'
 import {logout,getdetails} from '../../api/doctorapi/doclogin'
 import type{ AppDispatch} from '../../app/store'
 import { useDispatch } from 'react-redux';
-import {useEffect,useState} from 'react'
+import {useEffect} from 'react'
 function DoctorSidebar() {
 
 useEffect(()=>{ 

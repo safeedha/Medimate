@@ -114,22 +114,23 @@ function DoctorProfile() {
       fee: Number(formData.fee),
       image: uploadedUrl,
       phone: formData.phone,
-      email: doctor?.email,
+      email: doctor!.email!,
       specialisation: formData.specialisation,
       qualification: formData.qualification,
       medicalLicence,
     };
 
-    const update = {
-      ...doctor,
-      ...formData,
-      experience: Number(formData.experience),
-      fee: Number(formData.fee),
-      profilePicture: uploadedUrl,
-      medicalLicence,
-    };
+    // const update= {
+    //   ...doctor,
+    //   ...formData,
+    //   email: data.email ?? '',
+    //   experience: Number(formData.experience),
+    //   fee: Number(formData.fee),
+    //   profilePicture: uploadedUrl,
+    //   medicalLicence,
+    // };
 
-    const response = await profileUpdate(data, update, dispatch);
+    const response = await profileUpdate(data);
     if (response === 'Profile updated suceesfully') {
       toast.success(response);
       setDisabled(true);

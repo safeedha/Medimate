@@ -133,7 +133,7 @@ function Awallet() {
             </button>
             <h2 className="text-xl text-center font-semibold mb-4">Doctor Details</h2>
             <div className="space-y-2 text-gray-700">
-              <p><span className="font-medium">Name:</span> Dr. {doctor?.firstname} {doctor.lastname}</p>
+              <p><span className="font-medium">Name:</span> Dr. {doctor?.firstname} {doctor?.lastname}</p>
               <p><span className="font-medium">Email:</span> {doctor?.email}</p>
               <p><span className="font-medium">Specialisation:</span> {doctor?.specialisation?.deptname}</p>
             </div>
@@ -178,7 +178,7 @@ function Awallet() {
                       <td className="px-6 py-4 text-gray-800">{txn._id}</td>
                       <td className="px-6 py-4 text-gray-800">
                         {txn.from === 'platform' ? 'Platform' : (
-                          <button className="text-blue-600 hover:underline" onClick={() => userHandele(txn.from)}>
+                          <button className="text-blue-600 hover:underline" onClick={() => userHandele(txn.from as string)}>
                             View user
                           </button>
                         )}
@@ -186,11 +186,11 @@ function Awallet() {
                       <td className="px-6 py-4 text-gray-800">
                         {txn.toModel === 'Platform' ? 'Platform' :
                           txn.toModel === 'User' ? (
-                            <button className="text-blue-600 hover:underline" onClick={() => userHandele(txn.to)}>
+                            <button className="text-blue-600 hover:underline" onClick={() => userHandele(txn.to as string)}>
                               View user
                             </button>
                           ) : (
-                            <button className="text-blue-600 hover:underline" onClick={() => doctorHandle(txn.to)}>
+                            <button className="text-blue-600 hover:underline" onClick={() => doctorHandle(txn.to as string)}>
                               View doctor
                             </button>
                           )}

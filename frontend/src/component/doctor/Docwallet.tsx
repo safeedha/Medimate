@@ -149,8 +149,12 @@ function Docwallet() {
               <p><strong>Age:</strong> {appoinment.patient_age}</p>
               <p><strong>Gender:</strong> {appoinment.patient_gender}</p>
               <p><strong>Reason:</strong> {appoinment.reason}</p>
-              <p><strong>Starting time:</strong> {appoinment.schedule_id?.startingTime}</p>
-              <p><strong>End time:</strong> {appoinment.schedule_id?.endTime}</p>
+               {typeof appoinment.schedule_id === 'object' && (
+                <>
+                  <p><strong>Starting time:</strong> {appoinment.schedule_id.startingTime}</p>
+                  <p><strong>End time:</strong> {appoinment.schedule_id.endTime}</p>
+                </>
+              )}
               <p><strong>Status:</strong> {appoinment.status}</p>
               <p><strong>Payment:</strong> {appoinment.payment_status}</p>
             </div>

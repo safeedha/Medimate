@@ -259,13 +259,13 @@ useEffect(() => {
               ) : (
                 <>
                   <button
-                    onClick={() => openCancelModal(appt?._id, appt?.user_id!, appt.patient_email)}
+                    onClick={() => openCancelModal(appt?._id!, appt.user_id as string, appt.patient_email)}
                     className="w-full px-3 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600"
                   >
                     Cancel
                   </button>
                   <button
-                    onClick={() => confirmHandle(appt._id)}
+                    onClick={() => confirmHandle(appt?._id!)}
                     className="w-full px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
                   >
                     Complete
@@ -276,7 +276,7 @@ useEffect(() => {
               {appt.status === 'completed' && (
                 appt.followup_status === false ? (
                   <button
-                    onClick={() => handleFollowUp(appt._id)}
+                    onClick={() => handleFollowUp(appt?._id!)}
                     className="w-full px-3 py-1 bg-purple-500 text-white rounded text-xs hover:bg-purple-600"
                   >
                     Follow-up
@@ -284,7 +284,7 @@ useEffect(() => {
                 ) : (
                   <span
                     className="w-full px-3 py-1 bg-purple-100 text-purple-700 border border-purple-300 rounded text-xs text-center cursor-pointer"
-                    onClick={() => scrollToFollowUp(appt.followup_id)}
+                    onClick={() => scrollToFollowUp(appt?.followup_id as string)}
                   >
                     Follow-up Added
                   </span>
@@ -294,7 +294,7 @@ useEffect(() => {
               {appt.status === 'cancelled' && appt.isRescheduled && (
                 <button
                   className="w-full px-3 py-1 bg-emerald-500 text-white rounded text-xs hover:bg-emerald-600"
-                  onClick={() => scrollToreschedule(appt.rescheduled_to)}
+                  onClick={() => scrollToreschedule(appt.rescheduled_to as string)}
                 >
                   Rescheduled
                 </button>
