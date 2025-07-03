@@ -20,7 +20,7 @@ export class App {
   private setMiddleware(): void {
     this.app.use(morgan('dev')); // ✅ Morgan logs all HTTP requests
     this.app.use(cors({
-      origin: ['http://localhost:5173'],
+      origin: ['http://localhost:5173','https://medimate-rust.vercel.app'],
       credentials: true
     }));
     this.app.use(express.json());
