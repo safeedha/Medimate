@@ -40,12 +40,12 @@ export class AdminController{
        const response=await this.login.login(email,password)
           res.cookie("refreshtokenadmin", response.refreshToken,{
             httpOnly:true,
-            secure:false,
+            secure:true,
             maxAge:7*24*60*60*1000,
         })
          res.cookie("accesstokenadmin",response.accessToken, {
           httpOnly: true, 
-          secure: false, 
+          secure: true, 
           maxAge: 15 * 60 * 1000, 
         })
        res.status(200).json(response);  
@@ -60,12 +60,12 @@ export class AdminController{
   try {
     res.clearCookie("refreshtokenadmin", {
       httpOnly: true,
-      secure: false, 
+      secure: true, 
     });
 
     res.clearCookie("accesstokenadmin", {
       httpOnly: true,
-      secure: false, 
+      secure: true, 
     });
 
     res.status(200).json({ message: "Admin logged out successfully" });
