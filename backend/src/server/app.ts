@@ -20,7 +20,7 @@ export class App {
   private setMiddleware(): void {
     this.app.use(morgan('dev')); 
     this.app.use(cors({
-      origin: ['http://localhost:5173','https://medimate-rust.vercel.app'],
+      origin: ['http://localhost:5173','https://medimate-rust.vercel.app','https://www.medi-mate.safeedha.site'],
       credentials: true
     }));
     this.app.use(express.json());

@@ -51,7 +51,7 @@ function Login() {
           onSubmit={handleLogin}
         >
           <h3 className="font-semibold text-center mb-6 text-gray-800 text-lg">
-            Doctor Login
+            Admin Login
           </h3>
 
           <div className="mb-4">
