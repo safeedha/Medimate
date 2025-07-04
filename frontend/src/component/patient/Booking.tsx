@@ -34,7 +34,7 @@ function Booking() {
 
   const cancelHandle = async (id: string) => {
     const result = await Swal.fire({
-      title: 'Are you sure to cancel this?',
+      title: 'Are you sure about to cancel this appoinment',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -44,8 +44,13 @@ function Booking() {
 
     if (result.isConfirmed) {
       const response = await cancelAppoinment(id);
+      if(response==='refund added')
+      {
+          toast.success("The appointment was cancelled. Your refund added to your wallet");
+        setRender(!render);
+      }
       if (response === 'Status updated') {
-        toast.success("The appointment was cancelled. You will be refunded within weeks.");
+        toast.success("The appointment was cancelled.");
         setRender(!render);
       }
     }

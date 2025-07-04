@@ -78,6 +78,12 @@ function Docappoinment() {
     setLoading(true);
     try {
       const result = await cancelAppoinment(selectedId!, reason, userid!, mail);
+      if(result==='refund added')
+      {
+          toast.success("The appointment was cancelled. Your refund added to your mail");
+        setRender(!render);
+         setShowModal(false);
+      }
       if (result === "Status updated") {
         toast.success("Appointment cancelled. Reason mailed to patient inbox");
         setRender(!render);
