@@ -29,8 +29,8 @@ function Meetingroom() {
 
 
   const mymeeting = useCallback(() => {
-    const appID = 704835633;
-    const serverSecret = 'a349c1095b022eafdb7d770fdd9dd942';
+    const appID = 1726878278;
+    const serverSecret = '210ef6148ce5211d572b68a1053a197f';
 
     const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
       appID,
