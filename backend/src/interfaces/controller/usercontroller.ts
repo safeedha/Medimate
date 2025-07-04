@@ -180,17 +180,13 @@ async login(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
     const result = await this.userlog.login({ email, password });
 
-    // res.cookie("accessusertoken", result.accessToken, {
-    //   httpOnly: true,
-    //   secure: false, // true in production
-    //   maxAge: 15 * 60 * 1000, // 15 minutes
-    // });
+    
 
   
     res.cookie("refreshusertoken", result.refreshToken, {
       httpOnly: true,
-      secure: false, // true in production
-      maxAge:7 * 24 * 60 * 60 * 1000, // 7 days
+      secure: false, 
+      maxAge:7 * 24 * 60 * 60 * 1000, 
     });
     
 
@@ -385,10 +381,10 @@ async refreshTokencontroller(req: Request, res: Response): Promise<void> {
   }
     
 
-  async createPayment(req: CustomRequest, res: Response): Promise<void> {
+  async createpayment(req: CustomRequest, res: Response): Promise<void> {
     try {
       const { amount } = req.body;
-      
+      console.log(amount)
       const order = await createPayment(amount);
 
       res.status(200).json(order);

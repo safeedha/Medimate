@@ -124,7 +124,7 @@ router.post("/lockslot", verifyUserAuth, (req, res) => {
   user.createLockslot(req as CustomRequest, res);
 })
 router.post("/bookappoinment", verifyUserAuth, (req, res) => {
-  user.createPayment(req as CustomRequest, res);
+  user.createpayment(req as CustomRequest, res);
 })
 router.post("/verify-payment", verifyUserAuth, (req, res) => {
   user.verifyPayment(req as CustomRequest, res);
