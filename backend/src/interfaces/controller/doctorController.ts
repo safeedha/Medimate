@@ -90,14 +90,10 @@ export class DoctorController {
       const response = await this.doclogin.login(email, password);
        res.cookie("refreshtokendoctor", response.refreshToken, {
         httpOnly: true, 
-        secure: false,
+        secure: true,
         maxAge: 7 * 24 * 60 * 60 * 1000, 
-      });
-    //   res.cookie("accesstokendoctor", response.accessToken, {
-    //   httpOnly: true,     
-    //   secure: false,     
-    //   maxAge: 15 * 60 * 1000, 
-    // });
+        sameSite: "none"
+      })
          res.status(200).json({message:response.message,doctor:response.doctor, accessToken:response.accessToken});
     } catch (error) {
       if (error instanceof Error) {
@@ -113,13 +109,10 @@ export class DoctorController {
    
     res.clearCookie("refreshtokendoctor", {
       httpOnly: true,
-      secure: false,
+      secure: true,
+      sameSite: "none",
     });
 
-    // res.clearCookie("accesstokendoctor", {
-    //   httpOnly: true,
-    //   secure: false,
-    // });
 
     res.status(200).json({ message: "Logout successful" });
   } catch (error) {

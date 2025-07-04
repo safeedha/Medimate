@@ -306,17 +306,13 @@ async refreshTokencontroller(req: Request, res: Response): Promise<void> {
           const {credential} = req.body
           console.log(credential)
           const result =await this.googleuser.login(credential)
-          //  res.cookie("accessusertoken", result.accessToken, {
-          //   httpOnly: true,
-          //   secure: false, // true in production
-          //   maxAge: 15 * 60 * 1000, // 15 minutes
-          // });
+        
 
-  
           res.cookie("refreshusertoken", result.refreshToken, {
             httpOnly: true,
-            secure: false, // true in production
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            secure: true,
+            maxAge: 7 * 24 * 60 * 60 * 1000, 
+            sameSite:"none"
           });
 
           res.status(200).json({ message: 'Login successful', user: result.user,accessusertoken:result.accessToken});

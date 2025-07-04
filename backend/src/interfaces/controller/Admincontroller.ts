@@ -41,11 +41,13 @@ export class AdminController{
           res.cookie("refreshtokenadmin", response.refreshToken,{
             httpOnly:true,
             secure:true,
+            sameSite:"none",
             maxAge:7*24*60*60*1000,
         })
          res.cookie("accesstokenadmin",response.accessToken, {
           httpOnly: true, 
           secure: true, 
+          sameSite:"none",
           maxAge: 15 * 60 * 1000, 
         })
        res.status(200).json(response);  
@@ -61,11 +63,13 @@ export class AdminController{
     res.clearCookie("refreshtokenadmin", {
       httpOnly: true,
       secure: true, 
+      sameSite:"none",
     });
 
     res.clearCookie("accesstokenadmin", {
       httpOnly: true,
       secure: true, 
+      sameSite:"none"
     });
 
     res.status(200).json({ message: "Admin logged out successfully" });
