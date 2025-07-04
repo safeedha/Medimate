@@ -185,8 +185,9 @@ async login(req: Request, res: Response): Promise<void> {
   
     res.cookie("refreshusertoken", result.refreshToken, {
       httpOnly: true,
-      secure: false, 
+      secure: true, 
       maxAge:7 * 24 * 60 * 60 * 1000, 
+      sameSite: "none"
     });
     
 
@@ -213,7 +214,8 @@ async logout(req: Request, res: Response): Promise<void> {
     // })
       res.clearCookie("refreshusertoken",
       { httpOnly: true,
-      secure: false, 
+      secure: true,
+      sameSite: "none" 
     })
      res.status(200).json({ message: 'Logged out successfully' });
 
