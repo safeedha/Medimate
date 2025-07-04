@@ -86,6 +86,7 @@ export class MongoRegRepository implements RegRepository {
         {
           throw new Error("This account is blocked by admin,Please contact admin")
         }
+        console.log(doctor)
         return doctor;
       }
       catch(error)
@@ -177,7 +178,7 @@ export class MongoRegRepository implements RegRepository {
 
   async userLogin(email: string, password: string): Promise<Iuser> {
     try {
-      const user = await User.findOne({ email: email,googleIds:null });
+      const user = await User.findOne({ email: email});
       if (!user) {
         throw new Error('this email not registered');
       }

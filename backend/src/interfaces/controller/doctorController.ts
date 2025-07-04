@@ -184,8 +184,8 @@ async refreshTokencontroller(req: Request, res: Response): Promise<void> {
   async updatedocprofile(req: Request, res: Response): Promise<void> {
     try {
        const {firstname,lastname,experience,fee,image,email,phone,specialisation,qualification,medicalLicence} = req.body;
-         await this.docprofile.updateprofile(firstname,lastname,experience,fee,image,email,phone,specialisation,qualification,medicalLicence)
-        res.status(200).json({ message: 'Profile updated suceesfully' });
+         const result=await this.docprofile.updateprofile(firstname,lastname,experience,fee,image,email,phone,specialisation,qualification,medicalLicence)
+        res.status(200).json(result);
       } catch (error) {
       const errorMessage = error instanceof Error
         ? error.message

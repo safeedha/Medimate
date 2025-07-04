@@ -1,24 +1,19 @@
 import DoctorSidebar from './Docsidebar';
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import type { RootState } from '../../app/store';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { profileUpdate } from '../../api/doctorapi/doclogin';
 import { getDepartment } from '../../api/doctorapi/department';
+import type{DepartmentProps} from '../../Interface/interface'
 
-interface DepartmentProps {
-  id: string;
-  deptname: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-}
+
 
 function DoctorProfile() {
   const doctor = useSelector((state: RootState) => state.doctor.doctorInfo);
-  // const dispatch = useDispatch();
-
+ 
+  const dispatch=useDispatch()
   const [departments, setDepartments] = useState<DepartmentProps[]>([]);
   const [disabled, setDisabled] = useState<boolean>(true);
   const [profilePicture, setProfilePicture] = useState(doctor?.profilePicture || '');
@@ -120,18 +115,8 @@ function DoctorProfile() {
       medicalLicence,
     };
 
-    // const update= {
-    //   ...doctor,
-    //   ...formData,
-    //   email: data.email ?? '',
-    //   experience: Number(formData.experience),
-    //   fee: Number(formData.fee),
-    //   profilePicture: uploadedUrl,
-    //   medicalLicence,
-    // };
-
-    const response = await profileUpdate(data);
-    if (response === 'Profile updated suceesfully') {
+    const response = await profileUpdate(data,dispatch);
+    if (response === 'Profile updated successfully') {
       toast.success(response);
       setDisabled(true);
     } else if (response === 'Phone number already exists for another doctor') {

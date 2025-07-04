@@ -4,10 +4,11 @@ import {Idoctor} from '../../../domain/entities/doctor';
 export class Docprofile {
 
   constructor(private docRepository: DoctorRepository) {}
-  async updateprofile(firstname:string,lastname:string,experience:number,fee:number,image:string,email:string,phone:string,specialisation:string,qualification:string,medicalLicence:string): Promise<{message:string}> {
+  async updateprofile(firstname:string,lastname:string,experience:number,fee:number,image:string,email:string,phone:string,specialisation:string,qualification:string,medicalLicence:string): Promise<{message:string,doctor:Idoctor}> {
     try {
       const update = await this.docRepository.profileupdate(firstname,lastname,experience,fee,image,email,phone,specialisation,qualification,medicalLicence);
-      return {message:"updated"}
+      console.log(update)
+      return update
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);

@@ -345,7 +345,7 @@ async changeStatus(id: string): Promise<DoctorDTO[]> {
  specialisation:string,
  qualification:string,
  medicalLicence:string
-): Promise<{ message: string }> {
+): Promise<{ message: string,doctor:Idoctor }> {
   try {
     const doctor = await Doctor.findOne({ email });
 
@@ -375,7 +375,7 @@ async changeStatus(id: string): Promise<DoctorDTO[]> {
 
     await doctor.save();
 
-    return { message: 'Profile updated successfully' };
+    return { message: 'Profile updated successfully',doctor:doctor};
   } catch (error) {
     if (error instanceof Error) {
       console.error('Error updating profile:', error.message);

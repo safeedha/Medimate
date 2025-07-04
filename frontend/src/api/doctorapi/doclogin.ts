@@ -180,13 +180,16 @@ export const verifydoctorotp = async (email:string,otp:string) => {
 
 
 export const profileUpdate=async(data:{firstname:string,lastname:string,experience:number,fee:number,image:string,email:string| undefined,phone:string,specialisation:string,qualification:string,
-medicalLicence:string})=>
+medicalLicence:string},dispatch:AppDispatch)=>
 {
   try{
 
        const response = await doctorInstance.post("/update", data);
-      //  dispatch(setDoctorDetails(updata))
+        console.log(response.data)
+       dispatch(setDoctorDetails(response.data.doctor))
+       console.log(response.data.message)
        return response.data.message
+
   }
   catch (error) {
     if (axios.isAxiosError(error)) {
