@@ -81,7 +81,7 @@ function Docappoinment() {
       if(result==='refund added')
       {
           toast.success("The appointment was cancelled. Your refund added to your mail");
-        setRender(!render);
+         setRender(!render);
          setShowModal(false);
       }
       if (result === "Status updated") {

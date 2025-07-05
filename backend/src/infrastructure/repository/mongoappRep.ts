@@ -376,33 +376,34 @@ async  getappinmentbydoctor(
     });
 
   
-    const appointments = await AppointmentModel.aggregate([
-      {
-        $match: {
-          doctor_id: doctorObjectId,
-        },
-      },
-      {
-        $lookup: {
-          from: "slots",
-          localField: "schedule_id",
-          foreignField: "_id",
-          as: "schedule",
-        },
-      },
-      { $unwind: "$schedule" },
-      {
-        $sort: {
-          "schedule.date": -1,
-        },
-      },
-      {
-        $skip: (page - 1) * limit,
-      },
-      {
-        $limit: limit,
-      },
-    ]);
+   const appointments = await AppointmentModel.aggregate([
+  {
+    $match: {
+      doctor_id: doctorObjectId,
+    },
+  },
+  {
+    $lookup: {
+      from: "slots",
+      localField: "schedule_id",
+      foreignField: "_id",
+      as: "schedule",
+    },
+  },
+  { $unwind: "$schedule" },
+  {
+    $sort: {
+      created_at: -1, 
+    },
+  },
+  {
+    $skip: (page - 1) * limit,
+  },
+  {
+    $limit: limit,
+  },
+]);
+
 
     const mappedAppointments: AppointmentDTO[] = appointments.map((item: any) => ({
       _id: item._id.toString(),
@@ -428,7 +429,7 @@ async  getappinmentbydoctor(
       },
       followup_id:item.followup_id?.toString(),
       followup_status:item.followup_status,
-       rescheduled_to: item.rescheduled_to?.toString(),
+      rescheduled_to: item.rescheduled_to?.toString(),
       isRescheduled:item?.isRescheduled
     }));
 
