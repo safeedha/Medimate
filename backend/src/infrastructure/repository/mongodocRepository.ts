@@ -1,35 +1,44 @@
 import {DoctorRepository} from '../../domain/repository/doctor-repository';
+// import {generateSignedCloudinaryUrl} from '../../application/service/generateSignedCloudinaryUrl';
 import {Doctor} from '../database/models/docter';
 import {Idoctor} from '../../domain/entities/doctor';
 import {DoctorDTO} from '../../dto/doctor.dto'
 
 
 export class MongoDocRepository implements DoctorRepository {
-async getAllunverified(page: number, limit: number): Promise<{ doctors: DoctorDTO[]; total: number }> {
+ async getAllunverified(
+  page: number,
+  limit: number
+): Promise<{ doctors: DoctorDTO[]; total: number }> {
   try {
     const skip = (page - 1) * limit;
     const total = await Doctor.countDocuments({ status: 'Pending' });
+
     const doctors = await Doctor.find({ status: 'Pending' })
       .skip(skip)
       .limit(limit)
       .populate('specialisation');
-    const mappedDoctors: DoctorDTO[] = doctors.map((doc: any) => ({
-      _id: doc._id.toString(),
-      firstname: doc.firstname,
-      lastname: doc.lastname,
-      email: doc.email,
-      phone: doc.phone,
-      specialisation: doc.specialisation ?? null,
-      experience: doc.experience,
-      fee: doc.fee,
-      isBlocked: doc.isBlocked,
-      status: doc.status,
-      qualification: doc.qualification,
-      additionalInfo: doc.additionalInfo,
-      profilePicture: doc.profilePicture,
-      medicalLicence: doc.medicalLicence,
-      googleVerified: doc.googleVerified,
-    }));
+
+    const mappedDoctors: DoctorDTO[] = doctors.map((doc: any) => {
+
+
+      return {
+        _id: doc._id.toString(),
+        firstname: doc.firstname,
+        lastname: doc.lastname,
+        email: doc.email,
+        phone: doc.phone,
+        specialisation: doc.specialisation ?? null,
+        experience: doc.experience,
+        fee: doc.fee,
+        isBlocked: doc.isBlocked,
+        status: doc.status,
+        qualification: doc.qualification,
+        additionalInfo: doc.additionalInfo,
+        profilePicture: doc.profilePicture, 
+        medicalLicence: doc.medicalLicence, 
+      };
+    });
 
     return {
       doctors: mappedDoctors,
@@ -40,7 +49,6 @@ async getAllunverified(page: number, limit: number): Promise<{ doctors: DoctorDT
     throw new Error('Database error');
   }
 }
-
   
   async getAllverified(
   page: number,
@@ -154,7 +162,7 @@ async getAllverifiedbysort(
             deptname: doc.specialisation.deptname,
             description: doc.specialisation.description,
           }
-        : doc.specialisation?.toString() ?? null,
+      : doc.specialisation?.toString() ?? null,
       experience: doc.experience,
       fee: doc.fee,
       profilePicture: doc.profilePicture,
@@ -206,17 +214,21 @@ async getAllverifiedbysort(
       lastname: doc.lastname,
       email: doc.email,
       phone: doc.phone,
-      specialisation: doc.specialisation,
+      specialisation: doc.specialisation && typeof doc.specialisation === 'object'
+        ? {
+            deptname: doc.specialisation.deptname,
+            description: doc.specialisation.description,
+          }
+        : null,
       experience: doc.experience,
       fee: doc.fee,
       isBlocked:doc.isBlocked,
-      status: doc.status,
       qualification: doc.qualification,
       additionalInfo: doc.additionalInfo,
       profilePicture: doc.profilePicture,
       medicalLicence: doc.medicalLicence,
-      googleVerified: doc.googleVerified,
     }));
+   
 
     return { doctors, total };
   } catch (error) {
@@ -251,7 +263,6 @@ async getAllverifiedbysort(
       fee: doctor.fee,
       experience: doctor.experience,
       profilePicture: doctor.profilePicture,
-       isBlocked:doctor.isBlocked
     };
 
     return result;
@@ -317,8 +328,6 @@ async changeStatus(id: string): Promise<DoctorDTO[]> {
       specialisation: doc.specialisation,
       experience: doc.experience,
       fee: doc.fee,
-      isBlocked: doc.isBlocked,
-      status: doc.status,
       qualification: doc.qualification,
       additionalInfo: doc.additionalInfo,
       profilePicture: doc.profilePicture,

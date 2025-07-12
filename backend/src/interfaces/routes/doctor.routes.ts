@@ -1,6 +1,6 @@
 import express,{Request} from 'express'
 const router=express.Router()
-import {DoctorController} from '../../interfaces/controller/doctorController'
+import {DoctorController} from '../controller/doctor.controller'
 import {GetDept} from '../../application/usecase/dept/getDept'
 import {MongoDeptRepository} from '../../infrastructure/repository/mongodeptRepository'
 import {DocRegister} from '../../application/usecase/reg/docsignup'

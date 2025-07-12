@@ -17,7 +17,7 @@ export class MongoAppointmentRepository implements appointmentRepository {
     }
   }
 
-   async getcountofappoinmentofdoctor(id: string): Promise<Record<string, number>> {
+  async getcountofappoinmentofdoctor(id: string): Promise<Record<string, number>> {
   let pending = 0;
   let completed = 0;
   let cancelled = 0;

@@ -55,12 +55,10 @@ async getAlluser(
       lastname: doc.lastname,
       email: doc.email,
       phone: doc.phone ?? null,
-      googleVerified: doc.googleVerified,
       isBlocked:doc.isBlocked,
       gender: doc.gender,
       age: doc.age,
     }));
-
     return { users, total };
   } catch (error) {
     if (error instanceof Error) {
@@ -92,7 +90,6 @@ async getAlluserbysort(search?: string): Promise<{ users: UserDTO[]; total: numb
       lastname: doc.lastname,
       email: doc.email,
       phone: doc.phone ?? null,
-      googleVerified: doc.googleVerified,
       isBlocked: doc.isBlocked,
       gender: doc.gender,
       age: doc.age,

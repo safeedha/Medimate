@@ -14,25 +14,31 @@ function User() {
   const [currentPage, setCurrentPage] = useState(1)
   const usersPerPage = 4 
 
-  useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const response = await getAlluser(currentPage, usersPerPage, search);
-      if (response) {
-        setUsers(response.users);
-        setTotalUsers(response.total);
-      } else {
-        setUsers([]);
-        setTotalUsers(0);
-        console.error('No users found');
+ useEffect(() => {
+  const delayDebounce = setTimeout(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getAlluser(currentPage, usersPerPage, search);
+        if (response) {
+          setUsers(response.users);
+          setTotalUsers(response.total);
+        } else {
+          setUsers([]);
+          setTotalUsers(0);
+          console.error('No users found');
+        }
+      } catch (error) {
+        console.error('Error fetching users:', error);
       }
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    }
-  };
+    };
 
-  fetchData();
+    fetchData();
+  }, 500); 
+
+
+  return () => clearTimeout(delayDebounce);
 }, [currentPage, search]);
+
 
   const openModal = (user: Iuser) => {
     setSelectedUser(user)

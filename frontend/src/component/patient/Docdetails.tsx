@@ -365,7 +365,7 @@ function Docdetails() {
       <div className="bg-teal-100 rounded-md px-16 py-4 shadow-sm mt-20">
         <div className="flex items-center space-x-4">
           <img
-            src={doctor?.profilePicture}
+            src={`https://res.cloudinary.com/dwerqkqou/image/upload/${doctor?.profilePicture}`}
             alt="Doctor"
             className="w-24 h-24 rounded-full object-cover border-2 border-teal-400"
           />

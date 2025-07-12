@@ -13,22 +13,28 @@ const ChatSidebar = ({getUserId,onlineuser,sort}:{getUserId:(id:string,name:stri
   const [users, setUsers] = useState<Iuser[]>([]);
   const[search,setSearch]=useState('')
   const[unreadcount,setUnreadcount]=useState<UnreadCounts>({});
+  
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getAlluserbysort(search);
-        if (response) {
-          setUsers(response);
-        } else {
-          console.error('No users found');
+    const delayDebounce = setTimeout(() => {
+      const fetchUsers = async () => {
+        try {
+          const response = await getAlluserbysort(search);
+          if (response) {
+            setUsers(response.users);
+          } else {
+            setUsers([]);
+            console.error('No users found');
+          }
+        } catch (error) {
+          console.error('Error fetching users:', error);
         }
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
+      };
 
-    fetchData();
-  }, [search,sort]);
+      fetchUsers();
+    }, 500); 
+
+    return () => clearTimeout(delayDebounce);
+  }, [search, sort]);
 
   useEffect(() => {
   const fetchUnreadCounts = async () => {

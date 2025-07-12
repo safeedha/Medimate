@@ -67,7 +67,7 @@ function DoctorProfile() {
 
       try {
         const response = await axios.post("https://api.cloudinary.com/v1_1/dwerqkqou/image/upload", formData);
-        setMedicalLicence(response.data.secure_url);
+        setMedicalLicence(response.data.secure_url.split('/upload/')[1]);
         toast.success("Medical License uploaded");
       } catch (err) {
         toast.error("Upload failed");
@@ -97,7 +97,7 @@ function DoctorProfile() {
         "https://api.cloudinary.com/v1_1/dwerqkqou/image/upload",
         uploadForm
       );
-      uploadedUrl = response.data.secure_url;
+      uploadedUrl = response.data.secure_url.split('/upload/')[1];;
     } else {
       uploadedUrl = profilePicture;
     }
@@ -144,7 +144,7 @@ function DoctorProfile() {
             {/* Profile Picture Upload */}
             <div className="mb-6 text-center">
               <img
-                src={profilePicture || '/default-profile.png'}
+                src={`https://res.cloudinary.com/dwerqkqou/image/upload/${profilePicture}`}
                 alt="Profile"
                 className="w-20 h-20 mx-auto rounded-full border-2 border-indigo-300 cursor-pointer"
                 onClick={() => document.getElementById('fileInput')?.click()}
@@ -242,13 +242,13 @@ function DoctorProfile() {
                 />
               </div>
 
-              {/* Medical License */}
+            
               <div>
                 <label className="text-sm text-gray-700 block mb-1">Medical License</label>
                 {medicalLicence && (
                   <div className="mb-2">
                     <a
-                      href={medicalLicence}
+                      href={`https://res.cloudinary.com/dwerqkqou/image/upload/${medicalLicence}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 underline text-sm"

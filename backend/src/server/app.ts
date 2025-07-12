@@ -2,9 +2,9 @@ import express, { Application } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import morgan from 'morgan'; // ✅ Import Morgan
-import { adminRouter } from '../interfaces/routes/adminroutes';
-import { doctorRouter } from '../interfaces/routes/doctorroutes';
-import { userRouter } from '../interfaces/routes/userroutes';
+import { adminRouter } from '../interfaces/routes/admin.routes';
+import { doctorRouter } from '../interfaces/routes/doctor.routes';
+import { userRouter } from '../interfaces/routes/user.routes';
 import cookieParser from 'cookie-parser';
 
 export class App {

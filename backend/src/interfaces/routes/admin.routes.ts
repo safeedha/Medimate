@@ -1,5 +1,5 @@
 import express from 'express'
-import {AdminController} from '../../interfaces/controller/Admincontroller'
+import {AdminController} from '../controller/admin.controller'
 import {Login} from '../../application/usecase/dept/adminLogin'
 import {AddDept} from '../../application/usecase/dept/addDept'
 import {GetDept}  from '../../application/usecase/dept/getDept'
@@ -29,6 +29,7 @@ import {GetAlldoctor} from '../../application/usecase/doctor/getalldoctor'
 import {GetDashbordappoinment} from '../../application/usecase/appoinment/appoinmentdash'
 import {GetCountofappforeachDoc}  from '../../application/usecase/appoinment/gecountforeach'
 import {GetFilter } from '../../application/usecase/appoinment/getfilter'
+import errorHandler from '../../infrastructure/middleware/errorHandler';
 const router=express.Router()
 
 const mongouserrepository=new MongoUserRepository()
@@ -70,35 +71,41 @@ getrefund ,getPayout,paytodoctor,refundhandle,getsingleUser,getsingledoc,getAlld
 
 
 
-router.post("/login",(req, res) => admin.adminLogin(req, res))
-router.get("/logout",(req, res) => admin.adminLogout(req, res))
-
-router.put("/department/:id",verifyAdminAuth,(req, res) => admin.editDepartment(req, res))
-router.patch("/department/:id",verifyAdminAuth,(req, res) => admin.blockDepartment(req, res))
-router.get("/department",verifyAdminAuth,(req, res) => admin.getDepartment(req, res))
-router.post("/department",verifyAdminAuth,(req, res) => admin.createDepartment(req, res))
+router.post("/login", (req, res, next) => admin.adminLogin(req, res, next));
+router.get("/logout", (req, res, next) => admin.adminLogout(req, res, next));
 
 
-router.get("/doctor/unverified",verifyAdminAuth, (req, res) => admin.getAllunVerfiedDoctors(req, res))
-router.get("/doctor",verifyAdminAuth, (req, res) => admin.getAllVerfiedDoctors(req, res))
-router.get("/doctor/:doctorid",verifyAdminAuth, (req, res) => admin.getSingledoctor(req, res))
-router.patch("/doctor/status/:id",verifyAdminAuth, (req, res) => admin.changeDoctorblockstatus(req, res))
-router.patch("/doctor/verify/:id", verifyAdminAuth,(req, res) => admin.verification(req, res))
+router.put("/department/:id", verifyAdminAuth, (req, res, next) => admin.editDepartment(req, res, next));
+router.patch("/department/:id", verifyAdminAuth, (req, res, next) => admin.blockDepartment(req, res, next));
+router.get("/department", verifyAdminAuth, (req, res, next) => admin.getDepartment(req, res, next));
+router.post("/department", verifyAdminAuth, (req, res, next) => admin.createDepartment(req, res, next));
 
 
-router.get("/user",verifyAdminAuth, (req, res) => admin.getAllUser(req, res))
-router.patch("/user/status/:id",verifyAdminAuth,(req, res) => admin.changeUserblockstatus(req, res))
-router.patch("/user/:id",verifyAdminAuth,(req, res) => admin.getsingleuser(req, res))
 
-router.get("/appoinment/doctor/:id",verifyAdminAuth,(req, res) => admin.getAllappoinmentbydoctor(req, res))
-router.get("/appoinment",verifyAdminAuth,(req, res) => admin.getAllappoinment(req, res))
-router.get("/appoinment/count",verifyAdminAuth,(req, res) => admin.getCountforDoc(req, res))
-router.get("/appoinment/filter",verifyAdminAuth,(req, res) => admin.getAppointmentsFiltered(req, res))
+router.get("/doctor/unverified", verifyAdminAuth, (req, res, next) => admin.getAllunVerfiedDoctors(req, res, next));
+router.get("/doctor", verifyAdminAuth, (req, res, next) => admin.getAllVerfiedDoctors(req, res, next));
+router.get("/doctor/:doctorid", verifyAdminAuth, (req, res, next) => admin.getSingledoctor(req, res, next));
+router.patch("/doctor/status/:id", verifyAdminAuth, (req, res, next) => admin.changeDoctorblockstatus(req, res, next));
+router.patch("/doctor/verify/:id", verifyAdminAuth, (req, res, next) => admin.verification(req, res, next));
 
-router.get("/wallet",verifyAdminAuth,(req, res) => admin.getWalletinformation(req, res))
+
+
+router.get("/user", verifyAdminAuth, (req, res, next) => admin.getAllUser(req, res, next));
+router.patch("/user/status/:id", verifyAdminAuth, (req, res, next) => admin.changeUserblockstatus(req, res, next));
+router.patch("/user/:id", verifyAdminAuth, (req, res, next) => admin.getsingleuser(req, res, next));
+
+
+router.get("/appoinment/doctor/:id",verifyAdminAuth,(req, res,next) => admin.getAllappoinmentbydoctor(req, res,next))
+router.get("/appoinment", verifyAdminAuth, (req, res, next) => admin.getAllappoinment(req, res, next));
+router.get("/appoinment/count", verifyAdminAuth, (req, res, next) => admin.getCountforDoc(req, res, next));
+router.get("/appoinment/filter", verifyAdminAuth, (req, res, next) => admin.getAppointmentsFiltered(req, res, next));
+router.get("/wallet", verifyAdminAuth, (req, res, next) => admin.getWalletinformation(req, res, next));
+
 // router.get("/wallet/refund",verifyAdminAuth,(req, res) => admin.getRefundinformation(req, res))
-router.get("/wallet/pay",verifyAdminAuth,(req, res) => admin.payoutinformation(req, res))
-router.post("/wallet/pay",verifyAdminAuth,(req, res) => admin.payouttodoctor(req, res))
-router.post("/wallet/refund",verifyAdminAuth,(req, res) => admin.refundhandl(req, res))
+router.get("/wallet/pay", verifyAdminAuth, (req, res, next) => admin.payoutinformation(req, res, next));
+router.post("/wallet/pay", verifyAdminAuth, (req, res, next) => admin.payouttodoctor(req, res, next));
+router.post("/wallet/refund", verifyAdminAuth, (req, res, next) => admin.refundhandl(req, res, next));
 
+
+router.use(errorHandler)
 export { router as adminRouter };

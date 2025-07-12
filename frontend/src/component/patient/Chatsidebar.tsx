@@ -12,13 +12,23 @@ function Chatsidebar ({getUserId,onlineuser,sort}:{getUserId:(id:string,name:str
     const[unreadcount,setUnreadcount]=useState<UnreadCounts>({});
       
     const [doctors, setDoctors] = useState<Idoctor[] | null>(null);
-    useEffect(() => {
-     const fetchDoctors = async () => {
-       const doctorData = await getAlldoctorsbysort(search);
-       setDoctors(doctorData.data);
-     };
-     fetchDoctors();
-   }, [search,sort]);
+   useEffect(() => {
+  const delayDebounce = setTimeout(() => {
+    const fetchDoctors = async () => {
+      try {
+        const doctorData = await getAlldoctorsbysort(search);
+        setDoctors(doctorData.data);
+      } catch (error) {
+        console.error("Error fetching doctors:", error);
+      }
+    };
+
+    fetchDoctors();
+  }, 500); 
+
+  return () => clearTimeout(delayDebounce); 
+}, [search, sort]);
+
 
    useEffect(()=>{
      socket.on('notification',(data)=>{

@@ -33,7 +33,7 @@ function Department() {
   const [searchTerm, setSearchTerm] = useState('');
   const itemsPerPage = 3;
 
- const fetchDepartments = useCallback(async () => {
+   const fetchDepartments = useCallback(async () => {
   try {
     const result = await getDepartment(currentPage, itemsPerPage, searchTerm);
     setDepartments(result?.item);
@@ -41,10 +41,14 @@ function Department() {
   } catch (error) {
     console.error('Error fetching departments:', error);
   }
-}, [currentPage, itemsPerPage, searchTerm]); 
+}, [currentPage, itemsPerPage, searchTerm]);
 
 useEffect(() => {
-  fetchDepartments();
+  const handler = setTimeout(() => {
+    fetchDepartments();
+  }, 500); 
+
+  return () => clearTimeout(handler); 
 }, [fetchDepartments, isBlocked]);
 
   const handleBlock = async (id: string) => {

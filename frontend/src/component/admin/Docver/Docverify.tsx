@@ -58,6 +58,7 @@ function Docverify() {
         const response = await getAllunVerfiedDoctors(currentpage, limit)
         if (response) {
           setDoctors(response.doctors)
+          console.log()
           setTotal(response.total)
           window.scrollTo({ top: 0, behavior: 'smooth' })
         } else toast.error('Failed to fetch doctors')
@@ -244,7 +245,7 @@ function Docverify() {
                 <div className="space-y-4 flex flex-col items-center">
                   {selectedDoctor.profilePicture && (
                     <div className="w-32 h-32 rounded-full overflow-hidden border border-gray-300">
-                      <img src={selectedDoctor.profilePicture} alt="Profile" className="w-full h-full object-cover" />
+                      <img src={`https://res.cloudinary.com/dwerqkqou/image/upload/${selectedDoctor.profilePicture}`} alt="Profile" className="w-full h-full object-cover" />
                     </div>
                   )}
                   {selectedDoctor.medicalLicence && (

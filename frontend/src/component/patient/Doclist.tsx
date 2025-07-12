@@ -16,7 +16,10 @@ function Doclist() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
+  
+
+useEffect(() => {
+  const delayDebounce = setTimeout(() => {
     const fetchDoctors = async () => {
       const doctorData = await getAlldoctors(currentPage, itemsPerPage, singledepartment, search);
       setDoctors(doctorData.data);
@@ -24,7 +27,11 @@ function Doclist() {
     };
 
     fetchDoctors();
-  }, [currentPage, singledepartment, search]);
+  }, 500); // debounce delay: 500ms
+
+  return () => clearTimeout(delayDebounce); // cleanup
+}, [currentPage, singledepartment, search]);
+
 
   useEffect(() => {
     const fetchDepartnment = async () => {
@@ -96,7 +103,7 @@ function Doclist() {
                     className="bg-white p-6 rounded-xl border-2 border-teal-300 shadow-md hover:shadow-xl transition-transform duration-300 transform hover:-translate-y-1"
                   >
                     <img
-                      src={doctor.profilePicture || 'https://via.placeholder.com/100'}
+                      src={`https://res.cloudinary.com/dwerqkqou/image/upload/${doctor.profilePicture}`}
                       alt="Doctor"
                       className="w-24 h-24 mx-auto rounded-full object-cover border-4 border-teal-500 mb-4"
                     />

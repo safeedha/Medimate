@@ -1,7 +1,7 @@
 import express from 'express'
 import { Request } from "express";
 const router=express.Router()
-import {UserController} from '../../interfaces/controller/usercontroller'
+import {UserController} from '../controller/user.controller'
 import {GetDept} from '../../application/usecase/dept/getDept'
 import {MongoDeptRepository} from '../../infrastructure/repository/mongodeptRepository'
 import {UserReg} from '../../application/usecase/reg/userreg'
@@ -44,6 +44,7 @@ import{RefreshToken} from '../../application/usecase/user/refreshtoken'
 import {Deletemessage} from '../../application/usecase/conversation/deletemessage'
 import {MessageTimeUpdation} from '../../application/usecase/conversation/messagetimeuser'
 import {GetAllSort}  from '../../application/usecase/doctor/getSort'
+import errorHandler from '../../infrastructure/middleware/errorHandler';
 export interface CustomRequest extends Request {
   id: string;
 }
@@ -96,8 +97,8 @@ const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userr
 
 
 
-router.get("/department", (req, res) => user.getAllDept(req, res)) 
-router.post("/register", (req, res) => user.register(req, res)) 
+router.get("/department", (req, res,next) => user.getAllDept(req, res,next)) 
+router.post("/register", (req, res,next) => user.register(req, res,next)) 
 router.post("/login", (req, res) => user.login(req, res)) 
 router.get("/logout", (req, res) => user.logout(req, res))
 router.post("/refresh-token", (req, res) => user.refreshTokencontroller(req, res))
@@ -110,7 +111,7 @@ router.get("/doctors",verifyUserAuth, (req, res) => user.getAllDoct(req, res))
 router.get("/doctors/sort",verifyUserAuth, (req, res) => user.getAllDoctbySort(req, res))  
 router.get("/doctor/:id",verifyUserAuth, (req, res) => user.getSingleDoct(req, res))
 router.get("/doctor/slot/:id",verifyUserAuth, (req, res) => user.getSlotedoctor(req, res)) 
-router.get("/department",verifyUserAuth, (req, res) => user.getAllDept(req, res)) 
+router.get("/department",verifyUserAuth, (req, res,next) => user.getAllDept(req, res,next)) 
 router.get("/profile", verifyUserAuth, (req, res) => {
   user.getUserdetail(req as CustomRequest, res);
 });
@@ -189,4 +190,5 @@ router.get("/review/count", verifyUserAuth, (req, res) => {
   user.average(req as CustomRequest, res);
 })
 
+router.use(errorHandler)
 export { router as userRouter };

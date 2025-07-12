@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response,NextFunction } from 'express';
 import { GetDept } from '../../application/usecase/dept/getDept';
 import {UserReg} from '../../application/usecase/reg/userreg'
 import {UserLog} from '../../application/usecase/reg/userlog'
@@ -50,17 +50,13 @@ export class UserController {
   ) {}
 
  
-  async getAllDept(req: Request, res: Response): Promise<void> {
+  async getAllDept(req: Request, res: Response,next:NextFunction): Promise<void> {
     try {
       console.log('from dept')
       const result = await this.getallunblockeddept.getAllunblockedDept();
-
       res.status(200).json(result);
     } catch (error) {
-      const errorMessage = error instanceof Error
-        ? error.message
-        : 'Internal server error';
-      res.status(400).json({ message: errorMessage });
+     next(error)
     }
   }
 
@@ -146,7 +142,7 @@ export class UserController {
   }
 
 
-  async register(req: Request, res: Response): Promise<void> {
+  async register(req: Request, res: Response,next:NextFunction): Promise<void> {
     try {
       console.log("request ht")
       const {firstname,
@@ -165,10 +161,8 @@ export class UserController {
         gender})
       res.status(201).json({ message: 'Registration successful' });
     } catch (error) {
-      const errorMessage = error instanceof Error
-        ? error.message
-        : 'Internal server error';
-      res.status(400).json({ message: errorMessage });
+      next(error)
+      
     }
   }
 

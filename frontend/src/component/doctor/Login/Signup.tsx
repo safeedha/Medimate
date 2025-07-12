@@ -107,6 +107,7 @@ function Signup() {
           formData
         );
         const uploadedUrl:string = response.data.secure_url;
+        const imagePath: string = uploadedUrl.split('/upload/')[1];
 
 
         if (!medicalLicence) {
@@ -120,10 +121,11 @@ function Signup() {
           formData
         );
         const uploadedUrl2:string = response2.data.secure_url;
+        const licencePath: string = uploadedUrl2.split('/upload/')[1];
          console.log(uploadedUrl,uploadedUrl2)
     
    
-      const result=await signup(firstname,lastname,email,contact,specialisation,experience,password,fee,additionalInfo,uploadedUrl,uploadedUrl2)
+      const result=await signup(firstname,lastname,email,contact,specialisation,experience,password,fee,additionalInfo,imagePath,licencePath)
       if(result.message==="Doctor registered successfully")
       {
         toast.success("Doctor registered successfully")

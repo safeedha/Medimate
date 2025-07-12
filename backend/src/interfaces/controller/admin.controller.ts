@@ -1,4 +1,4 @@
-import express,{Request,Response} from 'express'
+import express,{Request,Response,NextFunction} from 'express'
 import {Login} from "../../application/usecase/dept/adminLogin"
 import {AddDept} from "../../application/usecase/dept/addDept"
 import {GetDept} from "../../application/usecase/dept/getDept"
@@ -32,7 +32,7 @@ export class AdminController{
 
     }
 
-    async adminLogin(req:Request,res:Response):Promise<void>
+    async adminLogin(req:Request,res:Response,next:NextFunction):Promise<void>
     {  try{
     
        const{email, password}=req.body
@@ -54,11 +54,11 @@ export class AdminController{
       }
       catch(error)
       {
-        res.status(500).json({message:"Internal server error"});
+       next(error)
       }
     }
 
-  async  adminLogout(req: Request, res: Response): Promise<void> {
+  async  adminLogout(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
     res.clearCookie("refreshtokenadmin", {
       httpOnly: true,
@@ -74,24 +74,23 @@ export class AdminController{
 
     res.status(200).json({ message: "Admin logged out successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
+    next(error)
   }
 }
 
 
 
-async createDepartment(req: Request, res: Response): Promise<void> {
+async createDepartment(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
     const { deptname, description } = req.body;
     const result = await this.addDept.addDept({ deptname, description });
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+    next(error)
   }
 }
 
-async getDepartment(req: Request, res: Response): Promise<void> {
+async getDepartment(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
     const page=parseInt(req.query.page as string)
     const limit=parseInt(req.query.limit as string)
@@ -99,12 +98,11 @@ async getDepartment(req: Request, res: Response): Promise<void> {
     const result = await this.getDept.getAllDept(page,limit,search);
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+    next(error)
   }
 }
 
-async editDepartment(req: Request, res: Response): Promise<void> {
+async editDepartment(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
     const { id } = req.params;
     console.log(id)
@@ -114,34 +112,31 @@ async editDepartment(req: Request, res: Response): Promise<void> {
     const result = await this.editDept.editDept(data);
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+    next(error)
   }
 }
 
-async blockDepartment(req: Request, res: Response): Promise<void> {
+async blockDepartment(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
     const { id } = req.params;
     const result = await this.blockDept.blockDept(id);
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+    next(error)
   }
 }
 
-async getAllunVerfiedDoctors(req: Request, res: Response): Promise<void> {
+async getAllunVerfiedDoctors(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
     const page=parseInt(req.query.page as string)
     const limit=parseInt(req.query.limit as string)
     const result = await this.getUnverified.getAllUnverifiedDoctors(page,limit);
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+    next(error)
   }
 }
-async getAllVerfiedDoctors(req: Request, res: Response): Promise<void> {
+async getAllVerfiedDoctors(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
     const page=parseInt(req.query.page as string)
     const limit=parseInt(req.query.limit as string)
@@ -150,35 +145,32 @@ async getAllVerfiedDoctors(req: Request, res: Response): Promise<void> {
     const result = await this.getAlldoctor.getAlldoctors(page,limit,search);
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+    next(error)
   }
 }
 
-async getSingledoctor(req: Request, res: Response): Promise<void> {
+async getSingledoctor(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
     const {doctorid}=req.params
     console.log(doctorid)
     const result = await this.getSingledoc.getsingledoc(doctorid);
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+    next(error)
   }
 }
-async changeDoctorblockstatus(req: Request, res: Response): Promise<void> {
+async changeDoctorblockstatus(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
     const { id } = req.params;
     const result = await this.changedocstat.changesatus(id);
     console.log(result)
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+    next(error)
   }
 }
 
-async verification(req: Request, res: Response): Promise<void> {
+async verification(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
     const { id } = req.params;
     const { status } = req.body; // 'Approved' or 'Rejected'
@@ -188,15 +180,14 @@ async verification(req: Request, res: Response): Promise<void> {
   }
   catch(error)
   {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+   next(error)
 
   }
 
 }
 
 
-async getAllUser(req: Request, res: Response): Promise<void> {
+async getAllUser(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
      const page=parseInt(req.query.page as string)
     const limit=parseInt(req.query.limit as string)
@@ -204,56 +195,51 @@ async getAllUser(req: Request, res: Response): Promise<void> {
     const result = await this.getUser.getAllUser(page,limit,search);
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+     next(error)
   }
 }
 
-async changeUserblockstatus(req: Request, res: Response): Promise<void> {
+async changeUserblockstatus(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
     const { id } = req.params;
     const result = await this.changestatus.changesatus(id);
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+    next(error)
   }
 }
 
-async getsingleuser(req: Request, res: Response): Promise<void> {
+async getsingleuser(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
     const { id } = req.params;
     const result = await this.getsingleUser.getsingleUser(id);
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+    next(error)
   }
 }
 
-async getAllappoinmentbydoctor(req: Request, res: Response): Promise<void> {
+async getAllappoinmentbydoctor(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
     const { id } = req.params;
     console.log('docter id',id)
     const result = await this.getdoctorAppointmentByid.getallappoinment(id);
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+    next(error)
   }
 }
 
-async getAllappoinment(req: Request, res: Response): Promise<void> {
+async getAllappoinment(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
     const result = await this.getDashbordappoinment.getoverview()
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+    next(error)
   }
 }
 
-async getCountforDoc(req: Request, res: Response): Promise<void> {
+async getCountforDoc(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
     const {status}=req.query
       console.log(status)
@@ -266,12 +252,11 @@ async getCountforDoc(req: Request, res: Response): Promise<void> {
     const result = await this.getCountofappforeachDoc.getcount(status as 'completed'|'pending'|'cancelled');
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+    next(error)
   }
 }
 
-async getAppointmentsFiltered(req: Request, res: Response): Promise<void> {
+async getAppointmentsFiltered(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
     const { status, start, end } = req.query;
 
@@ -289,21 +274,19 @@ async getAppointmentsFiltered(req: Request, res: Response): Promise<void> {
 
     res.status(200).json(filteredAppointments);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+     next(error)
   }
 }
 
 
-async getWalletinformation(req: Request, res: Response): Promise<void> {
+async getWalletinformation(req: Request, res: Response,next:NextFunction): Promise<void> {
   try {
      const page=parseInt(req.query.page as string)
     const limit=parseInt(req.query.limit as string)
     const result=await this.getAdminWallet.getwallet(page,limit)
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+     next(error)
   }
 }
 
@@ -317,36 +300,33 @@ async getWalletinformation(req: Request, res: Response): Promise<void> {
 //   }
 // }
 
-async payoutinformation(req: Request, res: Response):Promise<void> {
+async payoutinformation(req: Request, res: Response,next:NextFunction):Promise<void> {
     try {
       console.log("payout")
     const result=await this.getPayout.getrpayoutInfor()
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+    next(error)
   }
 }
 
-async payouttodoctor(req: Request, res: Response):Promise<void> {
+async payouttodoctor(req: Request, res: Response,next:NextFunction):Promise<void> {
     try {
     const {transactionId,doctorid}=req.body
     const result=await this.paytodoctor.paymentToDoctor(transactionId,doctorid)
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+      next(error)
   }
 }
 
-async refundhandl(req: Request, res: Response):Promise<void> {
+async refundhandl(req: Request, res: Response,next:NextFunction):Promise<void> {
     try {
     const {transactionId}=req.body
     const result=await this.refundhandle.refundhandler(transactionId)
     res.status(200).json(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    res.status(400).json({ message: errorMessage });
+   next(error)
   }
 }
 

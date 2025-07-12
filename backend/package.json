@@ -16,6 +16,7 @@
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "bcrypt": "^6.0.0",
+    "cloudinary": "^2.7.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
@@ -29,7 +30,10 @@
     "razorpay": "^2.9.6",
     "rrule": "^2.8.1",
     "socket.io": "^4.8.1",
-    "stream-chat": "^9.3.0"
+    "stream-chat": "^9.3.0",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0",
+    "winston-elasticsearch": "^0.19.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
