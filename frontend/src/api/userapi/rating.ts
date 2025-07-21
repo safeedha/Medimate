@@ -10,7 +10,6 @@ export const createReview = async (comment: string, rating: number, doctorId: st
     if (axios.isAxiosError(error)) {
       return error.response?.data?.message || error.message;
     } else {
-      console.error(error);
       return 'Internal server error';
     }
   }
