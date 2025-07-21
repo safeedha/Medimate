@@ -1,9 +1,9 @@
 
 import {WalletRepository} from '../../../domain/repository/wallet-repo';
 import {AdminWalletTransactionDto} from '../../../dto/wallet.dto'
+import { IGetAdminWallet } from '../../../domain/useCaseInterface/wallet/IGetAdminWallet';
 
-
-export class GetAdminWallet {
+export class GetAdminWallet implements IGetAdminWallet{
 
   constructor(private walletRepository:WalletRepository) {}
   async getwallet(page:number,limit:number): Promise<{ transaction: AdminWalletTransactionDto[]; balance: number; total: number }> {

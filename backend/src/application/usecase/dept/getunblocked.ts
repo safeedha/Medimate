@@ -1,7 +1,9 @@
 import {DepartmentRepository} from '../../../domain/repository/department-repository'
 import {DepartmentDTO } from '../../../dto/doctor.dto'
+import {IGetUnblockedDepartments} from "../../../domain/useCaseInterface/department/IGetUnblockedDepartments"
 
-export class Getallunblockeddept{
+
+export class GetAllUnblockedDept implements IGetUnblockedDepartments{
  constructor(private deptRepository: DepartmentRepository) {}
   async getAllunblockedDept():Promise<DepartmentDTO[]> {
     try {

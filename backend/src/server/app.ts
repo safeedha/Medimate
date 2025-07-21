@@ -2,9 +2,11 @@ import express, { Application } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import morgan from 'morgan'; // ✅ Import Morgan
-import { adminRouter } from '../interfaces/routes/admin.routes';
-import { doctorRouter } from '../interfaces/routes/doctor.routes';
-import { userRouter } from '../interfaces/routes/user.routes';
+import { adminRouter } from '../interfaces/routes/adminRoutes';
+import { doctorRouter } from '../interfaces/routes/doctorRoutes';
+import { userRouter } from '../interfaces/routes/userRoutes';
+import { refreshTokenRouter } from '../interfaces/routes/refreshTokenRouter';
+
 import cookieParser from 'cookie-parser';
 
 export class App {
@@ -28,6 +30,7 @@ export class App {
   }
 
   private setRouter(): void {
+    this.app.use('/refresh-token',refreshTokenRouter)
     this.app.use('/admin', adminRouter);
     this.app.use('/doctor', doctorRouter);
     this.app.use('/user', userRouter);

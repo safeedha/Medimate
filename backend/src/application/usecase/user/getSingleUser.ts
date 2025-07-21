@@ -1,7 +1,7 @@
 import {UserRepository} from '../../../domain/repository/user-repository';
 import {UserDTO} from '../../../dto/user.dto'
-
-export class GetsingleUser {
+import { IGetSingleUser } from '../../../domain/useCaseInterface/user/IGetSingleUser';
+export class GetsingleUser implements IGetSingleUser{
 
   constructor(private userRepository: UserRepository) {}
   async getsingleUser(id:string): Promise<UserDTO> {

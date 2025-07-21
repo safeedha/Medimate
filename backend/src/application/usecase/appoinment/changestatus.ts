@@ -1,9 +1,8 @@
 import { appointmentRepository  } from '../../../domain/repository/appoinment-rep';
 import { slotRepository } from '../../../domain/repository/slot-repository';
-import { Appointment } from '../../../domain/entities/appoinment';
 import { WalletRepository } from '../../../domain/repository/wallet-repo';
-
-export class ChangestatusAppointment {
+import {IChangeAppointmentStatus } from '../../../domain/useCaseInterface/appoinment/IChangeAppointmentStatus';
+export class ChangestatusAppointment implements IChangeAppointmentStatus{
   constructor(private appointmentRepo: appointmentRepository,private slotRepository:slotRepository,private walletRepository: WalletRepository) {}
    async changestus(appoinmentid:string,status: 'pending' |  'cancelled' | 'completed',reschedule=false):Promise<{message:string}>{
        try{

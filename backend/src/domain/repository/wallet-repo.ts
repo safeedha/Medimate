@@ -10,6 +10,6 @@ getdoctorwallet(doctorId:string,page:number,limit:number):Promise<{ balance: num
 addpaytodoctor(transactionId:string,doctorid:string):Promise<{message:string}>
 addrefund(transactionId:string):Promise<string>
 getuserwallet(userid:string,page:number,limit:number):Promise<{ balance: number;  transactions: WalletTransactionDto[] }>
-
+adduserwallet(id:string,amount:number):Promise<void>
 
 }

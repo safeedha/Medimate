@@ -94,17 +94,17 @@ const doctor=new DoctorController(getDept,docsignup,doclogin,docotpverify,docpro
 interface CustomRequest extends Request {
   id: string;
 }
- router.post("/signup", (req, res) => doctor.signup(req, res)) 
- router.post("/login", (req, res) => doctor.login(req, res))
-  router.get("/logout", (req, res) => doctor.logout(req, res))
- router.put("/reapply",(req, res) => doctor.reapplication(req, res)) 
- router.post("/sendotp", (req, res) => doctor.sendOtp(req, res))
- router.post("/verifyotp", (req, res) => doctor.verifyOtp(req, res)) 
+//  router.post("/signup", (req, res) => doctor.signup(req, res)) 
+//  router.post("/login", (req, res) => doctor.login(req, res))
+//   router.get("/logout", (req, res) => doctor.logout(req, res))
+//  router.put("/reapply",(req, res) => doctor.reapplication(req, res)) 
+//  router.post("/sendotp", (req, res) => doctor.sendOtp(req, res))
+//  router.post("/verifyotp", (req, res) => doctor.verifyOtp(req, res)) 
 router.post("/update",verifyDoctor, (req, res) => doctor.updatedocprofile(req, res)) 
-router.post("/reset", (req, res) => doctor.resetPassword(req, res)) 
+// router.post("/reset", (req, res) => doctor.resetPassword(req, res)) 
 router.post("/refresh-token", (req, res) => doctor.refreshTokencontroller(req, res))
-router.get("/user",verifyDoctor, (req, res) => doctor.getAllUser(req as CustomRequest, res))
-router.get("/department", (req, res) => doctor.getAllDept(req, res)) 
+// router.get("/user",verifyDoctor, (req, res) => doctor.getAllUser(req as CustomRequest, res))
+// router.get("/department", (req, res) => doctor.getAllDept(req, res)) 
 router.get('/status',verifyDoctor, (req, res) => doctor.getStatus(req as CustomRequest, res))
 
 router.patch('/user/:reciever',verifyDoctor, (req, res) => doctor.updatemessagetime(req as CustomRequest, res))
@@ -122,25 +122,26 @@ router.get("/appoinment/:id",verifyDoctor,(req, res) => doctor.getsingleappoinme
 router.post(`/appoinment/followup`, verifyDoctor, (req, res) => {
   doctor.createfollowp(req as CustomRequest, res);
 })
+
 router.get("/slots",verifyDoctor,(req, res) => doctor.getSlotsofdoctor(req as CustomRequest, res)) 
 router.delete("/slots/:slotid",verifyDoctor,(req, res) => doctor.cancelSlots(req as CustomRequest, res))
 
-router.get("/messages", verifyDoctor, (req, res) => {
-  doctor.getAllmessages(req as CustomRequest, res);
-})
-router.delete("/messages/:messageid", verifyDoctor, (req, res) => {
-  doctor.deletemessages(req as CustomRequest, res);
-})
+// router.get("/messages", verifyDoctor, (req, res) => {
+//   doctor.getAllmessages(req as CustomRequest, res);
+// // })
+// router.delete("/messages/:messageid", verifyDoctor, (req, res) => {
+//   doctor.deletemessages(req as CustomRequest, res);
+// })
 
-router.post("/report", verifyDoctor, (req, res) => {
-  doctor.Addreport(req as CustomRequest, res);
-})
+// router.post("/report", verifyDoctor, (req, res) => {
+//   doctor.Addreport(req as CustomRequest, res);
+// })
 
-router.get("/wallet", verifyDoctor, (req, res) => {
-  doctor.getWallet(req as CustomRequest, res);
-})
+// router.get("/wallet", verifyDoctor, (req, res) => {
+//   doctor.getWallet(req as CustomRequest, res);
+// })
 
-router.get("/messages/unread-counts", verifyDoctor, (req, res) => {
-  doctor.getUnreadcount(req as CustomRequest, res);
-})
+// router.get("/messages/unread-counts", verifyDoctor, (req, res) => {
+//   doctor.getUnreadcount(req as CustomRequest, res);
+// })
 export { router as doctorRouter };

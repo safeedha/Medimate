@@ -1,7 +1,7 @@
 import {UserRepository} from '../../../domain/repository/user-repository';
 import {UserDTO} from '../../../dto/user.dto'
-
-export class GetUser {
+import { IGetUser } from '../../../domain/useCaseInterface/user/IGetUser';
+export class GetUser implements IGetUser{
 
   constructor(private userRepository: UserRepository) {}
   async getAllUser(page:number,limit:number,search:string): Promise<{ users: UserDTO[]; total: number }> {

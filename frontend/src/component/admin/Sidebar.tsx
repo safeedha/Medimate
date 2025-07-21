@@ -16,9 +16,7 @@ function Sidebar() {
        <div className="mb-4">
         <Link to="/admin/dashboard" className="text-lg text-white">Dashboard</Link>
       </div>
-      <div className="mb-4">
-        <Link to="/admin/appointment" className="text-lg text-white">Appointment</Link>
-      </div>
+
 
       <div className="mb-4">
         <Link to="/admin/user" className="text-lg text-white">User</Link>

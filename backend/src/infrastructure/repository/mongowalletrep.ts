@@ -366,5 +366,30 @@ async  getuserwallet(userid: string, page: number, limit: number): Promise<{ bal
   }
 }
 
+async adduserwallet(id:string,amount:number):Promise<void>{
+  try{
+      const userwallet = await UserwalletModel.findOne({ userId:id });
+       if (!userwallet) {
+      throw new Error('No wallet available');
+       }
+       let userwallettransaction={
+       type:'debit' as 'debit',
+       amount:amount,
+       date:new Date()
+     }
+        userwallet.balance -= amount;
+        userwallet.transactions.push(userwallettransaction);
+        userwallet.lastUpdated = new Date()
+    
+  }
+  catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error('An unknown error occurred');
+    }
+  }
+}
+
 
 }

@@ -1,5 +1,5 @@
 
-import Navbar from './Navbar';
+import Navbar from '../common/Navbar';
 import banner from '../../assets/homep.jpg'; // Importing the banner image
 
 const PatientHomePage = () => {

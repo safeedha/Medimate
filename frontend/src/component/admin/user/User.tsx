@@ -4,6 +4,7 @@ import { toast, Toaster } from 'react-hot-toast'
 import { getAlluser, changeStatus } from '../../../api/adminapi/user'
 import Swal from 'sweetalert2'
 import type { Iuser } from '../../../Interface/interface'
+import Table from '../../../component/common/Table' 
 
 function User() {
   const [users, setUsers] = useState<Iuser[]>([])
@@ -83,6 +84,42 @@ function User() {
     setCurrentPage(1) 
   }
 
+  const columns = [
+  {
+    header: 'Name',
+    accessor: (user: Iuser) => `${user.firstname} ${user.lastname}`,
+  },
+  {
+    header: 'Email',
+    accessor: (user: Iuser) => user.email,
+  },
+  {
+    header: 'Details',
+    accessor: (user: Iuser) => (
+      <p
+        onClick={() => openModal(user)}
+        className="text-blue-500 hover:text-blue-700 cursor-pointer"
+      >
+        More Details
+      </p>
+    ),
+  },
+  {
+    header: 'Action',
+    accessor: (user: Iuser) => (
+      <button
+        className={`px-4 py-2 rounded-lg text-white font-semibold transition duration-300 shadow-md ${
+          user.isBlocked
+            ? 'bg-green-500 hover:bg-green-600'
+            : 'bg-red-500 hover:bg-red-600'
+        }`}
+        onClick={() => blockHandle(user._id!)}
+      >
+        {user.isBlocked ? 'Unblock' : 'Block'}
+      </button>
+    ),
+  },
+]
   return (
     <div className="flex h-screen">
       <Toaster
@@ -108,59 +145,21 @@ function User() {
           />
         </div>
 
-        <table className="w-full bg-white shadow rounded-lg">
-          <thead>
-            <tr className="bg-gray-200 text-left">
-              <th className="p-4">Name</th>
-              <th className="p-4">Email</th>
-              <th className="p-4">Details</th>
-              <th className="p-4">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.length > 0 ? (
-              users.map(user => (
-                <tr
-                  key={user._id}
-                  className={`border-t hover:bg-gray-50 ${
-                    user.isBlocked ? 'bg-red-100 text-red-700' : ''
-                  }`}
-                >
-                  <td className="p-4">
-                    {user.firstname} {user.lastname}
-                  </td>
-                  <td className="p-4">{user.email}</td>
-                  <td className="p-4">
-                    <p
-                      onClick={() => openModal(user)}
-                      className="text-blue-500 hover:text-blue-700 cursor-pointer"
-                    >
-                      More Details
-                    </p>
-                  </td>
-                  <td className="p-4">
-                    <button
-                      className={`px-4 py-2 rounded-lg text-white font-semibold transition duration-300 shadow-md ${
-                        user.isBlocked
-                          ? 'bg-green-500 hover:bg-green-600'
-                          : 'bg-red-500 hover:bg-red-600'
-                      }`}
-                      onClick={() => blockHandle(user._id!)}
-                    >
-                      {user.isBlocked ? 'Unblock' : 'Block'}
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={4} className="text-center p-6 text-gray-500">
-                  No users found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        <div className="overflow-x-auto">
+        <Table
+          columns={columns}
+          data={users}
+          getRowClassName={(user) =>
+            user.isBlocked ? 'bg-red-100 text-red-700' : ''
+          }
+        />
+        {users.length === 0 && (
+          <div className="text-center p-6 text-gray-500">No users found.</div>
+        )}
+      </div>     
+
+
+
           <div className="flex justify-center mt-4 space-x-2">
         {Array.from({ length: Math.ceil(totalUsers / usersPerPage) }).map((_, index) => {
           const pageNum = index + 1;

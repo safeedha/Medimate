@@ -1,13 +1,15 @@
 import { RegRepository } from "../../../domain/repository/reg-repository"
 import { Iuser } from '../../../domain/entities/user';
+import {IUserLogin} from "../../../domain/useCaseInterface/auth/IUserLogin"
 import jwt from 'jsonwebtoken';
+import {UserDTO} from '../../../dto/user.dto'
 
 
-export class UserLog {
+export class UserLogin implements IUserLogin {
   constructor(private regRepository: RegRepository) {}
 
   async login(data: { email: string, password: string }): Promise<{
-    user: Iuser,
+    user: UserDTO,
     accessToken: string,
     refreshToken: string
   }> {
@@ -16,17 +18,17 @@ export class UserLog {
       
       const user = await this.regRepository.userLogin(email, password);
 
-      const accessToken = jwt.sign(
-        { id: user._id },
-        process.env.JWT_SECRET!,
-        { expiresIn: '15m' }
-      );
-
-      const refreshToken = jwt.sign(
-        { id: user._id },
-        process.env.JWT_REFRESH_SECRET!,
-        { expiresIn: '7d' }
-      );
+          const accessToken = jwt.sign(
+                 { id: user._id, role: 'user' },
+                 process.env.JWT_SECRET!,
+                 { expiresIn: '15m' }
+               );
+       
+               const refreshToken = jwt.sign(
+                 { id: user._id, role: 'user' },
+                 process.env.JWT_REFRESH_SECRET!,
+                 { expiresIn: '7d' }
+               );
 
       return {
         user,

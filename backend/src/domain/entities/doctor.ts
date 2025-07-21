@@ -1,5 +1,9 @@
 import {Department} from './departnment'
-
+export interface IExperience {
+  hospitalName: string;
+  role: string;
+  years: number;
+}
 
 export interface Idoctor{
   _id?:string,
@@ -19,6 +23,7 @@ export interface Idoctor{
   profilePicture?:string,
   medicalLicence?:string,
   lastMessage?:Date
+  experienceDetail?:IExperience
 
 
 }

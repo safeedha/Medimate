@@ -1,7 +1,8 @@
 import { IDoctorReview } from '../../../domain/entities/review';
 import { ReviewRepository } from '../../../domain/repository/reviewrepository';
+import { ICreateReview } from "../../../domain/useCaseInterface/review/ICreateReview";
 
-export class Createreview {
+export class Createreview implements ICreateReview{
   constructor(private reviewRepository: ReviewRepository) {}
 
   async create(id: string, comment: string, rating: number, doctorId: string): Promise<string> {
@@ -14,7 +15,7 @@ export class Createreview {
       };
 
       const result = await this.reviewRepository.createReview(data);
-      return result; // Assuming the repository returns a string like "Review created" or an ID
+      return result;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);

@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import UserSidebar from './UserSidebar';
 import { getwallet } from '../../api/userapi/wallet';
-import Navbar from './Navbar';
-import Pagination from '../../component/common/Pgination';
-import type{Transaction} from '../../Interface/interface'
+import Navbar from '../common/Navbar';
+import Pagination from "../../component/common/Pgination";
+import Table from '../../component/common/Table';
+import type { Transaction } from '../../Interface/interface';
 
 function Wallet() {
-  const [walletData, setWalletData] = useState([]);
+  const [walletData, setWalletData] = useState<Transaction[]>([]);
   const [balance, setBalance] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [message, setMessage] = useState('');
@@ -19,19 +20,40 @@ function Wallet() {
         const response = await getwallet(currentPage, itemsPerPage);
         if (response === 'No wallet available') {
           setMessage('No wallet transaction occurred');
+          setWalletData([]);
           return;
         }
-
-        setWalletData(response.transactions);
-        setBalance(response.balance);
-        setTotalPages(response.totalPages);
+        setWalletData(response.transactions || []);
+        setBalance(response.balance || 0);
+        setTotalPages(response.totalPages || 1);
+        setMessage('');
       } catch (error) {
         console.error('Error fetching wallet data:', error);
+        setMessage('Something went wrong while fetching data');
       }
     };
 
     fetchWallet();
   }, [currentPage]);
+
+
+  const columns = [
+    {
+      header: 'Type',
+      accessor: (tx: Transaction) => (
+        <span className="capitalize">{tx.type}</span>
+      ),
+    },
+    {
+      header: 'Amount',
+      accessor: (tx: Transaction) => <>₹{tx.amount}</>,
+    },
+    {
+      header: 'Date',
+      accessor: (tx: Transaction) =>
+        new Date(tx.date).toLocaleDateString(),
+    },
+  ];
 
   return (
     <div className="flex min-h-screen">
@@ -39,50 +61,32 @@ function Wallet() {
       <div className="bg-gray-100 p-4">
         <UserSidebar />
       </div>
-
       <div className="flex-1 p-24 bg-teal-50 ml-52">
         {message ? (
           <div className="text-center text-3xl">{message}</div>
         ) : (
           <div>
             <h1 className="text-2xl font-bold mb-4">Wallet</h1>
-            <p><strong>Balance:</strong> ₹{balance}</p>
-
+            <p>
+              <strong>Balance:</strong> ₹{balance}
+            </p>
             <h2 className="text-xl font-semibold mt-4">Transactions:</h2>
 
-            <table className="min-w-full mt-2 border border-gray-300">
-              <thead>
-                <tr className="bg-gray-200">
-                  <th className="border px-4 py-2 text-left">#</th>
-                  <th className="border px-4 py-2 text-left">Type</th>
-                  <th className="border px-4 py-2 text-left">Amount</th>
-                  <th className="border px-4 py-2 text-left">Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {walletData.map((tx:Transaction, index: number) => (
-                  <tr key={index} className="hover:bg-gray-100">
-                    <td className="border px-4 py-2">
-                      {(currentPage - 1) * itemsPerPage + index + 1}
-                    </td>
-                    <td className="border px-4 py-2 capitalize">{tx.type}</td>
-                    <td className="border px-4 py-2">₹{tx.amount}</td>
-                    <td className="border px-4 py-2">
-                      {new Date(tx.date).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <Table
+              columns={columns}
+              data={walletData}
+              getRowClassName={() => ''}
+            />
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={(page) => setCurrentPage(page)}
-              />
-            )}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(totalPages / itemsPerPage )}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
+
+            <p className="text-sm text-center mt-2 text-gray-500">
+              Page {currentPage} of {totalPages}
+            </p>
           </div>
         )}
       </div>

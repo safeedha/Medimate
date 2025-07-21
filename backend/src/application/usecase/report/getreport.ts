@@ -1,6 +1,8 @@
 import { ReportRepository } from '../../../domain/repository/report-rep';
 import {IReport} from '../../../domain/entities/report'
-export class Getreport{
+import {IGetAppointmentReport } from '../../../domain/useCaseInterface/report/IGetAppointmentReport';
+
+export class Getreport implements IGetAppointmentReport{
 constructor(private repoeportRepository:ReportRepository)
 {
 

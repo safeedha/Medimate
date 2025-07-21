@@ -1,10 +1,11 @@
 import { appointmentRepository } from '../../../domain/repository/appoinment-rep';
+import {IGetAppointmentPagination} from '../../../domain/useCaseInterface/appoinment/IGetAppointmentPagination';
 
 
-export class GetPage {
+export class GetPage implements IGetAppointmentPagination{
   constructor(private appointmentRepo: appointmentRepository) {}
 
-  async getpage( id:string,originalId:string,limit:number):Promise<number> {
+  async getpageforappoinment( id:string,originalId:string,limit:number):Promise<number> {
     try {
       const result = await this.appointmentRepo.getpageforId(id,originalId,limit)
       return result;

@@ -1,8 +1,7 @@
-
+import { IGetUnverified } from '../../../domain/useCaseInterface/doctor/IGetUnverified';
 import {DoctorRepository} from '../../../domain/repository/doctor-repository';
 import {DoctorDTO} from '../../../dto/doctor.dto'
-export class GetUnverified {
-
+export class GetUnverified implements IGetUnverified {
   constructor(private doctorRepository: DoctorRepository) {}
   async getAllUnverifiedDoctors(page:number,limit:number): Promise<{ doctors: DoctorDTO[]; total: number }> {
     try {

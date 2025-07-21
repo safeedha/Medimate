@@ -1,19 +1,18 @@
-import userInstance from "./instance";
 import axios from "axios";
+import axiosInstance from "../instances";
 
-
-export const getAlldoctors = async (page:number,limit:number,singledepartment:string,search:string) => {
+export const getAlldoctors = async (page: number, limit: number, singledepartment: string, search: string,experience:number|undefined) => {
   try {
-   const response = await userInstance.get("/doctors", {
-    params: {
-      department: singledepartment,
-      search:search,
-      page,
-      limit
-    }
-  });
-
-    return response.data; 
+    const response = await axiosInstance.get("/user/doctors", {
+      params: {
+        department: singledepartment,
+        experience,
+        search,
+        page,
+        limit
+      }
+    });
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return error.response?.data?.message || error.message;
@@ -23,18 +22,15 @@ export const getAlldoctors = async (page:number,limit:number,singledepartment:st
       return 'Internal server error';
     }
   }
-}
+};
 
-
-export const getAlldoctorsbysort=async(search:string)=>{
-   try {
-   const response = await userInstance.get("/doctors/sort", {
-    params: {
-      search:search,
-    }
-  });
-
-    return response.data; 
+export const getAlldoctorsbysort = async (search: string) => {
+  try {
+    const response = await axiosInstance.get("/user/doctors/sort", {
+      params: { search }
+    });
+    console.log(response)
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return error.response?.data?.message || error.message;
@@ -44,13 +40,12 @@ export const getAlldoctorsbysort=async(search:string)=>{
       return 'Internal server error';
     }
   }
-}
-
+};
 
 export const getDepartnment = async () => {
   try {
-    const response = await userInstance.get("/department");
-    return response.data 
+    const response = await axiosInstance.get("/user/department");
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return error.response?.data?.message || error.message;
@@ -60,13 +55,13 @@ export const getDepartnment = async () => {
       return 'Internal server error';
     }
   }
-}
+};
 
-export const getSingledoctor = async (id:string) => {
+export const getSingledoctor = async (id: string) => {
   try {
-    const response = await userInstance.get(`/doctor/${id}`);
-    console.log(response.data)
-    return response.data; 
+    const response = await axiosInstance.get(`/user/doctor/${id}`);
+    console.log(response.data);
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return error.response?.data?.message || error.message;
@@ -76,14 +71,15 @@ export const getSingledoctor = async (id:string) => {
       return 'Internal server error';
     }
   }
-}
-export const  getSlotedoctor=async(id:string,date:Date)=>{
+};
+
+export const getSlotedoctor = async (id: string, date: Date) => {
   try {
-    const response = await userInstance.get(`/doctor/slot/${id}`, {
-      params: { date: date }
+    const response = await axiosInstance.get(`/user/doctor/slot/${id}`, {
+      params: { date }
     });
-    console.log(response.data)
-    return response.data; 
+    console.log(response.data);
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return error.response?.data?.message || error.message;
@@ -93,76 +89,9 @@ export const  getSlotedoctor=async(id:string,date:Date)=>{
       return 'Internal server error';
     }
   }
-}
+};
 
 
-
-
-// export const handlePayment = async (Razorpay: any, amount: number): Promise<string> => {
-//   return new Promise(async (resolve) => {
-//     try {
-//       const RAZORPAY_KEY_ID = "rzp_test_RmHsQLbeIzESnC";
-
-//       const response = await userInstance.post("/bookappoinment", {
-//         amount: amount * 100,
-//       });
-
-//       const order = response.data;
-
-//       const options = {
-//         key: RAZORPAY_KEY_ID,
-//         amount: order.amount,
-//         currency: order.currency,
-//         name: "Medimate",
-//         description: "Payment for your booking",
-//         order_id: order.id,
-//         handler: async (response:any) => {
-//           try {
-//             const verifyResponse = await userInstance.post("verify-payment", {
-//               razorpay_order_id: response.razorpay_order_id,
-//               razorpay_payment_id: response.razorpay_payment_id,
-//               razorpay_signature: response.razorpay_signature,
-//             });
-
-//             const verifyResult = verifyResponse.data;
-
-//             if (verifyResult.message === "Payment verified successfully") {
-//               resolve("success");
-//             } else {
-//               resolve("failed");
-//             }
-//           } catch (err) {
-//             console.error("Verification error:", err);
-//             resolve("failed");
-//           }
-//         },
-//         prefill: {
-//           name: "John Doe",
-//           email: "john@example.com",
-//           contact: "9999999999",
-//         },
-//         notes: {
-//           address: "Razorpay Corporate Office",
-//         },
-//         theme: {
-//           color: "#3399cc",
-//         },
-//       };
-
-//       const rzpay = new Razorpay(options);
-
-//       rzpay.on('payment.failed', function (response: any) {
-//         console.error("Payment failed:", response.error.description);
-//         resolve("failed");
-//       });
-
-//       rzpay.open();
-//     } catch (err) {
-//       console.error("Error creating order:", err);
-//       resolve("failed");
-//     }
-//   });
-// };
 
 type RazorpayOptions = {
   key: string;
@@ -204,10 +133,7 @@ type RazorpayPaymentErrorResponse = {
     };
   };
 };
-// interface RazorpayInstance {
-//   open(): void;
-//   on(event: string, callback: (response: { error: { description: string } }) => void): void;
-// }
+
 
 export const handlePayment = (RazorpayConstructor:any, amount: number): Promise<string> => {
   return new Promise((resolve) => {
@@ -215,7 +141,7 @@ export const handlePayment = (RazorpayConstructor:any, amount: number): Promise<
       try {
         const RAZORPAY_KEY_ID = "rzp_test_RmHsQLbeIzESnC";
 
-        const response = await userInstance.post("/bookappoinment", {
+        const response = await axiosInstance.post("/user/bookappoinment", {
           amount: amount * 100,
         });
 
@@ -230,7 +156,7 @@ export const handlePayment = (RazorpayConstructor:any, amount: number): Promise<
           order_id: order.id,
           handler: async (response: RazorpayPaymentResponse) => {
             try {
-              const verifyResponse = await userInstance.post("verify-payment", {
+              const verifyResponse = await axiosInstance.post("/user/verify-payment", {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,

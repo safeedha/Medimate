@@ -1,4 +1,5 @@
 import {UserRepository} from "../../domain/repository/user-repository";
+import { IBaseRepository } from '../../domain/repository/base-repository';
 import {Iuser} from "../../domain/entities/user";
 import {User} from "../database/models/user";
 import {UserDTO} from '../../dto/user.dto'
@@ -32,7 +33,6 @@ async getAlluser(
       lastname: doc.lastname,
       email: doc.email,
       phone: doc.phone ?? null,
-      googleVerified: doc.googleVerified,
       isBlocked:doc.isBlocked,
       gender: doc.gender,
       age: doc.age,

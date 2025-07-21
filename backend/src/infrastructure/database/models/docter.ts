@@ -9,8 +9,18 @@ const DoctorSchema: Schema<Idoctor> = new Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     phone: { type: String, required: true },
-    specialisation: {  type: Schema.Types.ObjectId, ref: 'Department'},
+    specialisation: { type: Schema.Types.ObjectId, ref: 'Department' },
+
+    experienceDetail: [
+      {
+        hospitalName: { type: String, required: true },
+        role: { type: String, required: true },
+        years: { type: Number, required: true },
+      }
+    ],
+
     experience: { type: Number, required: true },
+
     fee: { type: Number, required: true },
     status: {
       type: String,
@@ -18,17 +28,15 @@ const DoctorSchema: Schema<Idoctor> = new Schema(
       required: true,
     },
     isBlocked: { type: Boolean, default: false },
-    googleVerified:{type: Boolean, default: false},
-    qualification:{type:String,default:false},
+    googleVerified: { type: Boolean, default: false },
+    qualification: { type: String },
     additionalInfo: { type: String },
     profilePicture: { type: String },
     medicalLicence: { type: String },
-    lastMessage:{type:Date,default:Date.now}
+    lastMessage: { type: Date, default: Date.now },
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
 );
-
-
 export const Doctor = model<Idoctor>('Doctor', DoctorSchema);

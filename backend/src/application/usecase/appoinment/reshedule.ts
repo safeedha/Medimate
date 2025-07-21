@@ -1,7 +1,8 @@
 import { appointmentRepository  } from '../../../domain/repository/appoinment-rep';
 import { slotRepository } from '../../../domain/repository/slot-repository';
 import { Appointment } from '../../../domain/entities/appoinment';
-export class Reshedule{
+import { IRescheduleAppointment} from '../../../domain/useCaseInterface/appoinment/IRescheduleAppointment';
+export class Reshedule implements IRescheduleAppointment{
 constructor(private appointmentRepo: appointmentRepository,private slotRepository:slotRepository) {}
    async createresedule(canceledappoinment:string,newslot:string):Promise<String>{
      const existing=await this.appointmentRepo.getsingleappoinment(canceledappoinment)

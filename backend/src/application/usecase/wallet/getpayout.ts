@@ -1,8 +1,8 @@
-
+import { IGetPayout } from '../../../domain/useCaseInterface/wallet/IGetPayout';
 import { WalletRepository } from '../../../domain/repository/wallet-repo';
 import{AdminWalletTransactionDto} from '../../../dto/wallet.dto'
 
-export class GetPayout {
+export class GetPayout implements IGetPayout{
   constructor(private walletRepository: WalletRepository) {}
 
   async getrpayoutInfor(): Promise<AdminWalletTransactionDto[]> {

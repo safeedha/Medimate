@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Navbar from './Navbar';
+import Navbar from '../common/Navbar';
 import { useNavigate } from 'react-router-dom';
 import { getAlldoctors, getDepartnment } from '../../api/userapi/doctor';
 import Pagination from '../../component/common/Pgination';
@@ -14,38 +14,43 @@ function Doclist() {
   const [total, setTotal] = useState<number>(0);
   const itemsPerPage = 6;
 
+
+  const [minExp, setMinExp] = useState<number>(1);
+  const maxExp = 40;
   const navigate = useNavigate();
 
-  
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      const fetchDoctors = async () => {
+     
+        const doctorData = await getAlldoctors(
+          currentPage,
+          itemsPerPage,
+          singledepartment,
+          search,
+          minExp
+        );
+                setDoctors(doctorData.data);
+        setTotal(doctorData.total);
+      };
 
-useEffect(() => {
-  const delayDebounce = setTimeout(() => {
-    const fetchDoctors = async () => {
-      const doctorData = await getAlldoctors(currentPage, itemsPerPage, singledepartment, search);
-      setDoctors(doctorData.data);
-      setTotal(doctorData.total);
-    };
+      fetchDoctors();
+    }, 500);
 
-    fetchDoctors();
-  }, 500); // debounce delay: 500ms
-
-  return () => clearTimeout(delayDebounce); // cleanup
-}, [currentPage, singledepartment, search]);
-
+    return () => clearTimeout(delayDebounce);
+  }, [currentPage, singledepartment, search, minExp]);
 
   useEffect(() => {
     const fetchDepartnment = async () => {
       const response = await getDepartnment();
       setDepartment(response);
     };
-
     fetchDepartnment();
   }, []);
 
- 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, singledepartment]);
+  }, [search, singledepartment, minExp]);
 
   const appoinmenHandle = (id: string | undefined) => {
     if (id) navigate(`/doctor/${id}`);
@@ -81,13 +86,30 @@ useEffect(() => {
         </div>
 
         <section className="py-4 px-4 md:px-12 lg:px-20 ml-48 w-full mt-20">
-          <div>
+          {/* Row of Search + Experience Range */}
+          <div className="flex gap-6 items-center mb-4">
             <input
               type="text"
-              className="mb-4 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 w-full max-w-md"
+              className="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 w-full max-w-md"
               placeholder="Search for Doctor"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+              value={search}
             />
+          
+            <div className="flex items-center gap-2">
+              <label className="font-semibold whitespace-nowrap">Min Experience:</label>
+              <span className="w-8">{minExp} yrs</span>
+              <input
+              type="range"
+              min={1}
+              max={maxExp}
+              value={minExp}
+              onChange={e => setMinExp(Number(e.target.value))}
+              className="w-32"
+         
+            />
+           
+            </div>
           </div>
 
           {!doctors ? (

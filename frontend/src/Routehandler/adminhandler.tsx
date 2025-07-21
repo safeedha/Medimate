@@ -10,7 +10,7 @@ const Department = lazy(() => import('../component/admin/Dept/Department'));
 const Docverify = lazy(() => import('../component/admin/Docver/Docverify'));
 const Doctor = lazy(() => import('../component/admin/Docver/Doctor'));
 const User = lazy(() => import('../component/admin/user/User'));
-const Appoinment = lazy(() => import('../component/admin/Appoinment/Appoinment'));
+
 const Awallet = lazy(() => import('../component/admin/wallet/Awallet'));
 
 function Adminhandler() {
@@ -82,16 +82,7 @@ function Adminhandler() {
         }
       />
 
-      <Route
-        path="/admin/appointment"
-        element={
-          <Adminprotect>
-            <Suspense fallback={<LoaderFallback />}>
-              <Appoinment />
-            </Suspense>
-          </Adminprotect>
-        }
-      />
+     
 
       <Route
         path="/admin/wallet"

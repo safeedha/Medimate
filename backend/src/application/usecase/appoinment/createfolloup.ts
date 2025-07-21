@@ -1,9 +1,10 @@
 import { appointmentRepository  } from '../../../domain/repository/appoinment-rep';
 import { slotRepository } from '../../../domain/repository/slot-repository';
 import { Appointment } from '../../../domain/entities/appoinment';
+import {ICreateFollowUp} from '../../../domain/useCaseInterface/appoinment/ICreateFollowUp';
 
 
-export class Createfollowup {
+export class Createfollowup implements ICreateFollowUp{
   constructor(private appointmentRepo: appointmentRepository,private slotRepository:slotRepository) {}
    async createfollowpappinment(slotId:string,appoinmentId:string):Promise<string>{
        try{

@@ -8,13 +8,14 @@ export interface DepartmentDTO {
 }
 export interface DoctorDTO {
   _id?:string;
+  id?:string;
   firstname: string;
   lastname: string;
   email: string;
   phone?: string;
-  specialisation: string | DepartmentDTO| null;
-  experience: number;
-  fee: number;
+  specialisation?: string | DepartmentDTO| null;
+  experience?: number;
+  fee?: number;
   isBlocked?:boolean
   status?: "Approved" | "Rejected" | "Pending";
   qualification?: string;

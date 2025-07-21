@@ -1,7 +1,7 @@
-
+import { IGetUserWallet } from '../../../domain/useCaseInterface/wallet/IGetUserWallet';
 import {WalletRepository} from '../../../domain/repository/wallet-repo';
 import {WalletTransactionDto} from '../../../dto/wallet.dto'
-export class GetUserallet {
+export class GetUserallet implements IGetUserWallet  {
 
   constructor(private walletRepository:WalletRepository) {}
   async getwallet(userid:string,page:number,limit:number): Promise<{ balance: number;  transactions: WalletTransactionDto[] }> {

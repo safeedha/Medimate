@@ -1,9 +1,9 @@
 import { appointmentRepository  } from '../../../domain/repository/appoinment-rep';
 import { slotRepository } from '../../../domain/repository/slot-repository';
 import { Appointment } from '../../../domain/entities/appoinment';
-
+import {ICreateAppointment } from '../../../domain/useCaseInterface/appoinment/ICreateAppointment';
 import {WalletRepository} from '../../../domain/repository/wallet-repo';;
-export class CreateAppointment {
+export class CreateAppointment implements ICreateAppointment{
   constructor(private appointmentRepo: appointmentRepository,private slotRepository:slotRepository,private walletRepository:WalletRepository ) {}
 
   async createAppointment(id: string, doctorId: string, slot: string, name: string, email: string, age: number, gender: 'male' | 'female' | 'other', reason: string ,amount:number): Promise<{ message: string}> {

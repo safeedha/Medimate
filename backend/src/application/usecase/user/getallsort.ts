@@ -1,7 +1,8 @@
 import {UserRepository} from '../../../domain/repository/user-repository';
 import {UserDTO} from '../../../dto/user.dto'
+import { IGetAllSortedUsers } from '../../../domain/useCaseInterface/user/IGetAllSortedUsers';
 
-export class GetUserBysort {
+export class GetUserBysort implements IGetAllSortedUsers{
 
   constructor(private userRepository: UserRepository) {}
   async getAllSortUser(search:string): Promise<{ users: UserDTO[]; total: number }> {

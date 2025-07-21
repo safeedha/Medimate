@@ -1,7 +1,6 @@
 import {RegRepository } from "../../../domain/repository/reg-repository";
-import { Idoctor } from "../../../domain/entities/doctor";
-
-export class DocReapply{
+import { IDoctorReapply } from '../../../domain/useCaseInterface/auth/IDoctorReapply';
+export class DocReapply implements IDoctorReapply{
 
  constructor(private regRepository:RegRepository){}
  async docreapply(email:string,specialisation:string,experience:number,fee:number,medicalLicence:string):Promise<{message:string}>

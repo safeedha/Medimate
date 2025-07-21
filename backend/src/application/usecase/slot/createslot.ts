@@ -4,6 +4,7 @@ import { SlotLockDTO,RecurringDTO} from '../../../dto/slot.dto';
 import { RRule, Weekday } from 'rrule';
 import {convertTo12HourFormat} from '../../service/timeconvert'
 import {IndividualSlot} from '../../../domain/entities/slot'
+import { ICreateSlot } from '../../../domain/useCaseInterface/slot/ICreateSlot';
 const dayMap: Record<string, Weekday> = {
   MO: RRule.MO,
   TU: RRule.TU,
@@ -13,7 +14,7 @@ const dayMap: Record<string, Weekday> = {
   SA: RRule.SA,
   SU: RRule.SU,
 };
-export class CreateSlot {
+export class CreateSlot implements ICreateSlot{
 
   constructor(private slotrepository: slotRepository) {}
   async createSlots(id:string,startDate:string,endDate:string,selectedDays:Weekdays[],startTime:string,endTime:string,interval:number,frequency:"WEEKLY"|"DAILY"): Promise<{message:string}> {

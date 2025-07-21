@@ -6,12 +6,7 @@ interface UserInfo{
   _id?:string,
   firstname:string,
   lastname:string,
-  email:string,
-  phone:string,
-  googleIds?:string|null,
-  isBlocked:boolean,
-  googleVerified?:boolean,
-  gender:"male"|"female"|"other"
+  email?:string,
 }
 
 interface UserState {

@@ -5,10 +5,10 @@ import DashboardBarChart from './graph/Bar'
 import DoctorPieCharts from './graph/Pie'
 import { getAllDoctor } from '../../api/adminapi/doctor'
 import { getAlluser } from '../../api/adminapi/user'
-import { gettotalappoinment } from '../../api/adminapi/appoinment'
+import { gettotalappoinment,departmentsummary } from '../../api/adminapi/appoinment'
 import { FaUserMd, FaUsers } from 'react-icons/fa'
 import { MdEventNote } from 'react-icons/md'
-import type { AppointmentCountByDate } from '../../Interface/interface'
+import type { AppointmentCountByDate,deptSummary } from '../../Interface/interface'
 
 function Adashboard() {
   const reportRef = useRef<HTMLDivElement>(null)
@@ -25,6 +25,15 @@ function Adashboard() {
   const [doctorDatafordash, setDoctorDatafordash] = useState<Record<string, string>>({})
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
+  const [departmentSummary, setDepartmentSummary] = useState<deptSummary[]>([])
+
+  useEffect(()=>{
+   const getDepartmentsummary=async()=>{
+     const response=await departmentsummary()
+     setDepartmentSummary(response)
+   }
+   getDepartmentsummary()
+  },[])
 
   useEffect(() => {
     const today = new Date()
@@ -86,14 +95,11 @@ function Adashboard() {
 
   return (
     <div className="flex min-h-screen bg-gray-50 text-sm">
-      {/* Sidebar */}
       <div className="w-1/6 border-r bg-white">
         <Sidebar />
       </div>
 
-      {/* Main Dashboard */}
       <div className="flex-1 px-6 py-4">
-        {/* Header + Download */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold text-indigo-700">Admin Dashboard</h2>
           <button
@@ -104,7 +110,6 @@ function Adashboard() {
           </button>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-white shadow rounded-lg p-4 border-l-4 border-blue-500">
             <div className="flex items-center gap-3">
@@ -140,7 +145,6 @@ function Adashboard() {
           </div>
         </div>
 
-        {/* Charts */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <DashboardBarChart
             setAppointmentCountfordash={setAppointmentCountfordash}
@@ -154,7 +158,6 @@ function Adashboard() {
           />
         </div>
 
-        {/* Data Tables */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
           <div>
             <h3 className="text-lg font-semibold text-gray-700 mb-2">
@@ -209,7 +212,36 @@ function Adashboard() {
           </div>
         </div>
 
-        {/* Hidden PDF Section */}
+        {/* 🆕 Department Summary */}
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold text-gray-700 mb-3">
+            Department-wise Booking Summary
+          </h3>
+          <table className="w-full table-auto border border-gray-300 text-sm">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="border px-3 py-2 text-left">Department</th>
+                <th className="border px-3 py-2 text-left">Total</th>
+                <th className="border px-3 py-2 text-left">Completed</th>
+                <th className="border px-3 py-2 text-left">Pending</th>
+                <th className="border px-3 py-2 text-left">Cancelled</th>
+              </tr>
+            </thead>
+            <tbody>
+              {departmentSummary.map((dept, index) => (
+                <tr key={index}>
+                  <td className="border px-3 py-1">{dept.departmentName}</td>
+                  <td className="border px-3 py-1">{dept.total}</td>
+                  <td className="border px-3 py-1 text-green-600">{dept.completed}</td>
+                  <td className="border px-3 py-1 text-yellow-600">{dept.pending}</td>
+                  <td className="border px-3 py-1 text-red-600">{dept.cancelled}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* PDF export content */}
         <div className="hidden">
           <div ref={reportRef} className="p-6 font-sans text-sm text-gray-800 bg-white">
             <h1 className="text-2xl font-bold text-center mb-6 underline">Admin Dashboard Report</h1>
@@ -253,27 +285,29 @@ function Adashboard() {
             </div>
 
             <div className="mt-6">
-              <h2 className="text-lg font-semibold mb-2 border-b pb-1">Doctor-wise Total {type} Appointments</h2>
-              {Object.keys(doctorDatafordash).length > 0 ? (
-                <table className="w-full table-auto border border-gray-400 text-sm mt-2">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th className="border px-4 py-2 text-left">Doctor Name</th>
-                      <th className="border px-4 py-2 text-left">{type} Appointments</th>
+              <h2 className="text-lg font-semibold mb-2 border-b pb-1">Department-wise Booking Summary</h2>
+              <table className="w-full table-auto border border-gray-400 text-sm mt-2">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="border px-4 py-2 text-left">Department</th>
+                    <th className="border px-4 py-2 text-left">Total</th>
+                    <th className="border px-4 py-2 text-left">Completed</th>
+                    <th className="border px-4 py-2 text-left">Pending</th>
+                    <th className="border px-4 py-2 text-left">Cancelled</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {departmentSummary.map((dept, index) => (
+                    <tr key={index}>
+                      <td className="border px-4 py-1">{dept.departmentName}</td>
+                      <td className="border px-4 py-1">{dept.total}</td>
+                      <td className="border px-4 py-1 text-green-700">{dept.completed}</td>
+                      <td className="border px-4 py-1 text-yellow-700">{dept.pending}</td>
+                      <td className="border px-4 py-1 text-red-700">{dept.cancelled}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(doctorDatafordash).map(([name, count], index) => (
-                      <tr key={index}>
-                        <td className="border px-4 py-1">{name}</td>
-                        <td className="border px-4 py-1">{count}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <p className="text-gray-600 mt-2">No data available</p>
-              )}
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -283,3 +317,4 @@ function Adashboard() {
 }
 
 export default Adashboard
+

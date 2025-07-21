@@ -1,7 +1,7 @@
 import {UserRepository} from '../../../domain/repository/user-repository';
 import {UserDTO} from '../../../dto/user.dto'
-
-export class ChangeStatus {
+import { IChangeStatus } from '../../../domain/useCaseInterface/user/IChangeStatus';
+export class ChangeStatus implements IChangeStatus {
 
   constructor(private userRepository: UserRepository) {}
   async changesatus(id:string): Promise<UserDTO[]> {

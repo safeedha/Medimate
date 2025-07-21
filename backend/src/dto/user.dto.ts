@@ -9,11 +9,12 @@ export interface UserRegisterDTO {
 }
 
 export interface UserDTO {
-  id?: string;              
+   id?:string;
+  _id?: string;              
   firstname: string;
   lastname?: string;
   email: string;
-  phone: string | null;
+  phone?: string | null;
   googleVerified?: boolean;
   isBlocked?:boolean;
   gender?: "male" | "female" | "other";

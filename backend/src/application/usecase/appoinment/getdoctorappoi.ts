@@ -1,7 +1,8 @@
 import { appointmentRepository  } from '../../../domain/repository/appoinment-rep';
 import { slotRepository } from '../../../domain/repository/slot-repository';
 import {AppointmentDTO} from '../../../dto/slot.dto'
-export class GetdoctorAppointment {
+import {IGetDoctorAppointments} from '../../../domain/useCaseInterface/appoinment/IGetDoctorAppointments'; 
+export class GetdoctorAppointment implements IGetDoctorAppointments{
   constructor(private appointmentRepo: appointmentRepository,) {}
    async getallappoinment(doctorid:string,page:number,limit:number):Promise<{ total: number; appointments: AppointmentDTO[] }>{
        try{

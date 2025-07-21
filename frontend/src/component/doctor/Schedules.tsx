@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import DoctorSidebar from './Docsidebar';
-import { createAppoinment } from '../../api/doctorapi/appoinment';
+import DoctorSidebar from '../common/Docsidebar';
+import {createRecslot,editRecslot} from '../../api/doctorapi/appoinment';
 import toast, { Toaster } from 'react-hot-toast';
+import{useEffect} from 'react'
 import {
   Box,
   Button,
@@ -18,6 +19,7 @@ import {
 } from '@mui/material';
 import Slotlist from './Slotlist';
 import Getslot from './Getslot'
+import type { IRecurring } from '../../Interface/interface';
 
 const style = {
   position: 'absolute' as const,
@@ -47,6 +49,9 @@ function Schedules() {
   const [endTime, setEndTime] = useState('');
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
+  const [edit,setEdit]=useState<boolean>(false)
+  const [slot,setSlot]=useState<IRecurring>()
+
   const [selectedDays, setSelectedDays] = useState<Record<DayOfWeek, boolean>>({
     MO: false,
     TU: false,
@@ -56,7 +61,24 @@ function Schedules() {
     SA: false,
     SU: false,
   });
-
+      
+  useEffect(() => {
+  if (edit && slot) {
+    console.log(slot);
+    setOpen(true);
+    setStartDate(new Date(slot.startDate).toISOString().split('T')[0]);
+    setEndDate(new Date(slot.endDate).toISOString().split('T')[0]);
+    setFrequency(slot.frequency);
+    setInterval(slot.interval);
+    setStartTime(slot.starttime);  
+    setEndTime(slot.endttime);
+    const updatedDays = { MO: false, TU: false, WE: false, TH: false, FR: false, SA: false, SU: false };
+    slot.daysOfWeek.forEach((day) => {
+      updatedDays[day as DayOfWeek] = true;
+    });
+    setSelectedDays(updatedDays);
+  }
+}, [edit, slot]);
   const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStartTime(event.target.value);
   };
@@ -122,8 +144,8 @@ function Schedules() {
       toast.error('End time must be greater than start time');
       return;
     }
-
-    const result = await createAppoinment(
+   if(!true){
+    const result = await createRecslot(
       startDate,
       endDate,
       daysOfWeek,
@@ -132,13 +154,31 @@ function Schedules() {
       interval,
       frequency
     );
-
     if (result === 'slot creation sucessfull') {
       toast.success(result);
       setRender(!render);
     } else {
       toast.error(result);
     }
+  }
+  else{
+     const result = await editRecslot(
+      startDate,
+      endDate,
+      daysOfWeek,
+      startTime,
+      endTime,
+      interval,
+      frequency,
+      slot?._id!
+    );
+      if (result === 'slot creation sucessfull') {
+      toast.success('This slot edited');
+      setRender(!render);
+    } else {
+      toast.error(result);
+    }
+  }
 
     setOpen(false);
   };
@@ -274,7 +314,7 @@ function Schedules() {
         </div>
 
         <div>
-          <Slotlist render={render} setRender={setRender} />
+          <Slotlist render={render} setRender={setRender} setEdit={setEdit} setrecSlot={setSlot} />
         </div>
 
         <div>

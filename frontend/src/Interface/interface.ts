@@ -175,3 +175,23 @@ export interface DepartmentProps {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface INotification {
+  message: string;
+  createdAt: string;
+}
+
+export interface Medicine {
+  name: string
+  dosage: string
+  frequency: string
+  duration: string
+  notes?: string
+}
+export interface deptSummary{
+    total: number,
+    pending: number,
+    completed: number,
+    cancelled: number,
+    departmentName: string
+}

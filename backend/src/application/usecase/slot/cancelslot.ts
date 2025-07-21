@@ -1,8 +1,8 @@
 import {slotRepository} from '../../../domain/repository/slot-repository';
+import { ICancelRecurringSlot } from '../../../domain/useCaseInterface/slot/ICancelRecurringSlot';
 
-import{IRecurring} from '../../../domain/entities/recurringslot'
 
-export class CancelRecurringSlot {
+export class CancelRecurringSlot implements ICancelRecurringSlot{
 
   constructor(private slotrepository: slotRepository) {}
   async cancelSlots(id:string): Promise<string> {

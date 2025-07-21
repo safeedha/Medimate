@@ -1,7 +1,7 @@
 import { IDoctorReview } from '../../../domain/entities/review';
 import { ReviewRepository } from '../../../domain/repository/reviewrepository';
-
-export class Getreview {
+import {IGetDoctorReviews } from "../../../domain/useCaseInterface/review/IGetDoctorReviews";
+export class Getreview implements IGetDoctorReviews {
   constructor(private reviewRepository: ReviewRepository) {}
 
   async getreviews(

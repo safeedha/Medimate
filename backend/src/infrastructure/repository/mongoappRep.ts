@@ -2,12 +2,13 @@ import { appointmentRepository  } from '../../domain/repository/appoinment-rep';
 import { Appointment } from '../../domain/entities/appoinment';
 import { AppointmentModel} from '../database/models/appoinment';
 import {ScheduleDTO,AppointmentDTO,AppointmentCountByDate} from '../../dto/slot.dto'
+import {IDepartmentSummary} from '../../dto/departmentsummary.dto'
 import mongoose from "mongoose";
 
 
 export class MongoAppointmentRepository implements appointmentRepository {
   async createappoinment(data: Appointment): Promise<Appointment> {
-    try {
+    try{    
       const appointment = new AppointmentModel(data);
       await appointment.save();
       return appointment;
@@ -240,13 +241,7 @@ async getfilteredapooinmentfordoc(status: 'completed' | 'cancelled' | 'pending',
           }).populate({
             path:'doctor_id'
           }).sort({created_at:-1});
-
-  
-  
-
- 
     const pastAppointments = appointments.filter(app => app.schedule_id);
-
     return pastAppointments;
   } catch (error) {
     console.error('Error fetching past appointments:', error);
@@ -282,7 +277,6 @@ async getfilteredapooinmentfordoc(status: 'completed' | 'cancelled' | 'pending',
   async getfutureappoinment(userid: string,page:number,limit:number): Promise<{total:number,appoi:Appointment[]}> {
   try {
     const now = new Date();
-
     const appointments = await AppointmentModel.find({ 
   user_id: userid, 
    }).populate({
@@ -291,20 +285,14 @@ async getfilteredapooinmentfordoc(status: 'completed' | 'cancelled' | 'pending',
         path:'doctor_id'
       }).sort({created_at:-1});
 
-  
     const futureAppointments = appointments.filter(app => app.schedule_id);
        const total = futureAppointments.length;
-
-    // Apply pagination using slice
     const startIndex = (page - 1) * limit;
     const paginatedAppointments = futureAppointments.slice(startIndex, startIndex + limit);
-
     return {
       total,
       appoi: paginatedAppointments
-    };
-
-    
+    };  
   } catch (error) {
     console.error('Error fetching future appointments:', error);
     throw new Error('Failed to fetch future appointments');
@@ -369,13 +357,10 @@ async  getappinmentbydoctor(
 ): Promise<{ total: number; appointments: AppointmentDTO[] }> {
   try {
     const doctorObjectId = new mongoose.Types.ObjectId(doctorid);
-
-
     const countResult = await AppointmentModel.countDocuments({
       doctor_id: doctorObjectId,
     });
-
-  
+ 
    const appointments = await AppointmentModel.aggregate([
   {
     $match: {
@@ -404,8 +389,7 @@ async  getappinmentbydoctor(
   },
 ]);
 
-
-    const mappedAppointments: AppointmentDTO[] = appointments.map((item: any) => ({
+   const mappedAppointments: AppointmentDTO[] = appointments.map((item: any) => ({
       _id: item._id.toString(),
       user_id: item.user_id?.toString(),
       doctor_id: item.doctor_id?.toString(),
@@ -526,6 +510,78 @@ async getallappinmentfordoctor(doctorid:string):Promise<Appointment[]>{
          throw Error("error in updating")
      }
    }
+
+  async getdepartmentsummary():Promise<IDepartmentSummary[]>{
+      const result = await AppointmentModel.aggregate([
+            {
+              $lookup: {
+                from: "doctors", 
+                localField: "doctor_id",
+                foreignField: "_id",
+                as: "doctorData",
+              },
+            },
+            { $unwind: "$doctorData" },
+            {
+              $lookup: {
+                from: "departments", 
+                localField: "doctorData.specialisation",
+                foreignField: "_id",
+                as: "departmentData",
+              },
+            },
+            { $unwind: "$departmentData" },
+
+            {
+              $group: {
+                _id: {
+                  departmentId: "$departmentData._id",
+                  departmentName: "$departmentData.deptname",
+                  status: "$status",
+                },
+                count: { $sum: 1 },
+              },
+            },
+
+            {
+              $group: {
+                _id: {
+                  departmentId: "$_id.departmentId",
+                  departmentName: "$_id.departmentName",
+                },
+                total: { $sum: "$count" },
+                pending: {
+                  $sum: {
+                    $cond: [{ $eq: ["$_id.status", "pending"] }, "$count", 0],
+                  },
+                },
+                completed: {
+                  $sum: {
+                    $cond: [{ $eq: ["$_id.status", "completed"] }, "$count", 0],
+                  },
+                },
+                cancelled: {
+                  $sum: {
+                    $cond: [{ $eq: ["$_id.status", "cancelled"] }, "$count", 0],
+                  },
+                },
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                departmentName: "$_id.departmentName",
+                total: 1,
+                pending: 1,
+                completed: 1,
+                cancelled: 1,
+              },
+            },
+                ]);       
+       console.log(result)
+        return result;
+  }
+  
 
 
 }

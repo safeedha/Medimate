@@ -1,5 +1,4 @@
 import {DoctorRepository} from '../../domain/repository/doctor-repository';
-// import {generateSignedCloudinaryUrl} from '../../application/service/generateSignedCloudinaryUrl';
 import {Doctor} from '../database/models/docter';
 import {Idoctor} from '../../domain/entities/doctor';
 import {DoctorDTO} from '../../dto/doctor.dto'
@@ -54,7 +53,8 @@ export class MongoDocRepository implements DoctorRepository {
   page: number,
   limit: number,
   department?: string,
-  search?: string
+  search?: string,
+  experience?:string
 ): Promise<{ total: number; data: DoctorDTO[] }> {
   try {
   
@@ -75,6 +75,10 @@ export class MongoDocRepository implements DoctorRepository {
         doc.firstname.toLowerCase().includes(search.toLowerCase())
       );
     }
+     if(experience)
+     {
+       doctors = doctors.filter(doc =>doc.experience >= Number(experience))
+     }
       const total = doctors.length;
      if(page===0&&limit===0)
      {
@@ -96,9 +100,6 @@ export class MongoDocRepository implements DoctorRepository {
     }));
      return { total, data };
      }
-
-  
-
     const startIndex = (page - 1) * limit;
     const paginated = doctors.slice(startIndex, startIndex + limit);
    
@@ -118,10 +119,7 @@ export class MongoDocRepository implements DoctorRepository {
       fee: doc.fee,
       profilePicture: doc.profilePicture,
     }));
-
-
     return { total, data };
-
   } catch (error) {
     console.error('Error fetching verified doctors:', error);
     throw new Error('Database error');
@@ -135,12 +133,10 @@ async getAllverifiedbysort(
   search?: string
 ): Promise<{ total: number; data: DoctorDTO[] }> {
   try {
-  
     let doctors = await Doctor.find({ status: 'Approved', isBlocked: false }).populate({
       path: 'specialisation',
       match: { isblocked: false },
     });
-
     if (search) {
       doctors = doctors.filter((doc) =>
         doc.firstname.toLowerCase().includes(search.toLowerCase())
@@ -168,9 +164,6 @@ async getAllverifiedbysort(
       profilePicture: doc.profilePicture,
     }));
      return { total, data };
-
-  
-
   } catch (error) {
     console.error('Error fetching verified doctors:', error);
     throw new Error('Database error');
@@ -184,11 +177,7 @@ async getAllverifiedbysort(
 ): Promise<{ doctors: DoctorDTO[]; total: number }> {
   try {
     const skip = (page - 1) * limit;
-
-
     const baseFilter: any = { status: 'Approved' };
-
-
     if (search && search.trim() !== '') {
       baseFilter.$or = [
         { firstname: { $regex: search, $options: 'i' } },
@@ -196,18 +185,12 @@ async getAllverifiedbysort(
         { email: { $regex: search, $options: 'i' } },
       ];
     }
-
-
     const doctorDocs = await Doctor.find(baseFilter)
       .populate({ path: 'specialisation' })
       .skip(skip)
       .limit(limit)
       .exec();
-
-  
     const total = await Doctor.countDocuments(baseFilter);
-
-
     const doctors: DoctorDTO[] = doctorDocs.map((doc) => ({
       _id:doc._id,
       firstname: doc.firstname,
@@ -228,8 +211,6 @@ async getAllverifiedbysort(
       profilePicture: doc.profilePicture,
       medicalLicence: doc.medicalLicence,
     }));
-   
-
     return { doctors, total };
   } catch (error) {
     if (error instanceof Error) {
@@ -263,8 +244,9 @@ async getAllverifiedbysort(
       fee: doctor.fee,
       experience: doctor.experience,
       profilePicture: doctor.profilePicture,
+      isBlocked:doctor.isBlocked
     };
-
+    console.log('hoi')
     return result;
   } catch (error) {
     if (error instanceof Error) {

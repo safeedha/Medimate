@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from '../Sidebar';
 import Modal from 'react-modal';
 import { toast, Toaster } from 'react-hot-toast';
@@ -6,6 +6,7 @@ import { createDepartment, getDepartment, Editdepartnemt, blockdepartnemt } from
 import Swal from 'sweetalert2';
 import type { IDepartment } from '../../../Interface/interface';
 import Pagination from '../../../component/common/Pgination';
+import Table from '../../../component/common/Table'; // <-- import your reusable table
 
 const customStyles = {
   content: {
@@ -20,7 +21,6 @@ const customStyles = {
 
 function Department() {
   Modal.setAppElement('body');
-
   const [modalIsOpen, setIsOpen] = useState(false);
   const [deptname, setDeptname] = useState('');
   const [description, setDescription] = useState('');
@@ -33,23 +33,22 @@ function Department() {
   const [searchTerm, setSearchTerm] = useState('');
   const itemsPerPage = 3;
 
-   const fetchDepartments = useCallback(async () => {
-  try {
-    const result = await getDepartment(currentPage, itemsPerPage, searchTerm);
-    setDepartments(result?.item);
-    setTotalPages(Math.ceil(result?.total / itemsPerPage));
-  } catch (error) {
-    console.error('Error fetching departments:', error);
-  }
-}, [currentPage, itemsPerPage, searchTerm]);
+  const fetchDepartments = useCallback(async () => {
+    try {
+      const result = await getDepartment(currentPage, itemsPerPage, searchTerm);
+      setDepartments(result?.item);
+      setTotalPages(Math.ceil(result?.total / itemsPerPage));
+    } catch (error) {
+      console.error('Error fetching departments:', error);
+    }
+  }, [currentPage, itemsPerPage, searchTerm]);
 
-useEffect(() => {
-  const handler = setTimeout(() => {
-    fetchDepartments();
-  }, 500); 
-
-  return () => clearTimeout(handler); 
-}, [fetchDepartments, isBlocked]);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      fetchDepartments();
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [fetchDepartments, isBlocked]);
 
   const handleBlock = async (id: string) => {
     const result = await Swal.fire({
@@ -61,11 +60,10 @@ useEffect(() => {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, change it!',
     });
-
-    if (result.isConfirmed) {  
-        await blockdepartnemt(id);
-        setIsBlocked((prev) => !prev);
-        Swal.fire('Updated!', 'Department status has been changed.', 'success');
+    if (result.isConfirmed) {
+      await blockdepartnemt(id);
+      setIsBlocked((prev) => !prev);
+      Swal.fire('Updated!', 'Department status has been changed.', 'success');
     }
   };
 
@@ -89,31 +87,26 @@ useEffect(() => {
   };
 
   const formSubmit = async (e: React.MouseEvent<HTMLElement>) => {
-  e.preventDefault();
-
-  const trimmedName = deptname.trim();
-  const trimmedDesc = description.trim();
-
-  if (!trimmedName || !trimmedDesc) {
-    toast.error('Please fill all fields');
-    return;
-  }
-
-  if (trimmedName.length < 3 || trimmedDesc.length < 3) {
-    toast.error('Please enter a valid name and description (min 3 characters)');
-    return;
-  }
-
-  const result = await createDepartment(trimmedName, trimmedDesc);
-
-  if (result.success) {
-    toast.success('Department added successfully');
-    closeModal();
-    // fetchDepartments(currentPage, searchTerm);
-  } else {
-    toast.error(result.message);
-  }
-};
+    e.preventDefault();
+    const trimmedName = deptname.trim();
+    const trimmedDesc = description.trim();
+    if (!trimmedName || !trimmedDesc) {
+      toast.error('Please fill all fields');
+      return;
+    }
+    if (trimmedName.length < 3 || trimmedDesc.length < 3) {
+      toast.error('Please enter a valid name and description (min 3 characters)');
+      return;
+    }
+    const result = await createDepartment(trimmedName, trimmedDesc);
+    if (result.success) {
+      toast.success('Department added successfully');
+      closeModal();
+      fetchDepartments(); // <-- so the table updates after add
+    } else {
+      toast.error(result);
+    }
+  };
 
   const editHandle = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -125,7 +118,6 @@ useEffect(() => {
       toast.error('Please enter valid name and description');
       return;
     }
-
     const result = await Editdepartnemt(deptid, deptname, description);
     if (result === 'Department edited successfully') {
       toast.success(result);
@@ -137,6 +129,43 @@ useEffect(() => {
     }
   };
 
+
+  const columns = [
+    {
+      header: 'Department Name',
+      accessor: (dept: IDepartment) => dept.deptname,
+    },
+    {
+      header: 'Description',
+      accessor: (dept: IDepartment) => dept.description,
+    },
+    {
+      header: 'Action',
+      accessor: (dept: IDepartment) => (
+        <div className="space-x-2">
+          <button
+            onClick={() => handleBlock(dept._id!)}
+            className={`px-3 py-1 rounded text-white ${
+              dept.isblocked
+                ? 'bg-green-500 hover:bg-green-600'
+                : 'bg-red-500 hover:bg-red-600'
+            }`}
+          >
+            {dept.isblocked ? 'Unblock' : 'Block'}
+          </button>
+          <br />
+          <br />
+          <button
+            onClick={() => handleEdit(dept)}
+            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Edit
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="flex flex-row">
       <Toaster position="top-center" toastOptions={{ style: { fontSize: '14px', padding: '10px 20px', maxWidth: '400px' } }} />
@@ -146,7 +175,6 @@ useEffect(() => {
       <div className="w-5/6 bg-gray-100 p-4">
         <h1 className="text-2xl font-bold text-center mt-4">Department Management</h1>
 
-        {/* Search + Add */}
         <div className="flex justify-between items-center mt-4">
           <input
             type="text"
@@ -166,43 +194,14 @@ useEffect(() => {
           </button>
         </div>
 
-        <table className="min-w-full divide-y divide-gray-200 border mt-4">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Department Name</th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Description</th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Action</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {departments.map((dept) => (
-              <tr key={dept._id} className={dept.isblocked ? 'bg-red-100' : 'bg-white'}>
-                <td className="px-6 py-4 text-sm text-gray-800">{dept.deptname}</td>
-                <td className="px-6 py-4 text-sm text-gray-800">{dept.description}</td>
-                <td className="px-6 py-4 text-sm text-gray-800 space-x-2">
-                  <button
-                    onClick={() => handleBlock(dept!._id!)}
-                    className={`px-3 py-1 rounded text-white ${
-                      dept.isblocked ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'
-                    }`}
-                  >
-                    {dept.isblocked ? 'Unblock' : 'Block'}
-                  </button>
-                  <br />
-                  <br />
-                  <button
-                    onClick={() => handleEdit(dept)}
-                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  >
-                    Edit
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+     
+        <Table
+          columns={columns}
+          data={departments}
+          getRowClassName={(dept) => (dept.isblocked ? 'bg-red-100' : 'bg-white')}
+        />
 
-        {/* Pagination */}
+ 
         {totalPages > 1 && (
           <Pagination
             currentPage={currentPage}
@@ -256,4 +255,3 @@ useEffect(() => {
 }
 
 export default Department;
-

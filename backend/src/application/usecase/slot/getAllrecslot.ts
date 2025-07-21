@@ -1,8 +1,8 @@
 import {slotRepository} from '../../../domain/repository/slot-repository';
 import {RecurringDTO} from '../../../dto/slot.dto';
+import { IGetRecurringSlot } from '../../../domain/useCaseInterface/slot/IGetRecurringSlot';
 
-
-export class GetRecurringSlot {
+export class GetRecurringSlot implements IGetRecurringSlot{
 
   constructor(private slotrepository: slotRepository) {}
   async getSlots(id:string,page:number,limit:number): Promise<{ data: RecurringDTO[]; total: number }> {

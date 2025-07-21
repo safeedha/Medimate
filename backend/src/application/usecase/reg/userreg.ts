@@ -1,7 +1,8 @@
 import { RegRepository  } from "../../../domain/repository/reg-repository"
+import {IUserRegister} from "../../../domain/useCaseInterface/auth/IUserRegister"
 import bcrypt from 'bcrypt';
 
-export class UserReg {
+export class UserRegistration implements IUserRegister {
   constructor(private regRepository: RegRepository) {}
 
   async signup(data: { firstname: string; lastname: string; email: string; phone: string; password: string,gender:'male' | 'female' | 'other'}): Promise<{ message: string }> {

@@ -2,17 +2,18 @@ import { ReportRepository } from '../../domain/repository/report-rep';
 import { IReport } from '../../domain/entities/report';
 import { Report } from "../database/models/report"
 import { AppointmentModel} from '../database/models/appoinment';
+import { IMedicine } from '../../domain/entities/report';
 import mongoose from 'mongoose';
 export class MongoreportRepository implements ReportRepository {
-  async addReport(htmlContent: string, appointmentId: string, userId: string): Promise<string> {
+  async addReport(htmlContent: string, appointmentId: string, userId: string,medicine:IMedicine[]): Promise<string> {
     try {
       const newReport: IReport = {
-        content: htmlContent,
-        appointmentId,
-        userId,
-        createdAt: new Date()
-      };
-
+      content: htmlContent,
+      appointmentId,
+      userId,
+      medicine: medicine, 
+      createdAt: new Date()
+    };
       const savedReport = await Report.create(newReport);
       const appoinment=await  AppointmentModel.findOne({_id:appointmentId})
       if(!appoinment)
@@ -41,6 +42,7 @@ export class MongoreportRepository implements ReportRepository {
       content: savedReport.content,
       appointmentId: savedReport.appointmentId.toString(),
       userId: savedReport.userId.toString(),
+      medicine:savedReport.medicine,
       createdAt: savedReport.createdAt,
     };
 

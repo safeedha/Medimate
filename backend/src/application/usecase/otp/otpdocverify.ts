@@ -1,6 +1,7 @@
 import {RegRepository} from "../../../domain/repository/reg-repository";
+import {IOtpVerifier} from "../../../domain/useCaseInterface/authRecovery/IOtpVerifier"
 
-export class OtpdocVerify {
+export class DoctorOtpVerify implements IOtpVerifier{
   constructor(private regRepository: RegRepository) {}
 
   async verifyOtp(otp: string, email: string): Promise<{ message: string }> {

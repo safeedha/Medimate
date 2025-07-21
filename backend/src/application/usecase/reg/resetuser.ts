@@ -1,6 +1,7 @@
 import { RegRepository  } from "../../../domain/repository/reg-repository"
+import {IPasswordReset} from "../../../domain/useCaseInterface/authRecovery/IPasswordReset"
 import bcrypt from 'bcrypt';
-export class UserPassrest {
+export class UserPasswordRest implements IPasswordReset  {
   constructor(private regRepository: RegRepository) {}
 
   async passwordrest( email: string, password: string): Promise<{ message: string }> {

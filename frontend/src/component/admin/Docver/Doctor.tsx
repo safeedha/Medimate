@@ -5,6 +5,7 @@ import { getAllDoctor, changeblockStatus } from '../../../api/adminapi/doctor';
 import Modal from 'react-modal';
 import Swal from 'sweetalert2';
 import type { Idoctor } from '../../../Interface/interface';
+import Table from '../../../component/common/Table'; // <-- Import reusable Table!
 
 const customStyles = {
   content: {
@@ -40,7 +41,6 @@ function Doctor() {
   const subtitleRef = useRef<HTMLHeadingElement>(null);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  
   useEffect(() => {
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
 
@@ -52,7 +52,7 @@ function Doctor() {
       } catch {
         toast.error('An error occurred while fetching doctors');
       }
-    }, 500); 
+    }, 500);
 
     return () => {
       if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
@@ -74,23 +74,21 @@ function Doctor() {
   };
 
   const blockHandle = async (id: string) => {
- 
-      const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: 'Do you want to change status?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, change it!',
-      });
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to change status?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, change it!',
+    });
 
-      if (result.isConfirmed) {
-        const updatedDoctors = await changeblockStatus(id);
-        setDoctors(updatedDoctors);
-        toast.success('Status is updated');
-      }
-   
+    if (result.isConfirmed) {
+      const updatedDoctors = await changeblockStatus(id);
+      setDoctors(updatedDoctors);
+      toast.success('Status is updated');
+    }
   };
 
   const totalPages = Math.ceil(totalDoctors / itemsPerPage);
@@ -98,6 +96,40 @@ function Doctor() {
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
+
+  // --- Doctor Table Columns ---
+  const doctorColumns = [
+    {
+      header: "Name",
+      accessor: (doctor: Idoctor) => `${doctor.firstname} ${doctor.lastname}`,
+    },
+    {
+      header: "Email",
+      accessor: (doctor: Idoctor) => doctor.email,
+    },
+    {
+      header: "More details",
+      accessor: (doctor: Idoctor) => (
+        <button
+          onClick={() => openModal(doctor)}
+          className="text-cyan-600 underline hover:text-cyan-800"
+        >
+          View Item
+        </button>
+      ),
+    },
+    {
+      header: "Action",
+      accessor: (doctor: Idoctor) => (
+        <button
+          className={`px-4 py-1 rounded text-white ${doctor.isBlocked ? 'bg-green-500' : 'bg-red-500'}`}
+          onClick={() => blockHandle(doctor._id!)}
+        >
+          {doctor.isBlocked ? 'Unblock' : 'Block'}
+        </button>
+      ),
+    },
+  ];
 
   return (
     <div className="flex h-screen">
@@ -123,56 +155,21 @@ function Doctor() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-
+\
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-white shadow rounded">
-            <thead>
-              <tr className="bg-gray-200 text-left">
-                <th className="py-3 px-4">Name</th>
-                <th className="py-3 px-4">Email</th>
-                <th className="py-3 px-4">More details</th>
-                <th className="py-3 px-4">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {doctors.length > 0 ? (
-                doctors.map((doctor) => (
-                  <tr
-                    key={doctor._id}
-                    className={`border-b ${doctor.isBlocked ? 'bg-red-100' : 'bg-white'}`}
-                  >
-                    <td className="py-3 px-4">{doctor.firstname} {doctor.lastname}</td>
-                    <td className="py-3 px-4">{doctor.email}</td>
-                    <td className="py-3 px-4">
-                      <button
-                        onClick={() => openModal(doctor)}
-                        className="text-cyan-600 underline hover:text-cyan-800"
-                      >
-                        View Item
-                      </button>
-                    </td>
-                    <td className="py-3 px-4">
-                      <button
-                        className={`px-4 py-1 rounded text-white ${doctor.isBlocked ? 'bg-green-500' : 'bg-red-500'}`}
-                        onClick={() => blockHandle(doctor._id!)}
-                      >
-                        {doctor.isBlocked ? 'Unblock' : 'Block'}
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={4} className="py-4 text-center text-gray-500">
-                    No doctors found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <Table
+            columns={doctorColumns}
+            data={doctors}
+            getRowClassName={(doctor) => doctor.isBlocked ? 'bg-red-100' : 'bg-white'}
+          />
+          {doctors.length === 0 && (
+            <div className="py-4 text-center text-gray-500">
+              No doctors found.
+            </div>
+          )}
         </div>
 
-      
+     
         <div className="flex justify-center mt-4 space-x-2">
           {Array.from({ length: totalPages }).map((_, index) => {
             const pageNum = index + 1;
@@ -190,6 +187,7 @@ function Doctor() {
           })}
         </div>
 
+        {/* Modal for doctor details */}
         <Modal
           isOpen={modalIsOpen}
           onAfterOpen={afterOpenModal}

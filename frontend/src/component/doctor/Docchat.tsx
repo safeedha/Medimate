@@ -1,11 +1,11 @@
 import {useEffect,useState} from 'react'
-import ChatSidebar from './ChatSidebar'
+import ChatSidebar from '../common/ChatSidebar'
 import { useSelector } from 'react-redux';
 import {socket} from '../../socket'
 import type { RootState } from '../../app/store';
-import Nochatselected from './Nochatselected'
-import Chatbox from './Chatbox'
-import DoctorSidebar from './Docsidebar';
+import Nochatselected from '../common/Nochatselected'
+import Chatbox from '../common/Chatbox'
+import DoctorSidebar from '../common/Docsidebar';
 import { useLocation } from 'react-router-dom';
 
 function Docchat() {
@@ -20,11 +20,15 @@ function Docchat() {
  useEffect(()=>{
   if(userId)
   {
+    console.log('doctor',doctor?._id)
     console.log(userId)
     setUserid(userId)
   }
-  
  },[userId])
+  useEffect(()=>{
+    console.log('doctor',doctor?._id)
+ },[])
+
 
  useEffect(() => {
   if (!doctor?._id) return;

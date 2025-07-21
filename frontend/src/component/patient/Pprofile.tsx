@@ -8,7 +8,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import { Toaster, toast } from 'react-hot-toast';
-import Navbar from './Navbar';
+import Navbar from '../common/Navbar';
 
 function Pprofile() {
   const [firstname, setFirstname] = useState<string>('');

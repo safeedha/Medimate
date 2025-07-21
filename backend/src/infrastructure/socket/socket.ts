@@ -1,18 +1,23 @@
 import {SaveMessage} from  "../../application/usecase/conversation/saveMessage"
 import {MongoConversationRepo}  from '../../infrastructure/repository/mongoconverRep'
+import {MongoNotification} from  '../../infrastructure/repository/mongonotfictionRepo'
 import {Messageread} from  "../../application/usecase/conversation/changereadstatus"
+import {Addnotification} from  "../../application/usecase/notification/addnotification"
 import {MessageModel} from '../database/models/message'
 const mongoConversationRepo=new MongoConversationRepo()
+const mongoNotification=new MongoNotification()
 const savemessage=new SaveMessage(mongoConversationRepo)
 const messageread=new Messageread(mongoConversationRepo)
+const addnotification=new Addnotification(mongoNotification)
+
 import { Server } from 'socket.io'
 const users: Record<string, string[]> = {};
+const notification: Record<string, string[]> = {};
 const participant: Record<string, string[]> = {};
 export const registerSocketEvents = async(io: Server) => {
   io.on('connection', (socket) => {
     console.log('User connected:', socket.id)    
-     socket.on('register', (userId,role) => {
-      
+     socket.on('register', (userId,role) => {  
         if (users[userId]) {
         if (!users[userId].includes(socket.id)) {
           users[userId].push(socket.id);
@@ -23,6 +28,29 @@ export const registerSocketEvents = async(io: Server) => {
         socket.data.userId = userId;
         io.emit('online-users',Object.keys(users))
       });
+
+      socket.on('notification', (Id) => {
+        if (notification[Id]) {
+          if (!notification[Id].includes(socket.id)) {
+            notification[Id].push(socket.id);
+          }
+        } else {
+          notification[Id] = [socket.id];
+        }
+      });
+        socket.on("joinRoom1", (userId) => {
+          socket.join(userId);
+          console.log(`User ${userId} joined their personal room`);
+        });
+        socket.on("leaveRoom1", (userId) => {
+          socket.leave(userId);
+          console.log(`User ${userId} left their personal room`);
+        });
+        socket.on('notification_message',async(data)=>{
+        await addnotification.addnotification(data.userId,data.doctorId,data.message,data.type)
+        console.log('he')
+        io.to(data.userId).emit('notification_count', 1,data.message);
+      })
 
     socket.on('read',(data)=>{
       if (participant[data] && participant[data].length > 0)

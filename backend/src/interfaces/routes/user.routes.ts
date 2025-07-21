@@ -97,63 +97,63 @@ const user=new UserController(getDept,userreg,userlog,otpcration,otpverify,userr
 
 
 
-router.get("/department", (req, res,next) => user.getAllDept(req, res,next)) 
-router.post("/register", (req, res,next) => user.register(req, res,next)) 
-router.post("/login", (req, res) => user.login(req, res)) 
-router.get("/logout", (req, res) => user.logout(req, res))
+// router.get("/department", (req, res,next) => user.getAllDept(req, res,next)) 
+// router.post("/register", (req, res,next) => user.register(req, res,next)) 
+// router.post("/login", (req, res) => user.login(req, res)) 
+// router.get("/logout", (req, res) => user.logout(req, res))
 router.post("/refresh-token", (req, res) => user.refreshTokencontroller(req, res))
 
-router.post("/sendotp", (req, res) => user.sendOtp(req, res))
-router.post("/verifyotp", (req, res) => user.verifyOtp(req, res))
-router.post("/reset",(req, res) => user.resetPassword(req, res))
-router.post("/googlelogin",(req, res) => user.googleLogin(req, res))
-router.get("/doctors",verifyUserAuth, (req, res) => user.getAllDoct(req, res))
-router.get("/doctors/sort",verifyUserAuth, (req, res) => user.getAllDoctbySort(req, res))  
-router.get("/doctor/:id",verifyUserAuth, (req, res) => user.getSingleDoct(req, res))
-router.get("/doctor/slot/:id",verifyUserAuth, (req, res) => user.getSlotedoctor(req, res)) 
+// router.post("/sendotp", (req, res) => user.sendOtp(req, res))
+// router.post("/verifyotp", (req, res) => user.verifyOtp(req, res))
+// router.post("/reset",(req, res) => user.resetPassword(req, res))
+// router.post("/googlelogin",(req, res) => user.googleLogin(req, res))
+// router.get("/doctors",verifyUserAuth, (req, res) => user.getAllDoct(req, res))
+// router.get("/doctors/sort",verifyUserAuth, (req, res) => user.getAllDoctbySort(req, res))  
+// router.get("/doctor/:id",verifyUserAuth, (req, res) => user.getSingleDoct(req, res))
+// router.get("/doctor/slot/:id",verifyUserAuth, (req, res) => user.getSlotedoctor(req, res)) 
 router.get("/department",verifyUserAuth, (req, res,next) => user.getAllDept(req, res,next)) 
-router.get("/profile", verifyUserAuth, (req, res) => {
-  user.getUserdetail(req as CustomRequest, res);
-});
+// router.get("/profile", verifyUserAuth, (req, res) => {
+//   user.getUserdetail(req as CustomRequest, res);
+// });
 
 router.patch('/doctor/:reciever',verifyUserAuth, (req, res) => user.updatemessagetime(req as CustomRequest, res))
-router.post("/profile", verifyUserAuth, (req, res) => {
-  user.updateUserdetail(req as CustomRequest, res);
-});
+// router.post("/profile", verifyUserAuth, (req, res) => {
+//   user.updateUserdetail(req as CustomRequest, res);
+// });
 
-router.post("/lockslot", verifyUserAuth, (req, res) => {
-  user.createLockslot(req as CustomRequest, res);
-})
-router.post("/bookappoinment", verifyUserAuth, (req, res) => {
-  user.createpayment(req as CustomRequest, res);
-})
-router.post("/verify-payment", verifyUserAuth, (req, res) => {
-  user.verifyPayment(req as CustomRequest, res);
-})
+// router.post("/lockslot", verifyUserAuth, (req, res) => {
+//   user.createLockslot(req as CustomRequest, res);
+// })
+// router.post("/bookappoinment", verifyUserAuth, (req, res) => {
+//   user.createpayment(req as CustomRequest, res);
+// })
+// router.post("/verify-payment", verifyUserAuth, (req, res) => {
+//   user.verifyPayment(req as CustomRequest, res);
+// })
 
-router.post("/createappoinment", verifyUserAuth, (req, res) => {
-  user.createappoinment(req as CustomRequest, res);
-})
-router.get("/appointments/future", verifyUserAuth, (req, res) => {
-  user.getfutureAppoinment(req as CustomRequest, res);
-})
-router.get("/page", verifyUserAuth, (req, res) => {
-  user.getPages(req as CustomRequest, res);
-})
-router.get("/appointments/past", verifyUserAuth, (req, res) => {
-  user.getpasteAppoinments(req as CustomRequest, res);
-})
+// router.post("/createappoinment", verifyUserAuth, (req, res) => {
+//   user.createappoinment(req as CustomRequest, res);
+// })
+// router.get("/appointments/future", verifyUserAuth, (req, res) => {
+//   user.getfutureAppoinment(req as CustomRequest, res);
+// })
+// router.get("/page", verifyUserAuth, (req, res) => {
+//   user.getPages(req as CustomRequest, res);
+// })
+// router.get("/appointments/past", verifyUserAuth, (req, res) => {
+//   user.getpasteAppoinments(req as CustomRequest, res);
+// })
 
-router.patch("/appointment", verifyUserAuth, (req, res) => {
-  user.changestatusAppoinments(req as CustomRequest, res);
-})
+// router.patch("/appointment", verifyUserAuth, (req, res) => {
+//   user.changestatusAppoinments(req as CustomRequest, res);
+// })
 
-router.get("/messages", verifyUserAuth, (req, res) => {
-  user.getAllmessages(req as CustomRequest, res);
-})
-router.delete("/messages/:messageid", verifyUserAuth, (req, res) => {
-  user.deletemessages(req as CustomRequest, res);
-})
+// router.get("/messages", verifyUserAuth, (req, res) => {
+//   user.getAllmessages(req as CustomRequest, res);
+// })
+// router.delete("/messages/:messageid", verifyUserAuth, (req, res) => {
+//   user.deletemessages(req as CustomRequest, res);
+// })
 
 router.get("/gettoken", verifyUserAuth, (req, res) => {
   user.gettoken(req as CustomRequest, res);
@@ -176,19 +176,19 @@ router.get("/status", verifyUserAuth, (req, res) => {
   user.getSingleuser(req as CustomRequest, res);
 })
 
-router.get("/messages/unread-counts", verifyUserAuth, (req, res) => {
-  user.getUnreadcount(req as CustomRequest, res);
-})
+// router.get("/messages/unread-counts", verifyUserAuth, (req, res) => {
+//   user.getUnreadcount(req as CustomRequest, res);
+// })
 
-router.post("/review", verifyUserAuth, (req, res) => {
-  user.createReview(req as CustomRequest, res);
-})
-router.get("/review", verifyUserAuth, (req, res) => {
-  user.getreviews(req as CustomRequest, res);
-})
-router.get("/review/count", verifyUserAuth, (req, res) => {
-  user.average(req as CustomRequest, res);
-})
+// router.post("/review", verifyUserAuth, (req, res) => {
+//   user.createReview(req as CustomRequest, res);
+// })
+// router.get("/review", verifyUserAuth, (req, res) => {
+//   user.getreviews(req as CustomRequest, res);
+// })
+// router.get("/review/count", verifyUserAuth, (req, res) => {
+//   user.average(req as CustomRequest, res);
+// })
 
 router.use(errorHandler)
 export { router as userRouter };

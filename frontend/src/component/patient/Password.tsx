@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Navbar from './Navbar';
+import Navbar from '../common/Navbar';
 import UserSidebar from './UserSidebar';
 import toast, { Toaster } from 'react-hot-toast'
 import {userpasswordRest} from '../../api/userapi/register'
@@ -10,7 +10,7 @@ import type { RootState } from '../../app/store';
 function Password() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const user = useSelector((state: RootState) => state.user.userInfo);
+  const user = useSelector((state: RootState) => state?.user.userInfo);
 
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();

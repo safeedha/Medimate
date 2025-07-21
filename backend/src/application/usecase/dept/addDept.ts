@@ -1,9 +1,9 @@
 
 import {Department} from '../../../domain/entities/departnment'
 import {DepartmentRepository} from '../../../domain/repository/department-repository'
+import { IAddDept } from "../../../domain/useCaseInterface/department/IAddDept";
 
-
-export class AddDept {
+export class AddDept implements IAddDept{
   constructor(private deptRepository: DepartmentRepository) {}
 
   async addDept(deptData: Department): Promise<{ message: string }> {

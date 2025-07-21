@@ -9,6 +9,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/domain/useCaseInterface", "src/interfaces/controller/doctorController"],
   "exclude": ["node_modules"]
 }

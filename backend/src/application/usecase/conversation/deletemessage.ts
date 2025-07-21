@@ -1,8 +1,9 @@
 import {Conversation} from '../../../domain/entities/conversation'
 import {ConversationRepository} from '../../../domain/repository/conver-repo'
 import { Message } from '../../../domain/entities/messages';
+import { IDeleteMessage} from '../../../domain/useCaseInterface/conversation/IDeleteMessage';
 
-export class Deletemessage{
+export class Deletemessage implements IDeleteMessage{
   constructor(private conversationrepository:ConversationRepository){
 
   }

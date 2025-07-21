@@ -1,8 +1,8 @@
 
 import { slotRepository } from '../../../domain/repository/slot-repository';
 import { SlotLockDTO  } from '../../../dto/slot.dto'
-
-export class CreateLockslot {
+import {ICreateLockSlot } from '../../../domain/useCaseInterface/slot/ICreateLockSlot';
+export class CreateLockslot implements ICreateLockSlot{
   constructor(private slotRepository:slotRepository) {}
 
   async createLock(slot:string,doctorId:string): Promise<string> {

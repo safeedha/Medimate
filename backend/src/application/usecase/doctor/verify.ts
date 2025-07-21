@@ -2,8 +2,9 @@ import {DoctorRepository} from '../../../domain/repository/doctor-repository';
 import {Idoctor} from '../../../domain/entities/doctor';
 import {sendMail} from '../../../application/service/emailservice'
 import {DoctorDTO} from '../../../dto/doctor.dto'
+import { IVerifyDoctor } from '../../../domain/useCaseInterface/doctor/IVerifyDoctor';
 
-export class VerifyDoctor {
+export class VerifyDoctor implements IVerifyDoctor{
   constructor(private docRepository: DoctorRepository) {}
 
  async verifyStatus(id: string, status: 'Approved' | 'Rejected',reason?:string): Promise<DoctorDTO[]> {

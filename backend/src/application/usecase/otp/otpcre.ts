@@ -1,8 +1,8 @@
 import {RegRepository} from "../../../domain/repository/reg-repository";
+import {IOtpCreator} from "../../../domain/useCaseInterface/authRecovery/IOtpCreator"
 
 
-
-export class OtpCretion {
+export class OtpCretion implements IOtpCreator{
 constructor(private regRepository:RegRepository){}
 async createOtp(email:string,otp:string):Promise<{message:string}>{
     try{

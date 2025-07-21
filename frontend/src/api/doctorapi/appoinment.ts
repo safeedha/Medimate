@@ -1,10 +1,10 @@
-import doctorInstance from "./instance";
+import axiosInstance from "../instances";
 import axios from 'axios';
 
 type DayOfWeek = 'MO' | 'TU' | 'WE' | 'TH' | 'FR' | 'SA' | 'SU';
 type Frequency = "WEEKLY" | "DAILY";
 
-export const createAppoinment = async (
+export const createRecslot= async (
   startDate: string,
   endDate: string,
   selectedDays: DayOfWeek[],
@@ -14,7 +14,33 @@ export const createAppoinment = async (
   frequency: Frequency
 ) => {
   try {
-    const response = await doctorInstance.post("/slot/recurring", {
+    const response = await axiosInstance.post("/doctor/slot/recurring", {
+      startDate, endDate, selectedDays, startTime, endTime, interval, frequency
+    });
+    return response.data.message;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.response?.data?.message || error.message;
+    } else if (error instanceof Error) {
+      return error.message;
+    } else {
+      return 'Internal server error';
+    }
+  }
+};
+
+export const editRecslot=async (
+  startDate: string,
+  endDate: string,
+  selectedDays: DayOfWeek[],
+  startTime: string,
+  endTime: string,
+  interval: number,
+  frequency: Frequency,
+  slotId:string
+) => {
+  try {
+    const response = await axiosInstance.put(`/doctor/slot/recurring/${slotId}`, {
       startDate, endDate, selectedDays, startTime, endTime, interval, frequency
     });
     return response.data.message;
@@ -31,7 +57,7 @@ export const createAppoinment = async (
 
 export const getPage = async (originalId: string, limit: number) => {
   try {
-    const response = await doctorInstance.get('/page', {
+    const response = await axiosInstance.get('/doctor/page', {
       params: { originalId, limit }
     });
     return response.data;
@@ -46,7 +72,7 @@ export const getPage = async (originalId: string, limit: number) => {
 
 export const getOverviewofappoinment = async () => {
   try {
-    const response = await doctorInstance.get('/appoinment/count');
+    const response = await axiosInstance.get('/doctor/appoinment/count');
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -61,8 +87,9 @@ export const getOverviewofappoinment = async () => {
 
 export const getrecurring = async (id: string, page: number, limit: number) => {
   try {
-    const response = await doctorInstance.get(`/slots/recurring/${id}`, { params: { page, limit } });
-    return response.data.result;
+    const response = await axiosInstance.get(`/doctor/slots/recurring/${id}`, { params: { page, limit } });
+    console.log(response.data)
+    return response.data
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return error.response?.data?.message || error.message;
@@ -76,7 +103,7 @@ export const getrecurring = async (id: string, page: number, limit: number) => {
 
 export const getallappoinment = async (page: number, limit: number) => {
   try {
-    const response = await doctorInstance.get('/appoinment', { params: { page, limit } });
+    const response = await axiosInstance.get('/doctor/appoinment', { params: { page, limit } });
     console.log(response)
     return response.data.appoi;
   } catch (error) {
@@ -92,7 +119,7 @@ export const getallappoinment = async (page: number, limit: number) => {
 
 export const changerecurringslotStatus = async (id: string) => {
   try {
-    const response = await doctorInstance.delete(`/slots/recurring/${id}`);
+    const response = await axiosInstance.delete(`/doctor/slots/recurring/${id}`);
     return response.data.messgae;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -107,7 +134,7 @@ export const changerecurringslotStatus = async (id: string) => {
 
 export const cancelAppoinment = async (id: string, reason: string, userid: string, email: string) => {
   try {
-    const response = await doctorInstance.patch(`/appoinment/${id}/${userid}`, { reason, email });
+    const response = await axiosInstance.patch(`/doctor/appoinment/${id}/${userid}`, { reason, email });
     return response.data.message;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -122,9 +149,10 @@ export const cancelAppoinment = async (id: string, reason: string, userid: strin
 
 export const getSlotedoctor = async (date: Date) => {
   try {
-    const response = await doctorInstance.get('/slots', {
+    const response = await axiosInstance.get('/doctor/slots', {
       params: { date }
     });
+    console.log(response)
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -139,7 +167,7 @@ export const getSlotedoctor = async (date: Date) => {
 
 export const editSlot = async (id: string) => {
   try {
-    const response = await doctorInstance.put(`/slots/${id}`);
+    const response = await axiosInstance.put(`/doctor/slots/${id}`);
     return response.data.message;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -154,7 +182,7 @@ export const editSlot = async (id: string) => {
 
 export const cancelSlot = async (slotid: string) => {
   try {
-    const response = await doctorInstance.delete(`/slots/${slotid}`);
+    const response = await axiosInstance.delete(`/doctor/slots/${slotid}`);
     return response.data.message;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -169,7 +197,7 @@ export const cancelSlot = async (slotid: string) => {
 
 export const completeappoinment = async (id: string) => {
   try {
-    const response = await doctorInstance.patch(`/appoinment/${id}`);
+    const response = await axiosInstance.patch(`/doctor/appoinment/${id}`);
     return response.data.message;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -184,7 +212,7 @@ export const completeappoinment = async (id: string) => {
 
 export const getsingleappoinment = async (id: string) => {
   try {
-    const response = await doctorInstance.get(`/appoinment/${id}`);
+    const response = await axiosInstance.get(`/doctor/appoinment/${id}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -205,7 +233,7 @@ export const reshecdule = async (
   newslot: string
 ) => {
   try {
-    const response = await doctorInstance.post(`/appoinment/reshedule`, {
+    const response = await axiosInstance.post(`/doctor/appoinment/reshedule`, {
       canceledslot, reason, userid, email, newslot
     });
     return response.data;
@@ -222,7 +250,7 @@ export const reshecdule = async (
 
 export const followup = async (slotId: string, appoinmentId: string) => {
   try {
-    const response = await doctorInstance.post(`/appoinment/followup`, {
+    const response = await axiosInstance.post(`/doctor/appoinment/followup`, {
       slotId, appoinmentId
     });
     return response.data;
@@ -243,7 +271,7 @@ export const getAppointmentsFiltered = async (
   end: Date
 ) => {
   try {
-    const response = await doctorInstance.get('/appoinment/filter', {
+    const response = await axiosInstance.get('/doctor/appoinment/filter', {
       params: {
         status,
         start: start.toISOString(),

@@ -1,8 +1,8 @@
 import {slotRepository} from '../../../domain/repository/slot-repository';
+import { ICancelSlot } from '../../../domain/useCaseInterface/slot/ICancelSlot';
 
 
-
-export class CancelSlot {
+export class CancelSlot implements ICancelSlot{
 
   constructor(private slotrepository: slotRepository) {}
   async cancelSlot(id:string): Promise<string> {

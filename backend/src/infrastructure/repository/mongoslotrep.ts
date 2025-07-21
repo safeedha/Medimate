@@ -82,6 +82,57 @@ async  lockAvailableSlot(data: SlotLockDTO): Promise<string> {
     throw new Error("Something happened");
   }
 }
+  
+async editRecurringSlot(data: RecurringDTO): Promise<RecurringDTO> {
+  try {
+    // Check for overlapping recurring slots except the one being edited
+    const existingSlots = await Recurring.find({
+      _id: { $ne: data._id }, // exclude current slot
+      doctorId: data.doctorId,
+      startDate: { $lte: data.endDate },
+      endDate: { $gte: data.startDate },
+      starttime: { $lte: data.endttime },
+      endttime: { $gte: data.starttime },
+    });
+
+    // Check for day overlap
+    for (const slot of existingSlots) {
+      const sharedDays = slot.daysOfWeek.filter((day) => data.daysOfWeek.includes(day));
+      if (sharedDays.length > 0) {
+        throw new Error(
+          `Recurring schedule conflict: Overlapping with existing slot from ${slot.startDate.toDateString()} to ${slot.endDate.toDateString()} on [${sharedDays.join(", ")}] between ${slot.starttime} and ${slot.endttime}.`
+        );
+      }
+    }
+
+    // Update the slot
+    const updatedSlot = await Recurring.findByIdAndUpdate(
+      data._id,
+      {
+        $set: {
+          startDate: data.startDate,
+          endDate: data.endDate,
+          frequency: data.frequency,
+          interval: data.interval,
+          starttime: data.starttime,
+          endttime: data.endttime,
+          daysOfWeek: data.daysOfWeek,
+        },
+      },
+      { new: true } 
+    );
+
+    if (!updatedSlot) {
+      throw new Error("Recurring slot not found or update failed");
+    }
+
+    return updatedSlot;
+  } catch (error: any) {
+    throw new Error(`Error editing recurring slot: ${error.message}`);
+  }
+}
+
+
 
    async createSlot(data:IndividualSlot):Promise<IndividualSlot>
    {
@@ -196,6 +247,19 @@ async  lockAvailableSlot(data: SlotLockDTO): Promise<string> {
         throw Error(error.message)
       }
       throw Error("Somethin happend")
+    }
+   }
+
+   async deletrRecurringSlot(recId:string):Promise<void>{
+    try{
+      const slot=await Slot.deleteMany({recurringSlotId:recId})
+    }
+    catch(error)
+    {
+      if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error("Something happened");
     }
    }
 

@@ -1,24 +1,20 @@
-import {Conversation} from '../../../domain/entities/conversation'
-import {ConversationRepository} from '../../../domain/repository/conver-repo'
+
+import { ConversationRepository } from '../../../domain/repository/conver-repo';
 import { Message } from '../../../domain/entities/messages';
+import { IGetAllMessages } from '../../../domain/useCaseInterface/conversation/IGetAllMessages';
 
-export class GetAllmessage{
-  constructor(private conversationrepository:ConversationRepository){
+export class GetAllMessages implements IGetAllMessages {
+  constructor(private conversationRepository: ConversationRepository) {}
 
-  }
-  async getallmessage(sender:string,receiver:string):Promise<Message[]>{
-    try{
-      
-      const result=await this.conversationrepository.getAllmessage(sender,receiver)
-      return result
-    }
-    catch(error)
-    {
+  async getallmessage(receiverId: string, senderId: string): Promise<Message[]> {
+    try {
+      const result = await this.conversationRepository.getAllmessage(senderId, receiverId);
+      return result;
+    } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);
-      } else {
-        throw new Error("An unknown error occurred");
       }
+      throw new Error("An unexpected error occurred while fetching messages");
     }
   }
 }

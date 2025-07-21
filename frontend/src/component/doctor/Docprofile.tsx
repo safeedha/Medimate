@@ -1,49 +1,57 @@
-import DoctorSidebar from './Docsidebar';
-import { useSelector,useDispatch } from 'react-redux';
+import DoctorSidebar from '../common/Docsidebar';
+import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import type { RootState } from '../../app/store';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
-import { profileUpdate } from '../../api/doctorapi/doclogin';
+import { profileUpdate,getSingledoctor } from '../../api/doctorapi/doclogin';
 import { getDepartment } from '../../api/doctorapi/department';
-import type{DepartmentProps} from '../../Interface/interface'
+import type { DepartmentProps } from '../../Interface/interface';
 
 
+interface Experience {
+  hospitalName: string;
+  role: string;
+  years: string;
+}
 
 function DoctorProfile() {
   const doctor = useSelector((state: RootState) => state.doctor.doctorInfo);
- 
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
+
   const [departments, setDepartments] = useState<DepartmentProps[]>([]);
-  const [disabled, setDisabled] = useState<boolean>(true);
+  const [disabled, setDisabled] = useState(true);
   const [profilePicture, setProfilePicture] = useState(doctor?.profilePicture || '');
   const [medicalLicence, setMedicalLicence] = useState(doctor?.medicalLicence || '');
+  const [newExperienceList, setNewExperienceList] = useState<Experience[]>([
+    { hospitalName: '', role: '', years: '' },
+  ]);
 
   const [formData, setFormData] = useState({
     firstname: doctor?.firstname || '',
     lastname: doctor?.lastname || '',
-    experience: doctor?.experience || '',
-    fee: doctor?.fee || '',
+    experience: doctor?.experience?.toString() || '',
+    fee: doctor?.fee?.toString() || '',
     phone: doctor?.phone || '',
     specialisation: doctor?.specialisation || '',
     qualification: doctor?.qualification || '',
   });
+  useEffect(()=>{
+   const fetchSingledoctor=async()=>{
+    const response=await getSingledoctor()
+   }
+   fetchSingledoctor()
+  },[])
 
   useEffect(() => {
-    async function getAllDepartment() {
-      try {
-        const result = await getDepartment();
-        setDepartments(result);
-      } catch (error) {
-        console.error("Error fetching departments:", error);
-      }
-    }
-    getAllDepartment();
+    getDepartment().then(setDepartments).catch(console.error);
   }, []);
 
   const update = () => setDisabled(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -51,76 +59,88 @@ function DoctorProfile() {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfilePicture(reader.result as string);
-      };
+      reader.onloadend = () => setProfilePicture(reader.result as string);
       reader.readAsDataURL(file);
     }
   };
 
+  const handleExperienceChange = (index: number, field: keyof Experience, value: string) => {
+    const updatedList = [...newExperienceList];
+    updatedList[index][field] = value;
+    setNewExperienceList(updatedList);
+  };
+
+  const addExperienceField = () => {
+    setNewExperienceList([...newExperienceList, { hospitalName: '', role: '', years: '' }]);
+  };
+
   const handleLicenceChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", "products");
+    if (!file) return;
 
-      try {
-        const response = await axios.post("https://api.cloudinary.com/v1_1/dwerqkqou/image/upload", formData);
-        setMedicalLicence(response.data.secure_url.split('/upload/')[1]);
-        toast.success("Medical License uploaded");
-      } catch (err) {
-        toast.error("Upload failed");
-      }
+    const uploadData = new FormData();
+    uploadData.append('file', file);
+    uploadData.append('upload_preset', 'products');
+
+    try {
+      const { data } = await axios.post(
+        'https://api.cloudinary.com/v1_1/dwerqkqou/image/upload',
+        uploadData
+      );
+      setMedicalLicence(data.secure_url.split('/upload/')[1]);
+      toast.success('Medical License uploaded');
+    } catch {
+      toast.error('Upload failed');
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    let uploadedUrl: string;
 
+    const { firstname, lastname, phone, qualification, experience, fee } = formData;
 
-    if (!formData.firstname.trim()) return toast.error("First name is required");
-    if (!formData.lastname.trim()) return toast.error("Last name is required");
-    if (!formData.experience || isNaN(Number(formData.experience))) return toast.error("Valid experience is required");
-    if (!formData.fee || isNaN(Number(formData.fee))) return toast.error("Valid consultation fee is required");
-    if (!formData.qualification) return toast.error("Qualification is required");
-    if (!/^\d{10}$/.test(formData.phone)) return toast.error("Phone number must be exactly 10 digits");
+    if (!firstname.trim()) return toast.error('First name is required');
+    if (!lastname.trim()) return toast.error('Last name is required');
+    if (!experience || isNaN(Number(experience))) return toast.error('Valid experience is required');
+    if (!fee || isNaN(Number(fee))) return toast.error('Valid consultation fee is required');
+    if (!qualification.trim()) return toast.error('Qualification is required');
+    if (!/^\d{10}$/.test(phone)) return toast.error('Phone number must be exactly 10 digits');
 
+    let uploadedUrl = profilePicture;
 
-    if (profilePicture !== doctor?.profilePicture) {
+    if (profilePicture && profilePicture.startsWith('data:')) {
       const uploadForm = new FormData();
-      uploadForm.append("file", profilePicture);
-      uploadForm.append("upload_preset", "products");
+      uploadForm.append('file', profilePicture);
+      uploadForm.append('upload_preset', 'products');
 
       const response = await axios.post(
-        "https://api.cloudinary.com/v1_1/dwerqkqou/image/upload",
+        'https://api.cloudinary.com/v1_1/dwerqkqou/image/upload',
         uploadForm
       );
-      uploadedUrl = response.data.secure_url.split('/upload/')[1];;
-    } else {
-      uploadedUrl = profilePicture;
+      uploadedUrl = response.data.secure_url.split('/upload/')[1];
     }
 
-    const data = {
-      firstname: formData.firstname,
-      lastname: formData.lastname,
-      experience: Number(formData.experience),
-      fee: Number(formData.fee),
+    const payload = {
+      firstname,
+      lastname,
+      experience: Number(experience),
+      fee: Number(fee),
       image: uploadedUrl,
-      phone: formData.phone,
+      phone,
       email: doctor!.email!,
       specialisation: formData.specialisation,
-      qualification: formData.qualification,
+      qualification,
       medicalLicence,
+      newExperienceList, // ⬅️ send new entries to backend
     };
 
-    const response = await profileUpdate(data,dispatch);
-    if (response === 'Profile updated successfully') {
-      toast.success(response);
+    const res = await profileUpdate(payload, dispatch);
+
+    if (res === 'Profile updated successfully') {
+      toast.success(res);
       setDisabled(true);
-    } else if (response === 'Phone number already exists for another doctor') {
-      toast.error(response);
+    } else {
+      toast.error(res);
     }
   };
 
@@ -128,130 +148,102 @@ function DoctorProfile() {
     <div className="flex min-h-screen overflow-hidden font-sans">
       <Toaster />
       <DoctorSidebar />
-
       <div className="ml-64 flex-1 bg-gradient-to-br from-white via-blue-50 to-indigo-100">
         <header className="text-center py-6 px-6">
-          <h1 className="text-4xl md:text-5xl font-semibold text-indigo-700 mb-2">
+          <h1 className="text-4xl font-semibold text-indigo-700 mb-2">
             Dr. {doctor?.firstname || 'Doctor'}
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Manage your personal and professional details. Keep your profile up to date.
-          </p>
+          <p className="text-gray-600">Manage your personal and professional details.</p>
         </header>
 
-        <main className="px-6 md:px-20 py-4 flex-grow flex justify-center items-start">
-          <div className="w-full max-w-2xl bg-white rounded-2xl p-8 shadow-lg border border-indigo-200">
-            {/* Profile Picture Upload */}
-            <div className="mb-6 text-center">
+        <main className="px-6 md:px-20 py-4 flex justify-center">
+          <div className="w-full max-w-2xl bg-white rounded-2xl p-8 shadow-md">
+            {/* Profile Photo Upload */}
+            <div className="text-center mb-6">
               <img
                 src={`https://res.cloudinary.com/dwerqkqou/image/upload/${profilePicture}`}
                 alt="Profile"
-                className="w-20 h-20 mx-auto rounded-full border-2 border-indigo-300 cursor-pointer"
+                className="w-20 h-20 rounded-full border mx-auto cursor-pointer"
                 onClick={() => document.getElementById('fileInput')?.click()}
               />
               <input
-                type="file"
                 id="fileInput"
+                type="file"
                 accept="image/*"
-                className="hidden"
-                disabled={disabled}
+                hidden
                 onChange={handleImageChange}
+                disabled={disabled}
               />
             </div>
 
-            <h3 className="text-2xl font-semibold text-indigo-600 text-center mb-2">
-              Personal Information
-            </h3>
-            <p className="text-center text-gray-500 mb-6 text-sm">
-              View and update your contact, specialty, and professional details.
-            </p>
-
-            {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Name */}
-              <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-                <div className="flex-1">
-                  <label className="text-sm text-gray-700">First Name</label>
-                  <input
-                    type="text"
-                    name="firstname"
-                    value={formData.firstname}
-                    onChange={handleChange}
-                    disabled={disabled}
-                    className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="text-sm text-gray-700">Last Name</label>
-                  <input
-                    type="text"
-                    name="lastname"
-                    value={formData.lastname}
-                    onChange={handleChange}
-                    disabled={disabled}
-                    className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                  />
-                </div>
-              </div>
-
-              {/* Contact & Department */}
-              <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-                <div className="flex-1">
-                  <label className="text-sm text-gray-700">Phone Number</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    disabled={disabled}
-                    className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                    placeholder="e.g., 9876543210"
-                    pattern="[0-9]{10}"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="text-sm text-gray-700">Specialisation</label>
-                  <select
-                    name="specialisation"
-                    value={formData.specialisation}
-                    onChange={handleChange}
-                    disabled={disabled}
-                    className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                  >
-                    <option value="" disabled>Select Department</option>
-                    {departments.map((department) => (
-                      <option key={department.id} value={department.id}>
-                        {department.deptname}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Qualification */}
-              <div>
-                <label className="text-sm text-gray-700">Qualification</label>
-                <textarea
-                  name="qualification"
-                  value={formData.qualification === "false" ? "" : formData.qualification}
+              {/* Name Inputs */}
+              <div className="flex gap-4">
+                <input
+                  name="firstname"
+                  value={formData.firstname}
                   onChange={handleChange}
                   disabled={disabled}
-                  className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                  rows={3}
-                  placeholder="e.g., MBBS - AIIMS, New Delhi (2015)"
+                  placeholder="First Name"
+                  className="flex-1 p-2 border rounded-md"
+                />
+                <input
+                  name="lastname"
+                  value={formData.lastname}
+                  onChange={handleChange}
+                  disabled={disabled}
+                  placeholder="Last Name"
+                  className="flex-1 p-2 border rounded-md"
                 />
               </div>
 
-            
+              {/* Contact & Specialisation */}
+              <div className="flex gap-4">
+                <input
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  disabled={disabled}
+                  placeholder="Phone Number"
+                  className="flex-1 p-2 border rounded-md"
+                  pattern="[0-9]{10}"
+                />
+                <select
+                  name="specialisation"
+                  value={formData.specialisation}
+                  onChange={handleChange}
+                  disabled={disabled}
+                  className="flex-1 p-2 border rounded-md"
+                >
+                  <option value="">Select Department</option>
+                  {departments.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.deptname}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Qualification */}
+              <textarea
+                name="qualification"
+                value={formData.qualification}
+                onChange={handleChange}
+                disabled={disabled}
+                placeholder="Qualification"
+                className="w-full p-2 border rounded-md"
+              />
+
+              {/* License Upload */}
               <div>
-                <label className="text-sm text-gray-700 block mb-1">Medical License</label>
+                <label className="text-sm">Medical License</label>
                 {medicalLicence && (
-                  <div className="mb-2">
+                  <div className="mb-1">
                     <a
                       href={`https://res.cloudinary.com/dwerqkqou/image/upload/${medicalLicence}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className="text-blue-600 underline text-sm"
+                      target="_blank"
+                      rel="noreferrer"
                     >
                       View Uploaded License
                     </a>
@@ -262,51 +254,86 @@ function DoctorProfile() {
                   accept="image/*,.pdf"
                   onChange={handleLicenceChange}
                   disabled={disabled}
-                  className="block w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                  className="w-full p-2 border rounded-md"
                 />
               </div>
 
               {/* Experience & Fee */}
-              <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-                <div className="flex-1">
-                  <label className="text-sm text-gray-700">Experience (years)</label>
-                  <input
-                    type="number"
-                    name="experience"
-                    value={formData.experience}
-                    onChange={handleChange}
-                    disabled={disabled}
-                    className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                    min="0"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="text-sm text-gray-700">Consultation Fee</label>
-                  <input
-                    type="number"
-                    name="fee"
-                    value={formData.fee}
-                    onChange={handleChange}
-                    disabled={disabled}
-                    className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                    min="0"
-                  />
-                </div>
+              <div className="flex gap-4">
+                <input
+                  name="experience"
+                  value={formData.experience}
+                  onChange={handleChange}
+                  disabled={disabled}
+                  placeholder="Total Experience"
+                  className="flex-1 p-2 border rounded-md"
+                />
+                <input
+                  name="fee"
+                  value={formData.fee}
+                  onChange={handleChange}
+                  disabled={disabled}
+                  placeholder="Consultation Fee"
+                  className="flex-1 p-2 border rounded-md"
+                />
               </div>
 
-              {/* Action Button */}
+              {/* Dynamic Experience Fields */}
+              {!disabled && (
+                <div className="mt-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-semibold text-indigo-600">Add Previous Experience</h3>
+                    <button
+                      type="button"
+                      onClick={addExperienceField}
+                      className="bg-indigo-500 text-white px-3 py-1 rounded"
+                    >
+                      + Add
+                    </button>
+                  </div>
+                  {newExperienceList.map((exp, idx) => (
+                    <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                      <input
+                        type="text"
+                        placeholder="Hospital Name"
+                        value={exp.hospitalName}
+                        onChange={(e) => handleExperienceChange(idx, 'hospitalName', e.target.value)}
+                        className="p-2 border rounded-md"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Role"
+                        value={exp.role}
+                        onChange={(e) => handleExperienceChange(idx, 'role', e.target.value)}
+                        className="p-2 border rounded-md"
+                      />
+                      <input
+                        type="number"
+                        placeholder="Years"
+                        value={exp.years}
+                        onChange={(e) => handleExperienceChange(idx, 'years', e.target.value)}
+                        className="p-2 border rounded-md"
+                        min={0}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Action Buttons */}
               <div className="text-center">
                 {disabled ? (
-                  <p
+                  <button
+                    type="button"
                     onClick={update}
-                    className="inline-block mt-4 bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-full cursor-pointer"
+                    className="mt-4 bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-full"
                   >
                     Update Profile
-                  </p>
+                  </button>
                 ) : (
                   <button
                     type="submit"
-                    className="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full transition duration-300"
+                    className="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full"
                   >
                     Save Changes
                   </button>

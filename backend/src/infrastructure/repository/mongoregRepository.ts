@@ -1,8 +1,10 @@
 import { RegRepository } from '../../domain/repository/reg-repository';
 import bcrypt from 'bcrypt'
 import { Idoctor } from '../../domain/entities/doctor';
+import {DoctorDTO} from '../../dto/doctor.dto'
 import { Doctor } from '../database/models/docter';
 import { Iuser } from '../../domain/entities/user';
+import {UserDTO} from '../../dto/user.dto'
 import { User } from '../database/models/user';
 import { Otp } from '../database/models/otp';
 import { IOtp } from '../../domain/entities/otp';
@@ -53,50 +55,48 @@ export class MongoRegRepository implements RegRepository {
     }
   }
 
-  async docLogin(email: string, password: string): Promise<Idoctor> {
+  async docLogin(email: string, password: string): Promise<DoctorDTO> {
+  try {
+    const doctor = await Doctor.findOne({ email });
 
-    {
-      try{
-        const doctor=await Doctor.findOne({email:email})
-        
-        if(!doctor)
-        {
-          throw new Error("This email is not registered")
-        }
-       const isMatch = await bcrypt.compare(password,doctor.password!  );
-        if (isMatch) {
-        console.log('Passwords match');
-        } else {
-          throw new Error('invalid credential');
-        }
-
-        if(doctor.status==="Rejected")
-        {
-          throw new Error("Your account is Rejected by admin")
-        }
-        if(doctor.status==="Pending")
-        {
-          throw new Error("Your account is not approved yet,please contact admin")
-        }
-        if(doctor.googleVerified===false)
-        {
-          throw new Error("Your account not verified")
-        }
-         if(doctor.isBlocked===true)
-        {
-          throw new Error("This account is blocked by admin,Please contact admin")
-        }
-        console.log(doctor)
-        return doctor;
-      }
-      catch(error)
-      {
-        if (error instanceof Error) {
-          throw new Error(error.message); // or just: throw error;
-        }
-        throw new Error('Unexpected error occurred during doctor login');
-      }
+    if (!doctor) {
+      throw new Error("This email is not registered");
     }
+
+    const isMatch = await bcrypt.compare(password, doctor.password!);
+    if (!isMatch) {
+      throw new Error("Invalid credentials");
+    }
+
+    if (doctor.status === "Rejected") {
+      throw new Error("Your account is rejected by admin");
+    }
+
+    if (doctor.status === "Pending") {
+      throw new Error("Your account is not approved yet, please contact admin");
+    }
+
+    if (doctor.googleVerified === false) {
+      throw new Error("Your account is not verified");
+    }
+
+    if (doctor.isBlocked === true) {
+      throw new Error("This account is blocked by admin, please contact admin");
+    }
+
+    // Return only the required fields
+    return {
+      _id:doctor._id,
+      firstname: doctor.firstname,
+      lastname: doctor.lastname,
+      email: doctor.email,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error("Unexpected error occurred during doctor login");
+  }
 }
 
 
@@ -137,73 +137,83 @@ export class MongoRegRepository implements RegRepository {
   }
 
 
-  async usergoogleLogin(credential:string):Promise<Iuser>{
-    try{
-              const decoded = jwtDecode<DecodedGoogleToken>(credential);
-             
-               const existingUser = await User.findOne({  email: decoded?.email });
-               if(!existingUser)
-               {
-              
-                 const user=new User()
-                  user.googleIds=decoded?.sub
-                  user.firstname=decoded.name
-                  user.googleVerified=true
-                  user.email=decoded.email
-                  await user.save()
-               }
-               else{
-                  if(existingUser?.isBlocked === true) {
-                  throw new Error('this account is blocked');
-                 }
-                 else{
-                   existingUser.googleIds=decoded?.sub
-                   await existingUser.save()
-                 }
-                }
-              const user = await User.findOne({ googleIds: decoded?.sub });
-            if (!user) {
-              throw new Error("User creation failed");
-            }
-            return user;
-    }
-    catch(error)
-    {
-       if (error instanceof Error) {
-        throw new Error(error.message);
-      }
-      throw new Error('Unexpected error occurred during user login');
-    }
-  }
+async usergoogleLogin(credential: string): Promise<UserDTO> {
+  try {
+    const decoded = jwtDecode<DecodedGoogleToken>(credential);
+    let user = await User.findOne({ email: decoded?.email });
 
-  async userLogin(email: string, password: string): Promise<Iuser> {
-    try {
-      const user = await User.findOne({ email: email});
-      if (!user) {
-        throw new Error('this email not registered');
+    if (!user) {
+      user = new User();
+      user.googleIds = decoded?.sub;
+      user.firstname = decoded.name?.split(" ")[0] || "";
+      user.lastname = decoded.name?.split(" ").slice(1).join(" ") || "";
+      user.googleVerified = true;
+      user.email = decoded.email;
+      await user.save();
+    } else {
+      if (user.isBlocked) {
+        throw new Error("This account is blocked");
       }
-      const isMatch = await bcrypt.compare(password,user.password!  );
-        if (isMatch) {
-        console.log('Passwords match');
-        } else {
-          throw new Error('invalid credential');
-        }
-    
-      if (user.isBlocked === true) {
-        throw new Error('this account is blocked');
-      }
-      if (user.googleVerified === false) {
-        throw new Error('this account is not verified');
-      }
-      return user;
+      user.googleIds = decoded?.sub;
+      await user.save();
     }
-    catch (error) {
-      if (error instanceof Error) {
-        throw new Error(error.message); // or just: throw error;
-      }
-      throw new Error('Unexpected error occurred during user login');
+
+    const loggedInUser = await User.findOne({ googleIds: decoded?.sub });
+
+    if (!loggedInUser) {
+      throw new Error("User creation failed");
     }
+
+    return {
+       _id:loggedInUser._id,
+      firstname: loggedInUser.firstname,
+      lastname: loggedInUser.lastname,
+      email: loggedInUser.email,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error("Unexpected error occurred during user login");
   }
+}
+
+
+  async userLogin(email: string, password: string): Promise<UserDTO> {
+  try {
+    const user = await User.findOne({ email: email });
+
+    if (!user) {
+      throw new Error("This email is not registered");
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password!);
+    if (!isMatch) {
+      throw new Error("Invalid credentials");
+    }
+
+    if (user.isBlocked) {
+      throw new Error("This account is blocked");
+    }
+
+    if (!user.googleVerified) {
+      throw new Error("This account is not verified");
+    }
+
+    return {
+      _id:user._id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error("Unexpected error occurred during user login");
+  }
+}
+
 
 
   async craeteOtp(data:IOtp): Promise<void> {

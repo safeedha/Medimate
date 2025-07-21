@@ -11,7 +11,7 @@ import Docdetails from '../component/patient/Docdetails'
 import Booking from '../component/patient/Booking'
 import Password from '../component/patient/Password'
 import Chat from '../component/patient/Chat'
-import Report from '../component/patient/Report'
+
 import Wallet from '../component/patient/Wallet'
 function Userhandler() {
   return (
@@ -27,7 +27,7 @@ function Userhandler() {
     <Route path="/changepassword" element={<UserProtect><Password /></UserProtect>} />
     <Route path="/chat" element={<UserProtect><Chat /></UserProtect>} />
      <Route path="/wallet" element={<UserProtect><Wallet /></UserProtect>} />
-    <Route path="/viewreport" element={<UserProtect>< Report /></UserProtect>} />
+   
     </> 
   )
 }

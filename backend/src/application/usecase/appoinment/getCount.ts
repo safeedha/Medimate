@@ -1,6 +1,7 @@
 import { appointmentRepository  } from '../../../domain/repository/appoinment-rep';
 import { Appointment } from '../../../domain/entities/appoinment';
-export class GetdoctorAppointmentCount {
+import { IGetDoctorAppointmentCount} from '../../../domain/useCaseInterface/appoinment/IGetDoctorAppointmentCount';
+export class GetdoctorAppointmentCount implements IGetDoctorAppointmentCount{
   constructor(private appointmentRepo: appointmentRepository,) {}
    async getcountofappoinment(doctorid:string):Promise<Record<string, number>>{
        try{

@@ -1,8 +1,9 @@
 
 import {DoctorRepository} from '../../../domain/repository/doctor-repository';
 import {DoctorDTO} from '../../../dto/doctor.dto'
+import { IGetAllDoctor } from '../../../domain/useCaseInterface/doctor/IGetAllDoctor';
 
-export class GetAlldoctor {
+export class GetAlldoctor implements IGetAllDoctor{
 
   constructor(private doctorRepository: DoctorRepository) {}
   async getAlldoctors(page:number,limit:number,search:string): Promise<{doctors:DoctorDTO[],total:number}> {

@@ -5,6 +5,7 @@ import { getAllunVerfiedDoctors, changeStatus } from '../../../api/adminapi/doct
 import type { Idoctor } from '../../../Interface/interface'
 import Modal from 'react-modal'
 import Swal from 'sweetalert2'
+import Table from '../../../component/common/Table' // <-- Import the Table!
 
 const customStyles = {
   content: {
@@ -58,7 +59,6 @@ function Docverify() {
         const response = await getAllunVerfiedDoctors(currentpage, limit)
         if (response) {
           setDoctors(response.doctors)
-          console.log()
           setTotal(response.total)
           window.scrollTo({ top: 0, behavior: 'smooth' })
         } else toast.error('Failed to fetch doctors')
@@ -113,6 +113,29 @@ function Docverify() {
     }
   }
 
+  // -- Table Columns definition
+  const columns = [
+    {
+      header: "Name",
+      accessor: (doctor: Idoctor) => `${doctor.firstname} ${doctor.lastname}`,
+    },
+    {
+      header: "Email",
+      accessor: (doctor: Idoctor) => doctor.email,
+    },
+    {
+      header: "Actions",
+      accessor: (doctor: Idoctor) => (
+        <button
+          className="text-blue-600 hover:underline"
+          onClick={() => getSingledetails(doctor._id!)}
+        >
+          View Details
+        </button>
+      ),
+    },
+  ]
+
   return (
     <div className="flex h-screen">
       <Toaster
@@ -133,34 +156,11 @@ function Docverify() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full bg-white rounded-md shadow-md border border-gray-200">
-              <thead>
-                <tr className="bg-gray-200 text-gray-600 text-left text-sm uppercase">
-                  <th className="py-3 px-6 border border-gray-300">Name</th>
-                  <th className="py-3 px-6 border border-gray-300">Email</th>
-                  <th className="py-3 px-6 border border-gray-300">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {doctors.map((doctor) => (
-                  <tr
-                    key={doctor._id}
-                    className={`border-b hover:bg-gray-50 ${doctor.isBlocked ? 'bg-red-100 text-red-700' : ''}`}
-                  >
-                    <td className="py-3 px-6 border border-gray-200">{doctor.firstname} {doctor.lastname}</td>
-                    <td className="py-3 px-6 border border-gray-200">{doctor.email}</td>
-                    <td className="py-3 px-6 border border-gray-200">
-                      <button
-                        className="text-blue-600 hover:underline"
-                        onClick={() => getSingledetails(doctor._id!)}
-                      >
-                        View Details
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <Table
+              columns={columns}
+              data={doctors}
+              getRowClassName={(doctor) => doctor.isBlocked ? 'bg-red-100 text-red-700' : ''}
+            />
 
             {/* Pagination Controls */}
             <div className="mt-4 flex justify-center items-center space-x-4">
@@ -192,7 +192,7 @@ function Docverify() {
           </div>
         )}
 
-     
+        {/* Modal for doctor details */}
         <Modal
           isOpen={modalIsOpen}
           onAfterOpen={afterOpenModal}

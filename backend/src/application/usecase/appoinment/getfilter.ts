@@ -1,7 +1,8 @@
 import { appointmentRepository } from '../../../domain/repository/appoinment-rep';
 import {AppointmentCountByDate} from '../../../dto/slot.dto'
+import{IGetFilteredAppointment } from '../../../domain/useCaseInterface/appoinment/IGetFilteredAppointment';
 
-export class GetFilter {
+export class GetFilter implements IGetFilteredAppointment{
   constructor(private appointmentRepo: appointmentRepository) {}
 
   async getappoinmentrange( status: 'completed' | 'cancelled' | 'pending',start: Date,end: Date):Promise<AppointmentCountByDate[]> {

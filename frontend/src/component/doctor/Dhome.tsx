@@ -1,4 +1,4 @@
-import DoctorSidebar from './Docsidebar';
+import DoctorSidebar from '../common/Docsidebar';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../app/store';
 

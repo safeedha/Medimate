@@ -1,15 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
-import Navbar from './Navbar';
+import Navbar from '../common/Navbar';
 import { useParams } from 'react-router-dom';
-import {
-  getSingledoctor,
-  getSlotedoctor,
-  handlePayment
-} from '../../api/userapi/doctor';
-import {
-  creatAppoinment,
-  createlockslot
-} from '../../api/userapi/appoinment';
+import {getSingledoctor,getSlotedoctor,handlePayment} from '../../api/userapi/doctor';
+import {getwallet,debitwallet} from '../../api/userapi/wallet';
+import {creatAppoinment, createlockslot} from '../../api/userapi/appoinment';
 import type { Idoctor, IndividualSlot } from '../../Interface/interface';
 import toast, { Toaster } from 'react-hot-toast';
 import Modal from 'react-modal';
@@ -39,9 +33,13 @@ function Docdetails() {
   Modal.setAppElement('body');
   const { Razorpay } = useRazorpay();
   const subtitleRef = useRef<HTMLHeadingElement | null>(null);
-
   const [doctor, setDoctor] = useState<Idoctor>();
-  const [date, setDate] = useState<Date>(new Date());
+  const [balance,setBalance]=useState<number>(0)
+  const [date, setDate] = useState<Date>(() => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return tomorrow;
+});
   const [slot, setSlot] = useState<IndividualSlot[]>([]);
   const [modalIsOpen, setIsOpen] = useState<boolean>(false);
   const [selectedSlot, setSelectedSlot] = useState<IndividualSlot | null>(null);
@@ -132,6 +130,7 @@ function Docdetails() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    let payment=formData.paymentMethod
     e.preventDefault();
     if (
       !formData.fullName ||
@@ -145,7 +144,7 @@ function Docdetails() {
       toast.error('Please fill all fields');
       return;
     }
-
+   if(payment==='Online'){
     const result = await handlePayment(Razorpay, doctor?.fee as number);
     if (result === 'success') {
       const response = await creatAppoinment(
@@ -166,6 +165,32 @@ function Docdetails() {
     } else {
       toast.error('Payment failed or not verified.');
     }
+  }
+  else{
+    const bal=await getwallet(1,1)
+    setBalance(bal.balance)
+    if(balance>=doctor?.fee!)
+    {
+       await debitwallet(doctor?.fee!)
+       const response = await creatAppoinment(
+        id!,
+        selectedSlot?._id as string,
+        formData.fullName,
+        formData.email,
+        Number(formData.age),
+        formData.gender,
+        formData.reason,
+        doctor?.fee as number
+      );
+      if (response === 'Appointment created successfully') {
+        toast.success('Payment successful! Booking confirmed');
+        setRender(!render);
+      }
+    }
+    else{
+      toast.error('There is no available wallet in your wallet');
+    }
+  }
 
     closeModal();
   };
@@ -349,6 +374,17 @@ function Docdetails() {
                   />
                   Online Payment
                 </label>
+
+                  <label className="flex items-center gap-1">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="Wallet"
+                    checked={formData.paymentMethod === 'Wallet'}
+                    onChange={handleInputChange}
+                  />
+                  Wallet payment
+                </label>
               </div>
             </div>
 
@@ -402,7 +438,9 @@ function Docdetails() {
           className="border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 mb-5"
           onChange={handleDateChange}
           value={date.toISOString().split('T')[0]}
-          min={new Date().toISOString().split('T')[0]}
+           min={new Date(new Date().setDate(new Date().getDate() + 1))
+            .toISOString()
+            .split('T')[0]}
         />
 
         <div className="bg-teal-50 p-4 rounded-md shadow-inner">

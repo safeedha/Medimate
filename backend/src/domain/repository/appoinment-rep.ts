@@ -1,5 +1,6 @@
 import {Appointment} from  '../entities/appoinment';
 import {ScheduleDTO,AppointmentDTO,AppointmentCountByDate} from '../../dto/slot.dto'
+import {IDepartmentSummary} from '../../dto/departmentsummary.dto'
  export interface appointmentRepository {
   createappoinment(data:Appointment):Promise<Appointment>;
    getfutureappoinment(userid:string,page:number,limt:number):Promise<{total:number,appoi:Appointment[]}>
@@ -17,4 +18,5 @@ import {ScheduleDTO,AppointmentDTO,AppointmentCountByDate} from '../../dto/slot.
    createfollowp(appoinmentId:string,followupid:string):Promise<string>
    getpageforId( id:string,originalId:string,limit:number):Promise<number>
    getpageforuserId( id:string,originalId:string,limit:number):Promise<number>
+   getdepartmentsummary():Promise<IDepartmentSummary[]>
  }

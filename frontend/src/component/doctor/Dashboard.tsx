@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
-import DoctorSidebar from './Docsidebar'
+import DoctorSidebar from '../common/Docsidebar'
 import { getOverviewofappoinment } from '../../api/doctorapi/appoinment'
 import { FaCheckCircle, FaClock, FaTimesCircle, FaClipboardList } from 'react-icons/fa'
 import DashboardBarChart from './Bar'

@@ -1,5 +1,5 @@
 import {RegRepository} from "../../../domain/repository/reg-repository";
-
+import { IOtpCreator } from '../../../domain/useCaseInterface/authRecovery/IOtpCreator';
 
 
 export class OtpdocCretion {

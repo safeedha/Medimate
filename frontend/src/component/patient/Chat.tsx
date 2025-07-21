@@ -1,9 +1,9 @@
 import {useEffect,useState} from 'react'
-import Chatsidebar from './Chatsidebar'
-import Navbar from './Navbar';
-import Nochatselected from './Nochatselected'
+import Nochatselected from '../common/Nochatselected'
+import Navbar from '../common/Navbar';
+import ChatSidebar from '../common/ChatSidebar'
 import {socket} from '../../socket'
-import Chatbox from './Chatbox';  
+import Chatbox from '../common/Chatbox';  
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../app/store';
 
@@ -38,7 +38,7 @@ useEffect(() => {
     <>
     <Navbar/>
     <div className='flex flex-row mt-16'>
-      <Chatsidebar getUserId={getUserId} onlineuser={onlineuser} sort={sort}/>
+      <ChatSidebar getUserId={getUserId} onlineuser={onlineuser} sort={sort}/>
       <div className='flex-1 bg-teal-50'>
         {userid===""?
         <Nochatselected/>:
