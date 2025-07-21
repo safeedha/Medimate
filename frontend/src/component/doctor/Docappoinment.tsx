@@ -36,8 +36,8 @@ function Docappoinment() {
   const [targetIdToScroll, setTargetIdToScroll] = useState<string | null>(null);
   const [followupAppointmentId, setFollowupAppointmentId] = useState<string | null>(null);
 
- 
-  const rowRefs = useRef<{ [key: string]: React.RefObject<HTMLTableRowElement> }>({});
+   const rowRefs = useRef<{ [key: string]: React.RefObject<HTMLTableRowElement|null>}>({});
+  // const rowRefs = useRef<{ [key: string]: React.RefObject<HTMLTableRowElement> }>({});
   const user = useSelector((state: RootState) => state.doctor.doctorInfo);
   const limit = 3;
   const today = new Date();
@@ -366,19 +366,22 @@ function Docappoinment() {
           </div>
         ) : (
           <div className="overflow-x-auto bg-white rounded-xl shadow border border-gray-200">
-            <Table
+           <Table
             columns={columns}
             data={appointments}
             getRowClassName={() => ""}
             rowRefById={(row: Appointment) => {
               const id = row._id;
-              if (!id) return null; 
+              if (!id) {
+                return React.createRef<HTMLTableRowElement>();
+              }
               if (!rowRefs.current[id]) {
-                rowRefs.current[id] = React.createRef<HTMLTableRowElement>();
+                rowRefs.current[id]= React.createRef<HTMLTableRowElement>();
               }
               return rowRefs.current[id];
             }}
           />
+
           </div>
         )}
 

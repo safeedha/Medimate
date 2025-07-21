@@ -1,44 +1,37 @@
+import React from "react";
 
-
-import React from 'react';
-
-type TableColumn<T> = {
-  header: string;
-  accessor: (row: T) => React.ReactNode;
-};
-
-type TableProps<T> = {
-  columns: TableColumn<T>[];
+interface TableProps<T> {
+  columns: Array<{ header: string; accessor: (item: T) => React.ReactNode }>;
   data: T[];
-  getRowClassName?: (row: T) => string;
-  rowRefById?: (row: T) => React.RefObject<HTMLTableRowElement>|null ; 
-};
+  getRowClassName?: (item: T, idx: number) => string;
+  rowRefById?: (item: T) => React.RefObject<HTMLTableRowElement|null>;   
+}
 
-function Table<T extends {}>({
+export default function Table<T extends { _id?: string }>({
   columns,
   data,
   getRowClassName,
   rowRefById,
 }: TableProps<T>) {
   return (
-    <table className="w-full table-auto text-sm text-left text-gray-700">
-      <thead className="bg-gray-100 text-gray-600 font-semibold uppercase text-xs">
+    <table className="min-w-full border text-left border-gray-200 rounded-md shadow text-sm">
+      <thead className="bg-blue-50">
         <tr>
           {columns.map((col, idx) => (
-            <th key={idx} className="px-4 py-3">{col.header}</th>
+            <th key={idx} className="px-3 py-2 border">{col.header}</th>
           ))}
         </tr>
       </thead>
       <tbody>
-        {data.map((row, i) => (
+        {data.map((item, idx) => (
           <tr
-            key={(row as any)._id ?? i}
-            ref={rowRefById ? (rowRefById(row) as any) : undefined}
-            className={getRowClassName ? getRowClassName(row) : ''}
+            key={item._id || idx}
+            ref={rowRefById ? rowRefById(item) : undefined}
+            className={getRowClassName ? getRowClassName(item, idx) : ""}
           >
-            {columns.map((col, j) => (
-              <td key={j} className="px-4 py-2">
-                {col.accessor(row)}
+            {columns.map((col, cidx) => (
+              <td key={cidx} className="px-3 py-2 border">
+                {col.accessor(item)}
               </td>
             ))}
           </tr>
@@ -47,5 +40,3 @@ function Table<T extends {}>({
     </table>
   );
 }
-
-export default Table;

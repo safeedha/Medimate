@@ -21,8 +21,8 @@ function Booking() {
   const [selectedMedicines, setSelectedMedicines] = useState<any[]>([]);
   const [targetIdToScroll, setTargetIdToScroll] = useState<string | null>(null);
   const [loadingReport, setLoadingReport] = useState(false);
-  const rowRefs = useRef<{ [key: string]: React.RefObject<HTMLTableRowElement> }>({});
-  const reportRef = useRef<HTMLDivElement | null>(null);
+  const rowRefs = useRef<{ [key: string]: React.RefObject<HTMLTableRowElement|null>}>({});
+  const reportRef = useRef<HTMLDivElement|null>(null);
   const limit = 3;
 
   useEffect(() => {
@@ -283,19 +283,22 @@ function Booking() {
             </h2>
             {futur.length > 0 ? (
               <div className="overflow-x-auto rounded-lg">
-                <Table
+                 <Table
                   columns={columns}
                   data={futur}
                   getRowClassName={() => ''}
                   rowRefById={appointment => {
                     const id = appointment._id;
-                    if (!id) return null;
+                    if (!id) {
+                      return React.createRef<HTMLTableRowElement>();
+                    }
                     if (!rowRefs.current[id]) {
-                      rowRefs.current[id] = React.createRef<HTMLTableRowElement>();
+                      rowRefs.current[id]  = React.createRef<HTMLTableRowElement>();
                     }
                     return rowRefs.current[id];
                   }}
                 />
+
                 {totalPages > 1 && (
                   <div className="flex justify-center items-center space-x-2 mt-6">
                     <button
