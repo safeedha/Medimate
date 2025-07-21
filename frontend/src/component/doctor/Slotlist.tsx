@@ -141,7 +141,7 @@ function Slotlist({ render, setRender, setrecSlot, setEdit }: { render?: boolean
   ];
 
   return (
-    <div className="m-6 bg-yellow-50 relative text-sm">
+    <div className="m-6 relative text-sm">
       <div className="fixed top-6 right-6 bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded shadow z-50">
         <span>You can only cancel recurring slot before patient booking</span>
       </div>
@@ -153,7 +153,7 @@ function Slotlist({ render, setRender, setrecSlot, setEdit }: { render?: boolean
         </div>
       </div>
 
-      {/* Pagination */}
+   
       <div className="mt-4 flex justify-center items-center gap-2 flex-wrap">
         <button
           className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"

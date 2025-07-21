@@ -541,7 +541,7 @@ async getallappinmentfordoctor(doctorid:string):Promise<Appointment[]>{
                 },
                 count: { $sum: 1 },
               },
-            },
+            },    
 
             {
               $group: {

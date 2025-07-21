@@ -9,7 +9,6 @@ const secret = process.env.JWT_SECRET || 'secret';
 
 export const verifyToken = (req: CustomRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
-  console.log("Auth Header:", authHeader);
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     res.status(401).json({ message: 'No token provided' });
@@ -20,7 +19,7 @@ export const verifyToken = (req: CustomRequest, res: Response, next: NextFunctio
 
   try {
     const decoded = jwt.verify(token, secret) as JwtPayload;
-    console.log("Decoded JWT:", decoded);
+ 
 
     if (decoded && typeof decoded === 'object' && 'id' in decoded && 'role' in decoded) {
       const { id, role } = decoded;

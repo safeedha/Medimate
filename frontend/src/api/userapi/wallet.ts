@@ -20,6 +20,7 @@ export const getwallet = async (page: number, limit: number) => {
 export const debitwallet= async (amount:number) => {
   try {
     const response = await axiosInstance.post("/user/wallet",{amount});
+    console.log(response)
    
   } catch (error) {
     if (axios.isAxiosError(error)) {

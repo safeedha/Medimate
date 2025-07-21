@@ -10,6 +10,8 @@ export interface CustomRequest extends Request {
 router.get("/",verifyToken, (req, res, next) => {
   doctor.fetchSingleDoctor(req as CustomRequest, res, next)
 })
+router.post("/update",verifyToken, (req, res,next) => doctor.updateDoctorProfile(req as CustomRequest, res,next)) 
+
 router.post("/signup", (req, res, next) => auth.registerDoctor(req, res, next));
 router.post("/login", (req, res, next) => auth.loginDoctor(req, res, next));
 router.get("/logout", (req, res, next) => auth.logoutDoctor(req, res, next));
@@ -82,7 +84,7 @@ router.get("/slots", verifyToken, (req, res, next) => slot.cancelRecurringSlots(
 router.get("/slots",verifyToken,(req, res,next) => slot.getDoctorSlotsByDate(req as CustomRequest, res,next)) 
 router.delete("/slots/:slotid", verifyToken, (req, res, next) => slot.cancelSingleSlot(req as CustomRequest, res, next));
 router.post("/slot/recurring", verifyToken, (req, res, next) => slot.createRecurringSlot(req as CustomRequest, res, next));
-router.put("/slot/recurring/:id", verifyToken, (req, res, next) => slot.editRecurringSlot(req as CustomRequest, res, next));
+router.put("/slot/recurring/:recId", verifyToken, (req, res, next) => slot.editRecurringSlot(req as CustomRequest, res, next));
 router.delete("/slots/recurring/:id", verifyToken, (req, res, next) => slot.cancelRecurringSlots(req as CustomRequest, res, next));
 router.get("/slots/recurring/:id", verifyToken, (req, res, next) => slot.getAllRecurringSlots(req as CustomRequest, res, next));
 

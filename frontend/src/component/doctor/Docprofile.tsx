@@ -1,13 +1,12 @@
-import DoctorSidebar from '../common/Docsidebar';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import type { RootState } from '../../app/store';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
-import { profileUpdate,getSingledoctor } from '../../api/doctorapi/doclogin';
+import { profileUpdate, getSingledoctor } from '../../api/doctorapi/doclogin';
 import { getDepartment } from '../../api/doctorapi/department';
+import DoctorSidebar from '../common/Docsidebar';
 import type { DepartmentProps } from '../../Interface/interface';
-
 
 interface Experience {
   hospitalName: string;
@@ -17,37 +16,59 @@ interface Experience {
 
 function DoctorProfile() {
   const doctor = useSelector((state: RootState) => state.doctor.doctorInfo);
-  const dispatch = useDispatch();
 
   const [departments, setDepartments] = useState<DepartmentProps[]>([]);
   const [disabled, setDisabled] = useState(true);
-  const [profilePicture, setProfilePicture] = useState(doctor?.profilePicture || '');
-  const [medicalLicence, setMedicalLicence] = useState(doctor?.medicalLicence || '');
+  const [render, setRender] = useState(true);
+  const [profilePicture, setProfilePicture] = useState<string>('');
+  const [medicalLicence, setMedicalLicence] = useState<string>('');
+  const [experienceDetail, setExperienceDetail] = useState<Experience[]>([]);
   const [newExperienceList, setNewExperienceList] = useState<Experience[]>([
     { hospitalName: '', role: '', years: '' },
   ]);
 
   const [formData, setFormData] = useState({
-    firstname: doctor?.firstname || '',
-    lastname: doctor?.lastname || '',
-    experience: doctor?.experience?.toString() || '',
-    fee: doctor?.fee?.toString() || '',
-    phone: doctor?.phone || '',
-    specialisation: doctor?.specialisation || '',
-    qualification: doctor?.qualification || '',
+    firstname: '',
+    lastname: '',
+    experience: '',
+    fee: '',
+    phone: '',
+    specialisation: '',
+    qualification: '',
   });
-  useEffect(()=>{
-   const fetchSingledoctor=async()=>{
-    const response=await getSingledoctor()
-   }
-   fetchSingledoctor()
-  },[])
+
+  useEffect(() => {
+    const fetchSingleDoctor = async () => {
+      try {
+        const doctor = await getSingledoctor();
+        setFormData({
+          firstname: doctor.firstname || '',
+          lastname: doctor.lastname || '',
+          experience: doctor.experience?.toString() || '',
+          fee: doctor.fee?.toString() || '',
+          phone: doctor.phone || '',
+          specialisation: doctor.specialisation?.id || '',
+          qualification: doctor.qualification || '',
+        });
+        setProfilePicture(doctor.profilePicture || '');
+        setMedicalLicence(doctor.medicalLicence || '');
+        setExperienceDetail(doctor.experienceDetail || []);
+      } catch (error) {
+        console.error('Failed to fetch doctor:', error);
+      }
+    };
+
+    fetchSingleDoctor();
+  }, [render]);
 
   useEffect(() => {
     getDepartment().then(setDepartments).catch(console.error);
   }, []);
 
-  const update = () => setDisabled(false);
+  const update = () => {
+    setDisabled(false);
+    setNewExperienceList(experienceDetail);
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -94,9 +115,15 @@ function DoctorProfile() {
     }
   };
 
+   const handleRemoveExperience = (index: number) => {
+    const updatedList = [...newExperienceList];
+    updatedList.splice(index, 1);
+    setNewExperienceList(updatedList);
+  };
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const { firstname, lastname, phone, qualification, experience, fee } = formData;
 
     if (!firstname.trim()) return toast.error('First name is required');
@@ -107,7 +134,6 @@ function DoctorProfile() {
     if (!/^\d{10}$/.test(phone)) return toast.error('Phone number must be exactly 10 digits');
 
     let uploadedUrl = profilePicture;
-
     if (profilePicture && profilePicture.startsWith('data:')) {
       const uploadForm = new FormData();
       uploadForm.append('file', profilePicture);
@@ -119,6 +145,14 @@ function DoctorProfile() {
       );
       uploadedUrl = response.data.secure_url.split('/upload/')[1];
     }
+       for (const exp of newExperienceList) {
+      if (!exp.hospitalName.trim() || !exp.role.trim() || !exp.years.trim()) {
+        return toast.error('All experience fields must be filled');
+      }
+    }
+    const cleanedExperienceList = newExperienceList.filter(
+      (exp) => exp.hospitalName.trim() && exp.role.trim() && exp.years.trim()
+    );
 
     const payload = {
       firstname,
@@ -127,17 +161,16 @@ function DoctorProfile() {
       fee: Number(fee),
       image: uploadedUrl,
       phone,
-      email: doctor!.email!,
       specialisation: formData.specialisation,
       qualification,
       medicalLicence,
-      newExperienceList, // ⬅️ send new entries to backend
+      newExperienceList: cleanedExperienceList,
     };
 
-    const res = await profileUpdate(payload, dispatch);
-
+    const res = await profileUpdate(payload, newExperienceList);
     if (res === 'Profile updated successfully') {
       toast.success(res);
+      setRender((prev) => !prev);
       setDisabled(true);
     } else {
       toast.error(res);
@@ -158,7 +191,6 @@ function DoctorProfile() {
 
         <main className="px-6 md:px-20 py-4 flex justify-center">
           <div className="w-full max-w-2xl bg-white rounded-2xl p-8 shadow-md">
-            {/* Profile Photo Upload */}
             <div className="text-center mb-6">
               <img
                 src={`https://res.cloudinary.com/dwerqkqou/image/upload/${profilePicture}`}
@@ -177,66 +209,75 @@ function DoctorProfile() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Name Inputs */}
               <div className="flex gap-4">
-                <input
-                  name="firstname"
-                  value={formData.firstname}
-                  onChange={handleChange}
-                  disabled={disabled}
-                  placeholder="First Name"
-                  className="flex-1 p-2 border rounded-md"
-                />
-                <input
-                  name="lastname"
-                  value={formData.lastname}
-                  onChange={handleChange}
-                  disabled={disabled}
-                  placeholder="Last Name"
-                  className="flex-1 p-2 border rounded-md"
-                />
+                <div className="flex-1">
+                  <label htmlFor="firstname" className="block text-sm font-medium mb-1">First Name</label>
+                  <input
+                    id="firstname"
+                    name="firstname"
+                    value={formData.firstname}
+                    onChange={handleChange}
+                    disabled={disabled}
+                    className="w-full p-2 border rounded-md"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label htmlFor="lastname" className="block text-sm font-medium mb-1">Last Name</label>
+                  <input
+                    id="lastname"
+                    name="lastname"
+                    value={formData.lastname}
+                    onChange={handleChange}
+                    disabled={disabled}
+                    className="w-full p-2 border rounded-md"
+                  />
+                </div>
               </div>
 
-              {/* Contact & Specialisation */}
               <div className="flex gap-4">
-                <input
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  disabled={disabled}
-                  placeholder="Phone Number"
-                  className="flex-1 p-2 border rounded-md"
-                  pattern="[0-9]{10}"
-                />
-                <select
-                  name="specialisation"
-                  value={formData.specialisation}
-                  onChange={handleChange}
-                  disabled={disabled}
-                  className="flex-1 p-2 border rounded-md"
-                >
-                  <option value="">Select Department</option>
-                  {departments.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.deptname}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex-1">
+                  <label htmlFor="phone" className="block text-sm font-medium mb-1">Phone Number</label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    disabled={disabled}
+                    className="w-full p-2 border rounded-md"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label htmlFor="specialisation" className="block text-sm font-medium mb-1">Department</label>
+                  <select
+                    id="specialisation"
+                    name="specialisation"
+                    value={formData.specialisation}
+                    onChange={handleChange}
+                    disabled={disabled}
+                    className="w-full p-2 border rounded-md"
+                  >
+                    <option value="">Select Department</option>
+                    {departments.map((d) => (
+                      <option key={d.id} value={d.id}>{d.deptname}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
-              {/* Qualification */}
-              <textarea
-                name="qualification"
-                value={formData.qualification}
-                onChange={handleChange}
-                disabled={disabled}
-                placeholder="Qualification"
-                className="w-full p-2 border rounded-md"
-              />
-
-              {/* License Upload */}
               <div>
-                <label className="text-sm">Medical License</label>
+                <label htmlFor="qualification" className="block text-sm font-medium mb-1">Qualification</label>
+                <textarea
+                  id="qualification"
+                  name="qualification"
+                  value={formData.qualification}
+                  onChange={handleChange}
+                  disabled={disabled}
+                  className="w-full p-2 border rounded-md"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="medicalLicense" className="block text-sm font-medium mb-1">Medical License</label>
                 {medicalLicence && (
                   <div className="mb-1">
                     <a
@@ -250,6 +291,7 @@ function DoctorProfile() {
                   </div>
                 )}
                 <input
+                  id="medicalLicense"
                   type="file"
                   accept="image/*,.pdf"
                   onChange={handleLicenceChange}
@@ -258,27 +300,139 @@ function DoctorProfile() {
                 />
               </div>
 
-              {/* Experience & Fee */}
               <div className="flex gap-4">
-                <input
-                  name="experience"
-                  value={formData.experience}
-                  onChange={handleChange}
-                  disabled={disabled}
-                  placeholder="Total Experience"
-                  className="flex-1 p-2 border rounded-md"
-                />
-                <input
-                  name="fee"
-                  value={formData.fee}
-                  onChange={handleChange}
-                  disabled={disabled}
-                  placeholder="Consultation Fee"
-                  className="flex-1 p-2 border rounded-md"
-                />
+                <div className="flex-1">
+                  <label htmlFor="experience" className="block text-sm font-medium mb-1">Total Experience</label>
+                  <input
+                    id="experience"
+                    name="experience"
+                    value={formData.experience}
+                    onChange={handleChange}
+                    disabled={disabled}
+                    className="w-full p-2 border rounded-md"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label htmlFor="fee" className="block text-sm font-medium mb-1">Consultation Fee</label>
+                  <input
+                    id="fee"
+                    name="fee"
+                    value={formData.fee}
+                    onChange={handleChange}
+                    disabled={disabled}
+                    className="w-full p-2 border rounded-md"
+                  />
+                </div>
               </div>
 
-              {/* Dynamic Experience Fields */}
+              {disabled && experienceDetail.length > 0 && (
+                <div className="mt-6">
+                  <h3 className="font-semibold text-indigo-600 mb-2">Experience History</h3>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full border text-sm text-left">
+                      <thead className="bg-gray-100">
+                        <tr>
+                          <th className="px-3 py-2 border">Hospital</th>
+                          <th className="px-3 py-2 border">Role</th>
+                          <th className="px-3 py-2 border">Years</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {experienceDetail.map((exp, idx) => (
+                          <tr key={idx} className="hover:bg-gray-50">
+                            <td className="px-3 py-2 border">{exp.hospitalName}</td>
+                            <td className="px-3 py-2 border">{exp.role}</td>
+                            <td className="px-3 py-2 border">{exp.years}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+                  
+
+                    {!disabled && (
+                <div className="mt-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-semibold text-indigo-600">Add Previous Experience</h3>
+                    <button
+                      type="button"
+                      onClick={addExperienceField}
+                      className="bg-indigo-500 text-white px-3 py-1 rounded"
+                    >
+                      + Add
+                    </button>
+                  </div>
+                  {newExperienceList.map((exp, idx) => (
+                    <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3 items-end relative border p-3 rounded-md shadow-sm">
+                      <div>
+                        <label className="text-sm block mb-1">Hospital Name</label>
+                        <input
+                          type="text"
+                          value={exp.hospitalName}
+                          onChange={(e) => handleExperienceChange(idx, 'hospitalName', e.target.value)}
+                          className="p-2 border rounded-md w-full"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm block mb-1">Role</label>
+                        <input
+                          type="text"
+                          value={exp.role}
+                          onChange={(e) => handleExperienceChange(idx, 'role', e.target.value)}
+                          className="p-2 border rounded-md w-full"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm block mb-1">Years</label>
+                        <input
+                          type="number"
+                          value={exp.years}
+                          onChange={(e) => handleExperienceChange(idx, 'years', e.target.value)}
+                          className="p-2 border rounded-md w-full"
+                          min={0}
+                        />
+                      </div>
+                      {newExperienceList.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveExperience(idx)}
+                          className="absolute top-1 right-1 bg-red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-600"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+              {/* {disabled && experienceDetail.length > 0 && (
+                <div className="mt-6">
+                  <h3 className="font-semibold text-indigo-600 mb-2">Experience History</h3>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full border text-sm text-left">
+                      <thead className="bg-gray-100">
+                        <tr>
+                          <th className="px-3 py-2 border">Hospital</th>
+                          <th className="px-3 py-2 border">Role</th>
+                          <th className="px-3 py-2 border">Years</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {experienceDetail.map((exp, idx) => (
+                          <tr key={idx} className="hover:bg-gray-50">
+                            <td className="px-3 py-2 border">{exp.hospitalName}</td>
+                            <td className="px-3 py-2 border">{exp.role}</td>
+                            <td className="px-3 py-2 border">{exp.years}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
               {!disabled && (
                 <div className="mt-4">
                   <div className="flex justify-between items-center mb-2">
@@ -293,43 +447,47 @@ function DoctorProfile() {
                   </div>
                   {newExperienceList.map((exp, idx) => (
                     <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-                      <input
-                        type="text"
-                        placeholder="Hospital Name"
-                        value={exp.hospitalName}
-                        onChange={(e) => handleExperienceChange(idx, 'hospitalName', e.target.value)}
-                        className="p-2 border rounded-md"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Role"
-                        value={exp.role}
-                        onChange={(e) => handleExperienceChange(idx, 'role', e.target.value)}
-                        className="p-2 border rounded-md"
-                      />
-                      <input
-                        type="number"
-                        placeholder="Years"
-                        value={exp.years}
-                        onChange={(e) => handleExperienceChange(idx, 'years', e.target.value)}
-                        className="p-2 border rounded-md"
-                        min={0}
-                      />
+                      <div>
+                        <label className="text-sm block mb-1">Hospital Name</label>
+                        <input
+                          type="text"
+                          value={exp.hospitalName}
+                          onChange={(e) => handleExperienceChange(idx, 'hospitalName', e.target.value)}
+                          className="p-2 border rounded-md w-full"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm block mb-1">Role</label>
+                        <input
+                          type="text"
+                          value={exp.role}
+                          onChange={(e) => handleExperienceChange(idx, 'role', e.target.value)}
+                          className="p-2 border rounded-md w-full"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm block mb-1">Years</label>
+                        <input
+                          type="number"
+                          value={exp.years}
+                          onChange={(e) => handleExperienceChange(idx, 'years', e.target.value)}
+                          className="p-2 border rounded-md w-full"
+                          min={0}
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
-              )}
+              )} */}
 
-              {/* Action Buttons */}
               <div className="text-center">
                 {disabled ? (
-                  <button
-                    type="button"
+                  <div
                     onClick={update}
-                    className="mt-4 bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-full"
+                    className="ml-60 mt-4 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-full cursor-pointer text-center text-xs w-fit"
                   >
                     Update Profile
-                  </button>
+                  </div>
                 ) : (
                   <button
                     type="submit"

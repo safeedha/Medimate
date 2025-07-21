@@ -25,6 +25,7 @@ export class UserWalletController {
     try {
       const userId = req.id;
       const {amount}=req.body
+      console.log(amount)
       await this.adduserwallet.addMoney(userId,Number(amount))
       res.status(HttpStatus.CREATED).json({message:Messages.WALLET_ADDED_SUCCESS});
     } catch (error) {

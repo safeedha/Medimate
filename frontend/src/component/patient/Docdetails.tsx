@@ -35,6 +35,7 @@ function Docdetails() {
   const subtitleRef = useRef<HTMLHeadingElement | null>(null);
   const [doctor, setDoctor] = useState<Idoctor>();
   const [balance,setBalance]=useState<number>(0)
+  const [wallet,setWallet]=useState<boolean>(false)
   const [date, setDate] = useState<Date>(() => {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -75,6 +76,53 @@ function Docdetails() {
     fetchSlotDoctor();
   }, [date, id, render]);
 
+
+  const closeModal = () => {
+   
+    setIsOpen(false);
+    setFormData({
+      fullName: '',
+      age: '',
+      gender: 'male',
+      email: '',
+      phone: '',
+      reason: '',
+      paymentMethod: ''
+    });
+    setSelectedSlot(null);
+  
+  };
+    useEffect(() => {
+  const handleWalletPayment = async () => {
+    if (wallet) {
+      if (balance >= doctor?.fee!) {
+        await debitwallet(doctor?.fee!);
+        const response = await creatAppoinment(
+          id!,
+          selectedSlot?._id as string,
+          formData.fullName,
+          formData.email,
+          Number(formData.age),
+          formData.gender,
+          formData.reason,
+          doctor?.fee as number
+        );
+        if (response === 'Appointment created successfully') {
+          toast.success('Payment successful! Booking confirmed');
+          setRender((prev) => !prev);
+        }
+      } else {
+        toast.error('There is no available balance in your wallet');
+      }
+      setWallet(false);
+      closeModal()
+    }
+  };
+
+  handleWalletPayment(); 
+}, [wallet]);
+
+
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedDate = new Date(e.target.value);
     if (selectedDate < new Date(new Date().toDateString())) {
@@ -91,7 +139,6 @@ function Docdetails() {
   }
 
   const result = await createlockslot(item._id as string, doctor._id);
-
   if (result === 'Slot is locked') {
     setSelectedSlot(item);
     setIsOpen(true);
@@ -108,20 +155,8 @@ function Docdetails() {
     }
   };
 
-  const closeModal = () => {
-    setIsOpen(false);
-    setFormData({
-      fullName: '',
-      age: '',
-      gender: 'male',
-      email: '',
-      phone: '',
-      reason: '',
-      paymentMethod: ''
-    });
-    setSelectedSlot(null);
-  };
-
+  
+   
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -164,35 +199,16 @@ function Docdetails() {
       closeModal();
     } else {
       toast.error('Payment failed or not verified.');
+      closeModal();
     }
   }
   else{
     const bal=await getwallet(1,1)
     setBalance(bal.balance)
-    if(balance>=doctor?.fee!)
-    {
-       await debitwallet(doctor?.fee!)
-       const response = await creatAppoinment(
-        id!,
-        selectedSlot?._id as string,
-        formData.fullName,
-        formData.email,
-        Number(formData.age),
-        formData.gender,
-        formData.reason,
-        doctor?.fee as number
-      );
-      if (response === 'Appointment created successfully') {
-        toast.success('Payment successful! Booking confirmed');
-        setRender(!render);
-      }
-    }
-    else{
-      toast.error('There is no available wallet in your wallet');
-    }
+    setWallet(true)
   }
 
-    closeModal();
+    
   };
 
   return (

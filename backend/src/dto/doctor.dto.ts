@@ -6,6 +6,11 @@ export interface DepartmentDTO {
   description: string;
   isblocked?: boolean;
 }
+export interface IExperience {
+  hospitalName: string;
+  role: string;
+  years: string;
+}
 export interface DoctorDTO {
   _id?:string;
   id?:string;
@@ -18,6 +23,7 @@ export interface DoctorDTO {
   fee?: number;
   isBlocked?:boolean
   status?: "Approved" | "Rejected" | "Pending";
+  experienceDetail?:IExperience[],
   qualification?: string;
   additionalInfo?: string;
   profilePicture?: string;

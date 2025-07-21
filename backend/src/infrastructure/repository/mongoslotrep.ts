@@ -9,7 +9,6 @@ export class MongoSlotRepostory implements slotRepository{
     
 async  lockAvailableSlot(data: SlotLockDTO): Promise<string> {
   try {
-
     const existingLock = await SlotLock.findOne({
       doctorId: data.doctorId,
       slotId: data.slotId,
@@ -85,7 +84,7 @@ async  lockAvailableSlot(data: SlotLockDTO): Promise<string> {
   
 async editRecurringSlot(data: RecurringDTO): Promise<RecurringDTO> {
   try {
-    // Check for overlapping recurring slots except the one being edited
+      
     const existingSlots = await Recurring.find({
       _id: { $ne: data._id }, // exclude current slot
       doctorId: data.doctorId,

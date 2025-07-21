@@ -1,13 +1,13 @@
 import {DoctorRepository} from '../../../domain/repository/doctor-repository';
-import {Idoctor} from '../../../domain/entities/doctor';
+import {DoctorDTO,IExperience} from '../../../dto/doctor.dto'
 import { IUpdateDoctorProfile } from '../../../domain/useCaseInterface/doctor/IUpdateDoctorProfile';
 
 export class Docprofile implements IUpdateDoctorProfile{
 
   constructor(private docRepository: DoctorRepository) {}
-  async updateprofile(firstname:string,lastname:string,experience:number,fee:number,image:string,email:string,phone:string,specialisation:string,qualification:string,medicalLicence:string): Promise<{message:string,doctor:Idoctor}> {
+  async updateprofile(id:string,firstname:string,lastname:string,experience:number,fee:number,image:string,phone:string,specialisation:string,qualification:string,medicalLicence:string, newExperienceList:IExperience[]): Promise<{message:string}> {
     try {
-      const update = await this.docRepository.profileupdate(firstname,lastname,experience,fee,image,email,phone,specialisation,qualification,medicalLicence);
+      const update = await this.docRepository.profileupdate(id,firstname,lastname,experience,fee,image,phone,specialisation,qualification,medicalLicence,newExperienceList);
 
       return update
     } catch (error) {

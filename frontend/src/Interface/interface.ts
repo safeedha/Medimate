@@ -169,7 +169,8 @@ export interface IDoctorReview {
 }
 
 export interface DepartmentProps {
-  id: string;
+
+  id?: string;
   deptname: string;
   description: string;
   createdAt: string;

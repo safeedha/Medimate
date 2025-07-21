@@ -36,6 +36,7 @@ import {CancelSlot} from '../../../application/usecase/slot/deleteslot'
 import{GetSlotByDate} from '../../../application/usecase/slot/getslotbydate'
 import {EditSlot} from '../../../application/usecase/slot/editrecslot'
 import {FetchSingleDoctor} from '../../../application/usecase/doctor/getSingledoc'
+import {Docprofile} from '../../../application/usecase/doctor/docProfile'
 
 
 import {MongoRegRepository} from '../../repository/mongoregRepository'
@@ -121,4 +122,5 @@ export const slot = new DoctorSlotController(
 );
 
 const fetchSingleDoctor=new FetchSingleDoctor(mongodocRepository)
-export const doctor=new DoctorProfileController(fetchSingleDoctor)
+const docprofile=new Docprofile(mongodocRepository)
+export const doctor=new DoctorProfileController(docprofile,fetchSingleDoctor,)

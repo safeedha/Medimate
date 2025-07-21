@@ -124,9 +124,10 @@ export const verifydoctorotp = async (email: string, otp: string) => {
 
 export const getSingledoctor=async()=>{
   try{
-     const response = await axiosInstance.get("/doctor/");
-     return response.data
+     const response = await axiosInstance.get('/doctor/');
      console.log(response.data)
+     return response.data
+
   }
   catch(error)
   {
@@ -139,7 +140,11 @@ export const getSingledoctor=async()=>{
     }
   }
 }
-
+type ExperienceDetail = {
+  hospitalName: string;
+  role: string;
+  years: string;
+};
 export const profileUpdate = async (
   data: {
     firstname: string,
@@ -147,17 +152,20 @@ export const profileUpdate = async (
     experience: number,
     fee: number,
     image: string,
-    email: string | undefined,
     phone: string,
     specialisation: string,
     qualification: string,
-    medicalLicence: string
+    medicalLicence: string,
+
   },
-  dispatch: AppDispatch
+   newExperienceList:ExperienceDetail[]
 ) => {
   try {
-    const response = await axiosInstance.post("/doctor/update", data);
-    dispatch(setDoctorDetails(response.data.doctor));
+     const response = await axiosInstance.post("/doctor/update", data, {
+      params: {
+        newExperienceList: JSON.stringify(newExperienceList)
+      }
+    });
     return response.data.message;
   } catch (error) {
     if (axios.isAxiosError(error)) {

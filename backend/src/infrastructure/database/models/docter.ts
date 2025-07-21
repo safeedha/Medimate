@@ -10,14 +10,16 @@ const DoctorSchema: Schema<Idoctor> = new Schema(
     password: { type: String, required: true },
     phone: { type: String, required: true },
     specialisation: { type: Schema.Types.ObjectId, ref: 'Department' },
-
-    experienceDetail: [
-      {
-        hospitalName: { type: String, required: true },
-        role: { type: String, required: true },
-        years: { type: Number, required: true },
-      }
-    ],
+    experienceDetail: {
+      type: [
+        {
+          hospitalName: { type: String, required: true },
+          role: { type: String, required: true },
+          years: { type: String, required: true },
+        }
+      ],
+      default: []
+   },
 
     experience: { type: Number, required: true },
 

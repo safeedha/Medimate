@@ -1,15 +1,17 @@
-import {Idoctor} from '../../../domain/entities/doctor';
+import {DoctorDTO,IExperience} from '../../../dto/doctor.dto'
+
 export interface IUpdateDoctorProfile {
   updateprofile(
+    id:string,
     firstname: string,
     lastname: string,
     experience: number,
     fee: number,
     image: string,
-    email: string,
     phone: string,
     specialisation: string,
     qualification: string,
-    medicalLicence: string
-  ): Promise<{message:string,doctor:Idoctor}>; // Replace DoctorDTO with the actual return type
+    medicalLicence: string,
+    newExperienceList:IExperience[]
+  ): Promise<{message:string}>; // Replace DoctorDTO with the actual return type
 }

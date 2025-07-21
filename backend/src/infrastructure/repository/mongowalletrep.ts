@@ -333,7 +333,7 @@ async addrefund(transactionId:string):Promise<string> {
   }
 }
 
-async  getuserwallet(userid: string, page: number, limit: number): Promise<{ balance: number;  transactions: WalletTransactionDto[] }> {
+async  getuserwallet(userid: string, page: number, limit: number): Promise<{ balance: number;  transactions: WalletTransactionDto[],total:number }> {
   try {
     const userwallet = await UserwalletModel.findOne({ userId: userid });
 
@@ -354,7 +354,8 @@ async  getuserwallet(userid: string, page: number, limit: number): Promise<{ bal
 
     return {
       balance: userwallet.balance,
-      transactions: paginatedTransactions
+      transactions: paginatedTransactions,
+      total:totalTransactions
     };
   } catch (error) {
     if (error instanceof Error) {
@@ -380,6 +381,7 @@ async adduserwallet(id:string,amount:number):Promise<void>{
         userwallet.balance -= amount;
         userwallet.transactions.push(userwallettransaction);
         userwallet.lastUpdated = new Date()
+        await userwallet.save();
     
   }
   catch (error) {

@@ -101,6 +101,7 @@ export class DoctorSlotController {
   async editRecurringSlot(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const {recId}=req.params
+      console.log('recid'+recId)
       const { id } = req;
       const {
         startDate,

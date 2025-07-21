@@ -1,7 +1,8 @@
 import {DoctorRepository} from '../../domain/repository/doctor-repository';
 import {Doctor} from '../database/models/docter';
 import {Idoctor} from '../../domain/entities/doctor';
-import {DoctorDTO} from '../../dto/doctor.dto'
+import {DoctorDTO,IExperience} from '../../dto/doctor.dto'
+
 
 
 export class MongoDocRepository implements DoctorRepository {
@@ -90,6 +91,7 @@ export class MongoDocRepository implements DoctorRepository {
       phone: doc.phone,
       specialisation: doc.specialisation && typeof doc.specialisation === 'object'
         ? {
+         
             deptname: doc.specialisation.deptname,
             description: doc.specialisation.description,
           }
@@ -231,12 +233,16 @@ async getAllverifiedbysort(
     }
 
     const result: DoctorDTO = {
-      _id: doctor._id.toString(),
+      _id:doctor._id,
       firstname: doctor.firstname,
       lastname: doctor.lastname,
       email:doctor.email,
+      phone:doctor.phone,
+      qualification:doctor.qualification,
+      medicalLicence:doctor.medicalLicence,
       specialisation: doctor.specialisation && typeof doctor.specialisation === 'object'
         ? {
+               id:doctor.specialisation._id,
             deptname: doctor.specialisation.deptname,
             description: doctor.specialisation.description,
           }
@@ -244,9 +250,9 @@ async getAllverifiedbysort(
       fee: doctor.fee,
       experience: doctor.experience,
       profilePicture: doctor.profilePicture,
-      isBlocked:doctor.isBlocked
+      isBlocked:doctor.isBlocked,
+      experienceDetail:doctor.experienceDetail
     };
-    console.log('hoi')
     return result;
   } catch (error) {
     if (error instanceof Error) {
@@ -325,29 +331,29 @@ async changeStatus(id: string): Promise<DoctorDTO[]> {
 }
 
 
-  async profileupdate(
+async profileupdate(
+  id: string,
   firstname: string,
   lastname: string,
   experience: number,
   fee: number,
   image: string,
-  email: string,
   phone: string,
- specialisation:string,
- qualification:string,
- medicalLicence:string
-): Promise<{ message: string,doctor:Idoctor }> {
+  specialisation: string,
+  qualification: string,
+  medicalLicence: string,
+  experiencelist: IExperience[]
+): Promise<{ message: string}> {
   try {
-    const doctor = await Doctor.findOne({ email });
+    const doctor = await Doctor.findOne({ _id: id });
 
     if (!doctor) {
       throw new Error('Doctor not found');
     }
 
-    
     const existingDoctorWithPhone = await Doctor.findOne({
       phone: phone,
-      email: { $ne: email }, 
+      _id: { $ne: id },
     });
 
     if (existingDoctorWithPhone) {
@@ -360,13 +366,13 @@ async changeStatus(id: string): Promise<DoctorDTO[]> {
     doctor.fee = fee;
     doctor.phone = phone;
     doctor.profilePicture = image;
-    doctor.qualification=qualification,
-    doctor.specialisation=specialisation
-    doctor.medicalLicence=medicalLicence
+    doctor.qualification = qualification;
+    doctor.specialisation = specialisation;
+    doctor.medicalLicence = medicalLicence;
+    doctor.experienceDetail = experiencelist;
 
     await doctor.save();
-
-    return { message: 'Profile updated successfully',doctor:doctor};
+    return { message: 'Profile updated successfully' };
   } catch (error) {
     if (error instanceof Error) {
       console.error('Error updating profile:', error.message);

@@ -25,7 +25,7 @@ function Wallet() {
         }
         setWalletData(response.transactions || []);
         setBalance(response.balance || 0);
-        setTotalPages(response.totalPages || 1);
+        setTotalPages(response.total || 1);
         setMessage('');
       } catch (error) {
         console.error('Error fetching wallet data:', error);

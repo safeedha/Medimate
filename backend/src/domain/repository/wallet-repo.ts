@@ -9,7 +9,7 @@ getPayoutinfor():Promise<AdminWalletTransactionDto[]>
 getdoctorwallet(doctorId:string,page:number,limit:number):Promise<{ balance: number; transaction: DoctorTransactionDTO[]; total: number }>
 addpaytodoctor(transactionId:string,doctorid:string):Promise<{message:string}>
 addrefund(transactionId:string):Promise<string>
-getuserwallet(userid:string,page:number,limit:number):Promise<{ balance: number;  transactions: WalletTransactionDto[] }>
+getuserwallet(userid:string,page:number,limit:number):Promise<{ balance: number;  transactions: WalletTransactionDto[],total:number }>
 adduserwallet(id:string,amount:number):Promise<void>
 
 }

@@ -96,7 +96,10 @@ function Schedules() {
   };
 
   const handleOpen = () => setOpen(true);
-  const handleCloseModal = () => setOpen(false);
+  const handleCloseModal = () => { 
+    setOpen(false)
+    setEdit(false)
+  };
 
   const handleClose = async () => {
     const daysOfWeek: DayOfWeek[] = Object.entries(selectedDays)
@@ -144,7 +147,7 @@ function Schedules() {
       toast.error('End time must be greater than start time');
       return;
     }
-   if(!true){
+   if(!edit){
     const result = await createRecslot(
       startDate,
       endDate,
@@ -159,6 +162,7 @@ function Schedules() {
       setRender(!render);
     } else {
       toast.error(result);
+      setEdit(false)
     }
   }
   else{
@@ -198,9 +202,12 @@ function Schedules() {
 
           <Modal open={open} onClose={handleCloseModal}>
             <Box sx={style}>
-              <Typography variant="h6" gutterBottom>
+              {!edit?<Typography variant="h6" gutterBottom>
                 Create Recurring Slots
-              </Typography>
+              </Typography>:<Typography variant="h6" gutterBottom>
+                Edit Recurring Slots
+              </Typography>}
+           
 
               <Stack spacing={2}>
                 {/* Date Range */}

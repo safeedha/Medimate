@@ -31,13 +31,7 @@ function UserSidebar() {
     </Link>
   </nav>
 
-  <div className="mt-auto pt-6 border-t border-gray-300">
-    <button
-      className="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors font-semibold"
-    >
-      🔒 Logout
-    </button>
-  </div>
+ 
 </aside>
 
 

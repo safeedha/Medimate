@@ -4,7 +4,7 @@ import {WalletTransactionDto} from '../../../dto/wallet.dto'
 export class GetUserallet implements IGetUserWallet  {
 
   constructor(private walletRepository:WalletRepository) {}
-  async getwallet(userid:string,page:number,limit:number): Promise<{ balance: number;  transactions: WalletTransactionDto[] }> {
+  async getwallet(userid:string,page:number,limit:number): Promise<{ balance: number;  transactions: WalletTransactionDto[] ,total:number}> {
     try {
       const wallet = await this.walletRepository.getuserwallet(userid,page,limit);
       return wallet
