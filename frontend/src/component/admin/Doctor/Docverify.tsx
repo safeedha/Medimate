@@ -5,7 +5,7 @@ import { getAllunVerfiedDoctors, changeStatus } from '../../../api/adminapi/doct
 import type { Idoctor } from '../../../Interface/interface'
 import Modal from 'react-modal'
 import Swal from 'sweetalert2'
-import Table from '../../../component/common/Table' // <-- Import the Table!
+import Table from '../../common/Table' // <-- Import the Table!
 
 const customStyles = {
   content: {
@@ -192,7 +192,7 @@ function Docverify() {
           </div>
         )}
 
-        {/* Modal for doctor details */}
+ 
         <Modal
           isOpen={modalIsOpen}
           onAfterOpen={afterOpenModal}
@@ -245,14 +245,15 @@ function Docverify() {
                 <div className="space-y-4 flex flex-col items-center">
                   {selectedDoctor.profilePicture && (
                     <div className="w-32 h-32 rounded-full overflow-hidden border border-gray-300">
-                      <img src={`https://res.cloudinary.com/dwerqkqou/image/upload/${selectedDoctor.profilePicture}`} alt="Profile" className="w-full h-full object-cover" />
+                      <img src={`https://res.cloudinary.com/dwerqkqou/image/upload/${selectedDoctor?.profilePicture}`} alt="Profile" className="w-full h-full object-cover" />
                     </div>
                   )}
+                
                   {selectedDoctor.medicalLicence && (
                     <div className="w-full">
                       <span className="font-medium">Medical Licence:</span>
                       <div className="mt-2 border border-gray-200 rounded p-2">
-                        <a href={selectedDoctor.medicalLicence} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        <a href={`https://res.cloudinary.com/dwerqkqou/image/upload/${selectedDoctor.medicalLicence}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                           View Licence Document
                         </a>
                       </div>

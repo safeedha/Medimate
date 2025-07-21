@@ -2,12 +2,15 @@ import bgImage from '../../../assets/Admin.jpg';
 import toast, { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
 import {adminLogin} from '../../../api/adminapi/adminlogin'
+import { useDispatch } from 'react-redux';
+import {logoutUser} from '../../../feature/userslice'
+import { logoutDoctor} from '../../../feature/doctorslice'
 import {useNavigate} from 'react-router-dom'
 function Login() { 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate=useNavigate()
-
+    const dispatch=useDispatch()
   const handleLogin = async(e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
@@ -18,6 +21,8 @@ function Login() {
       if(result==='admin login sucessfull')
       {
         localStorage.setItem("admin", "admin@gmail.com");
+        dispatch(logoutUser())
+        dispatch(logoutDoctor())
         toast.success("Login sucessfull")
         navigate("/admin/dashboard")
       }

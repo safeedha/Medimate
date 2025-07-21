@@ -8,7 +8,7 @@ import {GoogleLogin} from '@react-oauth/google';
 import type{ CredentialResponse } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
 import {googleLogin} from '../../../api/userapi/register';
-
+import { logoutDoctor} from '../../../feature/doctorslice'
 function Plogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,10 +21,11 @@ function Plogin() {
       toast.error('Please enter both email and password');
       return;
     }
-
     const result = await login(email, password,dispatch);
     if (result === 'Login successful') {
       toast.success('Login successful');
+      localStorage.removeItem("admin");
+      dispatch(logoutDoctor())
       setEmail('');
       setPassword('');
       navigate("/home")

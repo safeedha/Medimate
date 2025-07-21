@@ -45,6 +45,7 @@ router.get("/wallet", verifyToken, (req, res, next) => {
 router.get("/user", verifyToken, (req, res, next) => {
   user.getAllUsers(req as CustomRequest, res, next);
 });
+router.patch('/doctor/:reciever',verifyToken, (req, res,next) => user.updatemessagetime(req as CustomRequest, res,next))
 
 
 

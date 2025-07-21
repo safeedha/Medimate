@@ -40,6 +40,7 @@ import {GetUserallet}  from '../../../application/usecase/wallet/getuserwallet'
 import {AddUserwallet} from '../../../application/usecase/wallet/addmoney'
 import {Getunreadnotification} from '../../../application/usecase/notification/getunreadnotification'
 import {Readnotification} from '../../../application/usecase/notification/readnotification'
+import {MessageTimeUpdation} from '../../../application/usecase/conversation/messagetimeuser'
 
 import {MongoRegRepository} from '../../repository/mongoregRepository'
 import {MongoDeptRepository} from '../../repository/mongodeptRepository'
@@ -81,7 +82,8 @@ export const department=new DepartmentController(getallunblockedept)
 const fetchSingleDoctor=new FetchSingleDoctor(mongodocRepository)
 const fetchVerifiedDoctor=new FetchVerifiedDoctor(mongodocRepository)
 const fetchSortedDoctors=new FetchSortedDoctors(mongodocRepository)
-export const doctor=new DoctorController(fetchSingleDoctor,fetchVerifiedDoctor,fetchSortedDoctors)
+const messagetimeUpdation=new MessageTimeUpdation(mongoConversationRepo)
+export const doctor=new DoctorController(fetchSingleDoctor,fetchVerifiedDoctor,fetchSortedDoctors,messagetimeUpdation)
 
 const getsingleUser=new GetsingleUser(mongoUserRepository)
 const updatesingleUser=new UpdatesingleUser(mongoUserRepository)

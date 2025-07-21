@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import DoctorSidebar from '../common/Docsidebar'
 import { getOverviewofappoinment } from '../../api/doctorapi/appoinment'
-import { FaCheckCircle, FaClock, FaTimesCircle, FaClipboardList } from 'react-icons/fa'
+import { FaCheckCircle, FaClock, FaTimesCircle, FaClipboardList,FaRupeeSign} from 'react-icons/fa'
 import DashboardBarChart from './Bar'
 import type { AppointmentCountByDate } from '../../Interface/interface'
 import html2pdf from 'html2pdf.js'
 
+import { walletInformation } from '../../api/doctorapi/wallet';
 function Dashboard() {
   const [count, setCount] = useState({
     completed: 0,
@@ -19,6 +20,7 @@ function Dashboard() {
   const [type, setType] = useState<'completed' | 'cancelled' | 'pending'>('completed')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
+  const [balance, setBalance] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,6 +29,22 @@ function Dashboard() {
     }
     fetchData()
   }, [])
+
+   useEffect(() => {
+      const fetchWallet = async () => {
+        try {
+          const response = await walletInformation(1, 1);
+          if (response === 'No matching wallet or transactions found') {
+            setBalance(0);
+          } else {
+            setBalance(response.balance);
+          }
+        } catch (error) {
+           console.log(error)
+        }
+      };
+      fetchWallet();
+    }, []);
 
   useEffect(() => {
     const today = new Date()
@@ -121,42 +139,53 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-5 rounded-2xl shadow-md flex items-center gap-4 border-l-4 border-emerald-500">
-            <FaClipboardList className="text-2xl text-emerald-500" />
-            <div>
-              <p className="text-gray-600 text-sm">Total Appointments</p>
-              <p className="text-xl font-bold text-emerald-700">{count.total}</p>
-            </div>
-          </div>
 
-          <div className="bg-white p-5 rounded-2xl shadow-md flex items-center gap-4 border-l-4 border-blue-500">
-            <FaCheckCircle className="text-2xl text-blue-500" />
-            <div>
-              <p className="text-gray-600 text-sm">Completed</p>
-              <p className="text-xl font-bold text-blue-700">{count.completed}</p>
-            </div>
-          </div>
-
-          <div className="bg-white p-5 rounded-2xl shadow-md flex items-center gap-4 border-l-4 border-yellow-500">
-            <FaClock className="text-2xl text-yellow-500" />
-            <div>
-              <p className="text-gray-600 text-sm">Pending</p>
-              <p className="text-xl font-bold text-yellow-700">{count.pending}</p>
-            </div>
-          </div>
-
-          <div className="bg-white p-5 rounded-2xl shadow-md flex items-center gap-4 border-l-4 border-red-500">
-            <FaTimesCircle className="text-2xl text-red-500" />
-            <div>
-              <p className="text-gray-600 text-sm">Cancelled</p>
-              <p className="text-xl font-bold text-red-700">{count.cancelled}</p>
-            </div>
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <div className="bg-white p-5 rounded-2xl shadow-md flex items-center gap-4 border-l-4 border-purple-500">
+          <FaRupeeSign className="text-2xl text-purple-500" />
+          <div>
+            <p className="text-gray-600 text-sm">Revenue</p>
+            <p className="text-xl font-bold text-purple-700">₹{balance}</p>
           </div>
         </div>
 
-        {/* Chart & Table */}
+ 
+        <div className="bg-white p-5 rounded-2xl shadow-md flex items-center gap-4 border-l-4 border-emerald-500">
+          <FaClipboardList className="text-2xl text-emerald-500" />
+          <div>
+            <p className="text-gray-600 text-sm">Total Appointments</p>
+            <p className="text-xl font-bold text-emerald-700">{count.total}</p>
+          </div>
+        </div>
+
+
+        <div className="bg-white p-5 rounded-2xl shadow-md flex items-center gap-4 border-l-4 border-blue-500">
+          <FaCheckCircle className="text-2xl text-blue-500" />
+          <div>
+            <p className="text-gray-600 text-sm">Completed</p>
+            <p className="text-xl font-bold text-blue-700">{count.completed}</p>
+          </div>
+        </div>
+
+        <div className="bg-white p-5 rounded-2xl shadow-md flex items-center gap-4 border-l-4 border-yellow-500">
+          <FaClock className="text-2xl text-yellow-500" />
+          <div>
+            <p className="text-gray-600 text-sm">Pending</p>
+            <p className="text-xl font-bold text-yellow-700">{count.pending}</p>
+          </div>
+        </div>
+
+
+        <div className="bg-white p-5 rounded-2xl shadow-md flex items-center gap-4 border-l-4 border-red-500">
+          <FaTimesCircle className="text-2xl text-red-500" />
+          <div>
+            <p className="text-gray-600 text-sm">Cancelled</p>
+            <p className="text-xl font-bold text-red-700">{count.cancelled}</p>
+          </div>
+        </div>
+      </div>
+
+
         <div className="mb-8">
           <DashboardBarChart
             setAppointmentCountfordash={memoizedSetAppointmentCountfordash}

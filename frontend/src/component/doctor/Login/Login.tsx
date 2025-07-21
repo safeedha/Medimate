@@ -4,7 +4,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../../../api/doctorapi/doclogin';
 import {useDispatch} from "react-redux"
-
+import {logoutUser} from '../../../feature/userslice'
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,6 +23,8 @@ function Login() {
     const result = await login(email, password,dispatch);
     if (result === 'doctor login sucessfull') {
       toast.success(result);
+      dispatch(logoutUser())
+      localStorage.removeItem("admin");
       navigate("/doctor/home")
     } else if (result === 'Your account not verified') {
       navigate('/otp', { state: { email, role: 'doctor' } });

@@ -23,12 +23,11 @@ router.get("/department",verifyToken, (req, res,next) => department.fetchAllUnbl
 router.get("/doctors", verifyToken,(req, res,next) => doctor.fetchAllVerifiedDoctors(req, res,next))
 router.get("/doctors/sort", verifyToken,(req, res,next) => doctor.fetchSortedDoctors(req, res,next))  
 router.get("/doctor/:id", verifyToken,(req, res,next) => doctor.fetchSingleDoctor(req, res,next))
-
+router.patch('/doctor/:reciever',verifyToken, (req, res,next) => doctor.updatemessagetime(req as CustomRequest, res,next))
 
 router.get("/profile", verifyToken, (req, res, next) => {
   user.fetchUserDetails(req as CustomRequest, res, next);
 });
-
 router.post("/profile", verifyToken, (req, res, next) => {
   user.updateUserDetails(req as CustomRequest, res, next);
 });

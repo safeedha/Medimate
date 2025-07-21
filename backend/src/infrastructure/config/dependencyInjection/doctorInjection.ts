@@ -37,6 +37,7 @@ import{GetSlotByDate} from '../../../application/usecase/slot/getslotbydate'
 import {EditSlot} from '../../../application/usecase/slot/editrecslot'
 import {FetchSingleDoctor} from '../../../application/usecase/doctor/getSingledoc'
 import {Docprofile} from '../../../application/usecase/doctor/docProfile'
+import {MessageTimeUpdation} from '../../../application/usecase/conversation/messagtime'
 
 
 import {MongoRegRepository} from '../../repository/mongoregRepository'
@@ -83,7 +84,8 @@ const getDoctorWallet=new GetDoctorWallet(mongoWalletRepository)
 export const wallet=new DoctorWalletController(getDoctorWallet)
 
 const getsortuser=new GetUserBysort(mongoUserRepository)
-export const user=new UserManagementController(getsortuser)
+const meassgeupdation= new MessageTimeUpdation(mongoConversationRepo)
+export const user=new UserManagementController(getsortuser,meassgeupdation)
 
 
 const getDoctorAppointment = new GetdoctorAppointment(mongoAppointmentRepository);

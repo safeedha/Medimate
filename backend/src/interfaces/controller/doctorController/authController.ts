@@ -9,6 +9,7 @@ import { sendMail } from '../../../application/service/emailservice';
 import { IPasswordReset } from '../../../domain/useCaseInterface/authRecovery/IPasswordReset';
 import { HttpStatus } from '../../../common/httpStatus';
 import {Messages} from '../../../common/messages';
+import {setCookies,clearCookies} from '../../../application/service/setCookies'
 
 export class DoctorAuthController {
   constructor(
@@ -60,14 +61,7 @@ export class DoctorAuthController {
     try {
       const { email, password } = req.body;
       const result = await this.doctorLogin.login(email, password);
-
-      res.cookie('refreshtoken', result.refreshToken, {
-        httpOnly: true,
-        secure: true,
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        sameSite: 'none'
-      });
-
+       setCookies(res,result.refreshToken)
       res.status(HttpStatus.OK).json({
         message: result.message,
         doctor: result.doctor,
@@ -80,12 +74,7 @@ export class DoctorAuthController {
 
   async logoutDoctor(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      res.clearCookie('refreshtoken', {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none'
-      });
-
+      clearCookies(res)
       res.status(HttpStatus.OK).json({ message: Messages.LOGOUT_SUCCESS });
     } catch (error) {
       next(error);

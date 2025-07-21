@@ -5,7 +5,7 @@ import { getAllDoctor, changeblockStatus } from '../../../api/adminapi/doctor';
 import Modal from 'react-modal';
 import Swal from 'sweetalert2';
 import type { Idoctor } from '../../../Interface/interface';
-import Table from '../../../component/common/Table'; // <-- Import reusable Table!
+import Table from '../../common/Table'; // <-- Import reusable Table!
 
 const customStyles = {
   content: {
@@ -155,7 +155,7 @@ function Doctor() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-\
+
         <div className="overflow-x-auto">
           <Table
             columns={doctorColumns}
@@ -199,8 +199,9 @@ function Doctor() {
             <h2 ref={subtitleRef} className="text-xl font-semibold mb-4">
               Doctor Details
             </h2>
-            {selectedDoctor ? (
+             {selectedDoctor ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              
                 <div className="space-y-3">
                   <div><strong>Name:</strong> {selectedDoctor.firstname} {selectedDoctor.lastname}</div>
                   <div><strong>Email:</strong> {selectedDoctor.email}</div>
@@ -212,14 +213,28 @@ function Doctor() {
                     <div><strong>Additional Info:</strong> {selectedDoctor.additionalInfo}</div>
                   )}
                 </div>
-                <div className="flex justify-center items-start">
+
+                {/* Right Column (Profile Picture and License Link) */}
+                <div className="flex flex-col justify-start items-center space-y-3">
                   {selectedDoctor.profilePicture && (
                     <div className="w-32 h-32 rounded-full overflow-hidden border border-gray-300">
                       <img
-                        src={selectedDoctor.profilePicture}
+                        src={`https://res.cloudinary.com/dwerqkqou/image/upload/${selectedDoctor.profilePicture}`}
                         alt="Profile"
                         className="w-full h-full object-cover"
                       />
+                    </div>
+                  )}
+                  {selectedDoctor.medicalLicence && (
+                    <div className="border border-gray-200 rounded p-2">
+                      <a
+                        href={`https://res.cloudinary.com/dwerqkqou/image/upload/${selectedDoctor.medicalLicence}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        View Licence Document
+                      </a>
                     </div>
                   )}
                 </div>

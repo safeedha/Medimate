@@ -82,8 +82,9 @@ function Reapplication() {
             formData
           );
           const uploadedUrl:string = res.data.secure_url;
+        const licencePath: string = uploadedUrl.split('/upload/')[1];
 
-       const response=await reappliction(email,specialisation,experience,fee,uploadedUrl)
+       const response=await reappliction(email,specialisation,experience,fee,licencePath)
        if(response==='Reapplication sucess')
        {
         toast.success("Your reapplication suceed")

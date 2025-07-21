@@ -1,8 +1,9 @@
-import {Conversation} from '../../../domain/entities/conversation'
-import {ConversationRepository} from '../../../domain/repository/conver-repo'
-import { Message } from '../../../domain/entities/messages';
 
-export class MessageTimeUpdation{
+import {ConversationRepository} from '../../../domain/repository/conver-repo'
+import {IUpdateMessagetime} from '../../../domain/useCaseInterface/conversation/IUpdateMessagetime';
+
+
+export class MessageTimeUpdation implements IUpdateMessagetime{
   constructor(private conversationrepository:ConversationRepository){
 
   }

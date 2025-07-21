@@ -5,8 +5,6 @@ import type{ AppDispatch} from '../../app/store'
 import { useDispatch } from 'react-redux';
 import {useEffect} from 'react'
 function DoctorSidebar() {
-
-
     useEffect(()=>{
      const fetchSingledoctor=async()=>{
       const response=await getSingledoctor()

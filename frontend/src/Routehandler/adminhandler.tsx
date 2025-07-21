@@ -7,8 +7,8 @@ import LoaderFallback from '../component/common/LoaderFallback';
 const Alogin = lazy(() => import('../component/admin/Login/Alogin'));
 const Adashboard = lazy(() => import('../component/admin/Adashboard'));
 const Department = lazy(() => import('../component/admin/Dept/Department'));
-const Docverify = lazy(() => import('../component/admin/Docver/Docverify'));
-const Doctor = lazy(() => import('../component/admin/Docver/Doctor'));
+const Docverify = lazy(() => import('../component/admin/Doctor/Docverify'));
+const Doctor = lazy(() => import('../component/admin/Doctor/Doctor'));
 const User = lazy(() => import('../component/admin/user/User'));
 
 const Awallet = lazy(() => import('../component/admin/wallet/Awallet'));

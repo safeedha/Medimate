@@ -4,6 +4,7 @@ import { IUserLogin } from "../../../domain/useCaseInterface/auth/IUserLogin";
 import { IGoogleAuth } from "../../../domain/useCaseInterface/auth/IGoogleAuth";
 import { HttpStatus } from '../../../common/httpStatus';
 import { Messages } from '../../../common/messages';
+import {setCookies,clearCookies} from '../../../application/service/setCookies'
 
 export class AuthController {
   constructor(
@@ -28,14 +29,7 @@ export class AuthController {
       const { email, password } = req.body;
 
       const result = await this.userLogin.login({ email, password });
-
-      res.cookie("refreshtoken", result.refreshToken, {
-        httpOnly: true,
-        secure: true,
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        sameSite: "none"
-      });
-
+       setCookies(res,result.refreshToken)
       res.status(HttpStatus.OK).json({
         message: Messages.LOGIN_SUCCESS,
         user: result.user,
@@ -52,14 +46,7 @@ export class AuthController {
       const { credential } = req.body;
 
       const result = await this.googleAuth.googleLogin(credential);
-
-      res.cookie("refreshtoken", result.refreshToken, {
-        httpOnly: true,
-        secure: true,
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        sameSite: "none"
-      });
-
+        setCookies(res,result.refreshToken)
       res.status(HttpStatus.OK).json({
         message: Messages.LOGIN_SUCCESS,
         user: result.user,
@@ -73,11 +60,7 @@ export class AuthController {
 
   async logoutUser(req: Request, res: Response): Promise<void> {
     try {
-      res.clearCookie("refreshusertoken", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none"
-      });
+        clearCookies(res)
 
       res.status(HttpStatus.OK).json({ message: Messages.LOGOUT_SUCCESS });
     } catch (error) {

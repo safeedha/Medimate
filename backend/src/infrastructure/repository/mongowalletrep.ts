@@ -14,7 +14,6 @@ export class MongoWalletRepository implements WalletRepository {
     try {
     
       let wallet = await AdminWalletModel.findOne();
-
        const transaction: AdminWalletTransaction = {
         type: 'credit',
         amount,
@@ -39,10 +38,7 @@ export class MongoWalletRepository implements WalletRepository {
         wallet.transactions.push(transaction);
         wallet.lastUpdated = new Date();
       }
-
-      await wallet.save();
-
-     
+      await wallet.save();     
       return "money added"
     } catch (error) {
       if (error instanceof Error) {
@@ -344,7 +340,7 @@ async  getuserwallet(userid: string, page: number, limit: number): Promise<{ bal
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
 
-    const paginatedTransactions: WalletTransactionDto[] = userwallet.transactions
+    const paginatedTransactions: WalletTransactionDto[] = userwallet.transactions.reverse()
   .slice(startIndex, endIndex)
   .map((tx) => ({
     type: tx.type,

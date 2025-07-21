@@ -8,7 +8,6 @@ export class AuthController {
   async adminLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password } = req.body;
-
       const response = await this.loginService.login(email, password);
        setCookies(res,response?.refreshToken!)
       res.status(200).json(response);
