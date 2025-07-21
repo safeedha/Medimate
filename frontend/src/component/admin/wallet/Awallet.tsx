@@ -3,8 +3,8 @@ import Sidebar from '../Sidebar'
 import { Toaster } from 'react-hot-toast'
 import {
   walletInformation,
-  payoutrequst,
-  pyoutpayment,
+  payoutRequest,
+  payoutPayment,
 } from '../../../api/adminapi/wallet'
 import { getsingleuser } from '../../../api/adminapi/user'
 import { getsingleDoctor } from '../../../api/adminapi/doctor'
@@ -47,7 +47,7 @@ function Awallet() {
   useEffect(() => {
     const getpayout = async () => {
       try {
-        const wallet = await payoutrequst()
+        const wallet = await payoutRequest()
         setPayout(wallet)
       } catch (error) {
         console.error('Failed to fetch payout info:', error)
@@ -81,7 +81,7 @@ function Awallet() {
 
     if (confirmation.isConfirmed) {
       try {
-        await pyoutpayment(transId, doctorid)
+        await payoutPayment(transId, doctorid)
         Swal.fire({
           icon: 'success',
           title: 'Payment Successful',
