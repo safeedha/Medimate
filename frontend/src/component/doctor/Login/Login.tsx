@@ -29,7 +29,7 @@ function Login() {
     } else if (result === 'Your account not verified') {
       navigate('/otp', { state: { email, role: 'doctor' } });
     } 
-    else if(result==='Your account is Rejected by admin')
+    else if(result==='Your account is rejected by admin')
     {
       toast.error("Your account is rejected by admin,Please check Your mail to know Reason")
       setReaply(true)
