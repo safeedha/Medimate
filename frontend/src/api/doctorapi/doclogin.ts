@@ -50,10 +50,11 @@ export const login = async (email: string, password: string, dispatch: AppDispat
     const response = await axiosInstance.post("/doctor/login", { email, password });
     dispatch(setDoctorDetails(response.data.doctor));
     localStorage.setItem('authToken', response.data.accessToken);
-   
+     console.log(response.data.message)
     return response.data.message;
   } catch (error) {
     if (axios.isAxiosError(error)) {
+      console.log(error.response?.data?.message )
       return error.response?.data?.message || error.message;
     } else if (error instanceof Error) {
       return error.message;
