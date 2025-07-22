@@ -9,6 +9,7 @@ import {
   followup,
   getPage,
   getSlotedoctor,
+  completeappoinment
 } from "../../api/doctorapi/appoinment";
 import { toast, Toaster } from "react-hot-toast";
 import { Link } from "react-router-dom";
@@ -37,7 +38,7 @@ function Docappoinment() {
   const [followupAppointmentId, setFollowupAppointmentId] = useState<string | null>(null);
 
    const rowRefs = useRef<{ [key: string]: React.RefObject<HTMLTableRowElement|null>}>({});
-  // const rowRefs = useRef<{ [key: string]: React.RefObject<HTMLTableRowElement> }>({});
+
   const user = useSelector((state: RootState) => state.doctor.doctorInfo);
   const limit = 3;
   const today = new Date();
@@ -174,6 +175,7 @@ function Docappoinment() {
           message: `Your consultation with Dr. ${user?.firstname} ${user?.lastname} has started. Please join the video call.`,
           type: 'consultation',
         });
+         await completeappoinment(apptid);
         const roomId = [user?._id, uid].sort().join('_');
         const videoUrl = `/video/${roomId}?role=doctor&userId=${user?._id}`;
         window.open(videoUrl, '_blank');

@@ -57,7 +57,7 @@ function Pprofile() {
         gender
       );
 
-      if (response === 'updation successfull') {
+      if (response === 'User updated successfully') {
         toast.success('Your profile updated successfully');
         setUpdate((prev) => !prev);
         setDisabled(true);

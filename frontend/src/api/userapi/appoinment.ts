@@ -52,6 +52,7 @@ export const  getfutureAppoinments = async (page: number, limit: number) => {
     const response = await axiosInstance.get('/user/appointments/future', {
       params: { page, limit }
     });
+    console.log(response.data)
     return response.data;
   } catch (error) {
     console.log(error);

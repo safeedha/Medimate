@@ -21,6 +21,7 @@ router.post("/verifyotp", (req, res, next) => auth.verifyDoctorOtp(req, res, nex
 router.post("/reset", (req, res,next) => auth.resetDoctorPassword(req, res,next)) 
 
 router.get("/department", (req, res,next) =>  department.fetchAllUnblockedDepartments(req, res,next)) 
+router.get("/department/all", (req, res,next) =>  department.fetchAlldDepartment(req, res,next)) 
 
 router.get("/messages", verifyToken, (req, res, next) => {
   message.fetchMessages(req as CustomRequest, res, next);

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import {Link} from 'react-router-dom'
 import UserSidebar from './UserSidebar';
 import Navbar from '../common/Navbar';
 import { getfutureAppoinments, cancelAppoinment, getPage } from '../../api/userapi/appoinment';
@@ -116,11 +117,11 @@ function Booking() {
     }
   }, [futur, targetIdToScroll]);
 
-  const joinHandle = (doctorId: string, userId: string) => {
-    const roomId = [doctorId, userId].sort().join('_');
-    const videoUrl = `/video/${roomId}?role=user&userId=${userId}`;
-    window.open(videoUrl, '_blank');
-  };
+  // const joinHandle = (doctorId: string, userId: string) => {
+  //   const roomId = [doctorId, userId].sort().join('_');
+  //   const videoUrl = `/video/${roomId}?role=user&userId=${userId}`;
+  //   window.open(videoUrl, '_blank');
+  // };
 
   const handleDownloadPDF = () => {
     if (reportRef.current) {
@@ -160,115 +161,156 @@ function Booking() {
 
   const totalPages = Math.ceil(total / limit);
 
-  // ---- Table columns ----
+ 
   const columns = [
-    {
-      header: 'Patient Name',
-      accessor: (appointment: Appointment) => appointment.patient_name,
-    },
-    {
-      header: 'Doctor',
-      accessor: (appointment: Appointment) =>
-        typeof appointment.doctor_id !== 'string' && appointment.doctor_id
-          ? appointment.doctor_id.firstname
-          : '',
-    },
-    {
-      header: 'Date',
-      accessor: (appointment: Appointment) =>
-        typeof appointment.schedule_id !== 'string' && appointment.schedule_id
-          ? new Date(appointment.schedule_id.date).toLocaleDateString()
-          : '',
-    },
-    {
-      header: 'Time',
-      accessor: (appointment: Appointment) =>
-        typeof appointment.schedule_id !== 'string' && appointment.schedule_id
-          ? `${appointment.schedule_id.startingTime} - ${appointment.schedule_id.endTime}`
-          : '',
-    },
-    {
-      header: 'Reason',
-      accessor: (appointment: Appointment) => appointment.reason,
-    },
-    {
-      header: 'Status',
-      accessor: (appointment: Appointment) => (
-        <span className="capitalize">{appointment.status}</span>
-      ),
-    },
-    {
-      header: 'Action',
-      accessor: (appointment: Appointment) => {
-        if (appointment.status === 'completed') {
-          if (appointment.reportAdded) {
-            return (
+  {
+    header: 'Patient Name',
+    accessor: (appointment: Appointment) => appointment.patient_name,
+  },
+  {
+    header: 'Doctor',
+    accessor: (appointment: Appointment) =>
+      typeof appointment.doctor_id !== 'string' && appointment.doctor_id
+        ? appointment.doctor_id.firstname
+        : '',
+  },
+  {
+    header: 'Date',
+    accessor: (appointment: Appointment) =>
+      typeof appointment.schedule_id !== 'string' && appointment.schedule_id
+        ? new Date(appointment.schedule_id.date).toLocaleDateString()
+        : '',
+  },
+  {
+    header: 'Time',
+    accessor: (appointment: Appointment) =>
+      typeof appointment.schedule_id !== 'string' && appointment.schedule_id
+        ? `${appointment.schedule_id.startingTime} - ${appointment.schedule_id.endTime}`
+        : '',
+  },
+  {
+    header: 'Reason',
+    accessor: (appointment: Appointment) => appointment.reason,
+  },
+  {
+    header: 'Status',
+    accessor: (appointment: Appointment) => (
+      <span className="capitalize">{appointment.status}</span>
+    ),
+  },
+  {
+    header: 'Action',
+    accessor: (appointment: Appointment) => {
+      const chatButton =
+        typeof appointment.doctor_id !== 'string' && appointment.doctor_id ? (
+          <Link
+            to="/chat"
+            state={{ userId: appointment.doctor_id._id }}
+            className="w-full px-3 py-1 bg-gray-300 text-gray-800 rounded text-xs text-center hover:bg-gray-400"
+          >
+            Chat
+          </Link>
+        ) : null;
+
+      if (appointment.status === 'completed') {
+        if (appointment.reportAdded) {
+          return (
+            <div className="flex flex-col gap-1 min-w-[120px]">
               <button
                 onClick={() => {
-                  if (typeof appointment.doctor_id === 'object' && appointment.doctor_id !== null) {
-                    handleViewReport(appointment._id!, appointment.doctor_id.firstname!);
+                  if (
+                    typeof appointment.doctor_id === 'object' &&
+                    appointment.doctor_id !== null
+                  ) {
+                    handleViewReport(
+                      appointment._id!,
+                      appointment.doctor_id.firstname!
+                    );
                   }
                 }}
-                className="min-w-[120px] px-3 py-1.5 rounded-md text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
+                className="px-3 py-1.5 rounded-md text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
               >
                 View Report
               </button>
-            );
-          } else {
-            return (
-              <span className="inline-block min-w-[120px] px-3 py-1.5 rounded-md text-sm font-medium text-yellow-600 bg-yellow-100">
-                Report Pending
-              </span>
-            );
-          }
-        } else if (appointment.status === 'pending') {
-          return (
-            <div className="flex gap-1 flex-col min-w-[120px]">
-              <button
-                onClick={() => cancelHandle(appointment._id!)}
-                className="px-3 py-1.5 rounded-md text-sm font-medium bg-red-500 text-white hover:bg-red-600"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => joinHandle(appointment?.doctor_id! as string, appointment.user_id as string)}
-                className="px-3 py-1.5 rounded-md text-sm font-medium bg-blue-600 text-white hover:bg-blue-700"
-              >
-                Join
-              </button>
+              {chatButton}
             </div>
-          );
-        } else if (appointment.status === 'cancelled' && appointment.isRescheduled === false) {
-          return (
-            <span className="inline-block min-w-[120px] px-3 py-1.5 rounded-md text-sm text-gray-500 bg-gray-100">
-              {appointment.status}
-            </span>
           );
         } else {
           return (
+            <div className="flex flex-col gap-1 min-w-[120px]">
+              <span className="px-3 py-1.5 rounded-md text-sm font-medium text-yellow-600 bg-yellow-100">
+                Report Pending
+              </span>
+              {chatButton}
+            </div>
+          );
+        }
+      } else if (appointment.status === 'pending') {
+        return (
+          <div className="flex flex-col gap-1 min-w-[120px]">
             <button
-              className="min-w-[120px] px-3 mt-1 py-1.5 inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-purple-600 text-white hover:bg-purple-700"
-              onClick={() => scrollToreschedule(appointment.rescheduled_to as string)}
+              onClick={() => cancelHandle(appointment._id!)}
+              className="px-3 py-1.5 rounded-md text-sm font-medium bg-red-500 text-white hover:bg-red-600"
+            >
+              Cancel
+            </button>
+            {/* <button
+              onClick={() =>
+                joinHandle(
+                  appointment?.doctor_id! as string,
+                  appointment.user_id as string
+                )
+              }
+              className="px-3 py-1.5 rounded-md text-sm font-medium bg-blue-600 text-white hover:bg-blue-700"
+            >
+              Join
+            </button> */}
+            {chatButton}
+          </div>
+        );
+      } else if (
+        appointment.status === 'cancelled' &&
+        appointment.isRescheduled === false
+      ) {
+        return (
+          <div className="flex flex-col gap-1 min-w-[120px]">
+            <span className="px-3 py-1.5 rounded-md text-sm text-gray-500 bg-gray-100">
+              {appointment.status}
+            </span>
+            {chatButton}
+          </div>
+        );
+      } else {
+        return (
+          <div className="flex flex-col gap-1 min-w-[120px]">
+            <button
+              className="px-3 py-1.5 inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-purple-600 text-white hover:bg-purple-700"
+              onClick={() =>
+                scrollToreschedule(appointment.rescheduled_to as string)
+              }
             >
               Reschedule Added
             </button>
-          );
-        }
-      },
+            {chatButton}
+          </div>
+        );
+      }
     },
-    {
-      header: '',
-      accessor: (appointment: Appointment) =>
-        appointment.status === 'completed' && appointment.followup_status ? (
-          <button
-            className="min-w-[120px] px-3 mt-1 py-1.5 inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-lime-400 text-white hover:bg-lime-700"
-            onClick={() => scrollToFollowUp(appointment.followup_id as string)}
-          >
-            Follow-up Added
-          </button>
-        ) : null,
-    },
-  ];
+  },
+  {
+    header: '',
+    accessor: (appointment: Appointment) =>
+      appointment.status === 'completed' && appointment.followup_status ? (
+        <button
+          className="min-w-[120px] px-3 mt-1 py-1.5 inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-lime-400 text-white hover:bg-lime-700"
+          onClick={() => scrollToFollowUp(appointment.followup_id as string)}
+        >
+          Follow-up Added
+        </button>
+      ) : null,
+  },
+];
+
 
   return (
     <div className='min-h-screen bg-teal-50'>

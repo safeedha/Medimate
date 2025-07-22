@@ -7,21 +7,31 @@ export class MongoDeptRepository implements DepartmentRepository {
     const newDept = new DepartmentModel(deptData);
     return await newDept.save();
    }
-    async getAll(page: number, limit: number, search: string): Promise<{ data: Department[]; total: number }> {
-
-        const skip = (page - 1) * limit;
-
-      const filter = search
-      ? { deptname: { $regex: search, $options: 'i' } } 
-      : {};
-
+    async getAll(
+  page?: number,
+  limit?: number,
+  search?: string
+): Promise<{ data: Department[]; total: number }> {
+  const filter = search
+    ? { deptname: { $regex: search, $options: 'i' } }
+    : {};
+  if (typeof page === 'undefined' || typeof limit === 'undefined') {
     const [data, total] = await Promise.all([
-        DepartmentModel.find(filter).skip(skip).limit(limit),
-        DepartmentModel.countDocuments(filter),
+      DepartmentModel.find(filter),
+      DepartmentModel.countDocuments(filter),
     ]);
-
     return { data, total };
   }
+
+  const skip = (page - 1) * limit;
+
+  const [data, total] = await Promise.all([
+    DepartmentModel.find(filter).skip(skip).limit(limit),
+    DepartmentModel.countDocuments(filter),
+  ]);
+
+  return { data, total };
+}
     async getAllunblocked():Promise<DepartmentDTO[]>
     {
 

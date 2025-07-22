@@ -162,6 +162,7 @@ export const setUserdetail = async (
       age,
       gender
     });
+    console.log(response.data.message)
     return response.data.message;
   } catch (error) {
     if (axios.isAxiosError(error)) {

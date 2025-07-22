@@ -21,6 +21,11 @@ export type formData= {
     paymentMethod: string;
 }
 
+export interface Experience {
+  hospitalName: string;
+  role: string;
+  years: string;
+}
 export interface IDepartment {
   _id?: string;
   deptname: string;
@@ -45,6 +50,8 @@ export interface Idoctor {
   additionalInfo?: string;
   profilePicture?: string;
   medicalLicence?: string;
+  experienceDetail?:Experience[]
+
 }
 
 

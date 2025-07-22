@@ -6,7 +6,7 @@ import Chatsidebar from './Chatsidebar'
 import { useSelector } from 'react-redux';
 import Chatbox from './Chatbox';  
 import type { RootState } from '../../app/store';
-
+import { useLocation } from 'react-router-dom';
 
 function Chat() {
   const user = useSelector((state: RootState) => state.user.userInfo);
@@ -14,7 +14,14 @@ function Chat() {
  const [userid,setUserid]=useState<string>("");
  const [name,setName]=useState<string>("");
  const[sort,setSort]=useState<boolean>(false)
-
+ const location = useLocation();
+  const { userId} = location.state || {};
+ useEffect(()=>{
+  if(userId)
+  {
+    setUserid(userId)
+  }
+ },[userId])
 
 
 

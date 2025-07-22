@@ -4,7 +4,7 @@ import { IGetDept } from "../../../domain/useCaseInterface/department/IGetDept";
 
 export class GetDept implements IGetDept {
  constructor(private deptRepository: DepartmentRepository) {}
-  async getAllDept(page:number,limit:number,search:string):Promise<{ data: Department[]; total: number }> {
+  async getAllDept(page?:number,limit?:number,search?:string):Promise<{ data: Department[]; total: number }> {
     try {
         const departments = await this.deptRepository.getAll(page,limit,search);
         return departments;

@@ -3,6 +3,7 @@ import { Appointment } from '../../domain/entities/appoinment';
 import { AppointmentModel} from '../database/models/appoinment';
 import {ScheduleDTO,AppointmentDTO,AppointmentCountByDate} from '../../dto/slot.dto'
 import {IDepartmentSummary} from '../../dto/departmentsummary.dto'
+import { SlotLock}  from '../database/models/slotlock'
 import mongoose from "mongoose";
 
 
@@ -304,6 +305,11 @@ async changestatus(id:string,status:'pending' |  'cancelled' | 'completed'):Prom
       const appointment = await AppointmentModel.findById(id);
       if (!appointment) {
         throw new Error('Appointment not found');
+      }
+
+      if(status==='cancelled')
+      {
+        await SlotLock.deleteOne({slotId:appointment.schedule_id})
       }
       appointment.status = status;
       await appointment.save();

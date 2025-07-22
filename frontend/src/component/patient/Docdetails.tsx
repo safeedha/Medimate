@@ -413,33 +413,56 @@ function Docdetails() {
           </form>
         </div>
       </Modal>
+       
+        <div className="bg-teal-100 rounded-md shadow-md mt-20 p-3">
+  <div className="flex flex-col lg:flex-row gap-6">
 
-      <div className="bg-teal-100 rounded-md px-16 py-4 shadow-sm mt-20">
-        <div className="flex items-center space-x-4">
-          <img
-            src={`https://res.cloudinary.com/dwerqkqou/image/upload/${doctor?.profilePicture}`}
-            alt="Doctor"
-            className="w-24 h-24 rounded-full object-cover border-2 border-teal-400"
-          />
-          <div>
-            <h2 className="text-xl font-bold text-gray-800">
-              Dr. {doctor?.firstname} {doctor?.lastname}
-            </h2>
-            <p className="text-teal-800 text-sm">
-              Specialisation: {doctor?.specialisation?.deptname}
-            </p>
-            <p className="text-gray-700 text-sm">
-              Experience:{' '}
-              <span className="font-semibold">{doctor?.experience}</span>{' '}
-              years
-            </p>
-            <p className="text-gray-700 text-sm">
-              Consultation Fee:{' '}
-              <span className="font-semibold">₹{doctor?.fee}</span>
-            </p>
-          </div>
+    <div className="flex gap-6 w-full lg:w-1/2">
+      <img
+        src={`https://res.cloudinary.com/dwerqkqou/image/upload/${doctor?.profilePicture}`}
+        alt="Doctor"
+        className="w-24 h-24 rounded-full object-cover border-2 border-teal-400"
+      />
+      <div>
+        <h2 className="text-xl font-bold text-gray-800">
+          Dr. {doctor?.firstname} {doctor?.lastname}
+        </h2>
+        <p className="text-teal-800 text-sm mt-1">
+          Specialisation: {doctor?.specialisation?.deptname}
+        </p>
+        <p className="text-gray-700 text-sm mt-1">
+          Experience: <span className="font-semibold">{doctor?.experience}</span> years
+        </p>
+        <p className="text-gray-700 text-sm mt-1">
+          Consultation Fee: <span className="font-semibold">₹{doctor?.fee}</span>
+        </p>
+      </div>
+    </div>
+
+    {/* Right: Experience Details */}
+    {doctor?.experienceDetail && doctor.experienceDetail.length > 0 && (
+      <div className="w-full lg:w-1/2 bg-gray-50 p-4 rounded-md border border-gray-300">
+        <h3 className="text-md font-semibold mb-3 text-gray-800">Experience Details</h3>
+        <div className="flex flex-wrap gap-4">
+          {doctor.experienceDetail.map((exp, index) => (
+            <div
+              key={index}
+              className="w-full sm:w-[250px] bg-white p-3 border rounded shadow-sm"
+            >
+              <p className="font-medium text-gray-700">{exp.hospitalName}</p>
+              <p className="text-sm text-gray-600">Role: {exp.role}</p>
+              <p className="text-sm text-gray-600">Years: {exp.years}</p>
+            </div>
+          ))}
         </div>
       </div>
+    )}
+    
+  </div>
+</div>
+
+
+
 
       <div className="bg-white shadow-md rounded-md p-4 mt-6 mx-auto max-w-5xl">
         <h1 className="text-lg font-semibold text-gray-800 mb-2">

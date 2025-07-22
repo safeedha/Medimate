@@ -38,7 +38,7 @@ import {EditSlot} from '../../../application/usecase/slot/editrecslot'
 import {FetchSingleDoctor} from '../../../application/usecase/doctor/getSingledoc'
 import {Docprofile} from '../../../application/usecase/doctor/docProfile'
 import {MessageTimeUpdation} from '../../../application/usecase/conversation/messagtime'
-
+import {GetDept}  from '../../../application/usecase/dept/getDept'
 
 import {MongoRegRepository} from '../../repository/mongoregRepository'
 import {MongoDeptRepository} from '../../repository/mongodeptRepository'
@@ -70,7 +70,8 @@ const doctorpassreset=new DoctorPasswordRest(mongoregrepository)
 export const auth=new DoctorAuthController(doctorregister,doclogin,docreapply,otpdocCreation,doctorotpverify,doctorpassreset)
 
 const getallunblockedept=new GetAllUnblockedDept(mongodeptRepository)
-export const department=new DepartmentController(getallunblockedept)
+const gGetDept=new GetDept(mongodeptRepository)
+export const department=new DepartmentController(getallunblockedept,gGetDept)
 
 const getAllMessages=new GetAllMessages(mongoConversationRepo)
 const getUnreadCountMessage=new GetUnreadCountMessage(mongoConversationRepo)

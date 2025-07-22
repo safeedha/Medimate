@@ -6,13 +6,9 @@ import toast, { Toaster } from 'react-hot-toast';
 import { profileUpdate, getSingledoctor } from '../../api/doctorapi/doclogin';
 import { getDepartment } from '../../api/doctorapi/department';
 import DoctorSidebar from '../common/Docsidebar';
-import type { DepartmentProps } from '../../Interface/interface';
+import type { DepartmentProps,Experience } from '../../Interface/interface';
 
-interface Experience {
-  hospitalName: string;
-  role: string;
-  years: string;
-}
+
 
 function DoctorProfile() {
   const doctor = useSelector((state: RootState) => state.doctor.doctorInfo);

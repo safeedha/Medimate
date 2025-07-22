@@ -119,6 +119,7 @@ export class MongoDocRepository implements DoctorRepository {
         : doc.specialisation?.toString() ?? null,
       experience: doc.experience,
       fee: doc.fee,
+      experienceDetail:doc.experienceDetail,
       profilePicture: doc.profilePicture,
     }));
     return { total, data };
@@ -359,10 +360,18 @@ async profileupdate(
     if (existingDoctorWithPhone) {
       throw new Error('Phone number already exists for another doctor');
     }
+    let exp=0
+    if(experiencelist.length>0)
+    {
+           exp = experiencelist.reduce((sum, exp) => {
+            const years = parseInt(exp.years); // Convert string to number
+            return sum + (isNaN(years) ? 0 : years);
+          }, 0);
+    }
 
     doctor.firstname = firstname;
     doctor.lastname = lastname;
-    doctor.experience = experience;
+    doctor.experience = experience>exp?experience:exp;
     doctor.fee = fee;
     doctor.phone = phone;
     doctor.profilePicture = image;
