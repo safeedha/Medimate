@@ -85,6 +85,17 @@ async  lockAvailableSlot(data: SlotLockDTO): Promise<string> {
 async editRecurringSlot(data: RecurringDTO): Promise<RecurringDTO> {
   try {
       
+    const slots = await Slot.find({ recurringSlotId: data._id  });
+
+    if (slots.length === 0) {
+      throw new Error("No slots found with the given recurringSlotId");
+    }
+
+    const isAnyBooked = slots.some(slot => slot.status === "booked");
+
+    if (isAnyBooked) {
+      throw new Error("Cannot Edit, because one or more slots are already booked");
+    }
     const existingSlots = await Recurring.find({
       _id: { $ne: data._id }, // exclude current slot
       doctorId: data.doctorId,
@@ -94,7 +105,6 @@ async editRecurringSlot(data: RecurringDTO): Promise<RecurringDTO> {
       endttime: { $gte: data.starttime },
     });
 
-    // Check for day overlap
     for (const slot of existingSlots) {
       const sharedDays = slot.daysOfWeek.filter((day) => data.daysOfWeek.includes(day));
       if (sharedDays.length > 0) {
