@@ -1,4 +1,4 @@
-import { DoctorDTO } from '../../../dto/doctor.dto';
+
 export interface IChangeDocStatus {
-  changesatus(id: string): Promise<DoctorDTO[]>;
+  changesatus(id: string): Promise<string>;
 }

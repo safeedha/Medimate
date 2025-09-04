@@ -1,14 +1,19 @@
-import { Appointment } from '../../../domain/entities/appoinment';
-import {WalletRepository} from '../../../domain/repository/wallet-repo';
-import{ AdminWallet} from "../../../domain/entities/adminwallet"
 
+import {IWalletRepository} from '../../../domain/repository/WalletRepository';
+import{DoctorTransactionDTO} from '../../../dto/wallet.dto'
 export class GetDoctorWallet {
 
-  constructor(private walletRepository:WalletRepository) {}
-  async getwallet(doctrid:string,page:number,limit:number): Promise<any> {
+  constructor(private walletRepository:IWalletRepository) {}
+  async getwallet(doctrid:string,page:number,limit:number): Promise<{ balance: number; transactions: DoctorTransactionDTO[]; total: number }> {
     try {
-      const wallet = await this.walletRepository.getdoctorwallet(doctrid,page,limit);
-      return wallet
+      const { balance, transaction , total} = await this.walletRepository.getdoctorwallet(doctrid,page,limit);
+          const transactions: DoctorTransactionDTO[] = transaction.map((txn) => ({
+            type: txn.type,
+            amount: txn.amount,
+            appointmentId: txn.appointmentId?.toString(),
+            date: txn.date,
+          }));
+      return {balance ,transactions,total}
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);

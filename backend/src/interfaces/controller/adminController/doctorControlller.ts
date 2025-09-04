@@ -4,6 +4,7 @@ import { IChangeDocStatus } from '../../../domain/useCaseInterface/doctor/IChang
 import { IVerifyDoctor } from '../../../domain/useCaseInterface/doctor/IVerifyDoctor';
 import {IGetSingleDoctor} from "../../../domain/useCaseInterface/doctor/IGetSingleDoctor"
 import { IGetAllDoctor } from '../../../domain/useCaseInterface/doctor/IGetAllDoctor';
+import { HttpStatus } from '../../../common/httpStatus';
 
 export class DoctorController {
   constructor(
@@ -19,7 +20,7 @@ export class DoctorController {
       const page = parseInt(req.query.page as string);
       const limit = parseInt(req.query.limit as string);
       const result = await this.getUnverified.getAllUnverifiedDoctors(page, limit);
-      res.status(200).json(result);
+      res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);
     }
@@ -31,7 +32,7 @@ export class DoctorController {
       const limit = parseInt(req.query.limit as string);
       const search = req.query.search as string;
       const result = await this.getAllDoctor.getAlldoctors(page,limit,search);//getAllDoctors(page, limit, search);
-      res.status(200).json(result);
+      res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);
     }
@@ -41,7 +42,7 @@ export class DoctorController {
     try {
       const { doctorId } = req.params;
       const result = await this.getSingleDoctor.getsingledoc(doctorId)//getSingleDoctor(doctorId);
-      res.status(200).json(result);
+      res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);
     }
@@ -51,7 +52,7 @@ export class DoctorController {
     try {
       const { id } = req.params;
       const result = await this.changeDoctorStatus.changesatus(id);//
-      res.status(200).json(result);
+      res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);
     }
@@ -60,10 +61,10 @@ export class DoctorController {
   async updateVerificationStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
-      const { status } = req.body; // 'Approved' or 'Rejected'
+      const { status } = req.body; 
       const reason = req.query.reason as string;
       const result = await this.verifyDoctor.verifyStatus(id, status, reason);
-      res.status(200).json(result);
+      res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);
     }

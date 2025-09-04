@@ -1,13 +1,13 @@
-import {slotRepository} from '../../../domain/repository/slot-repository';
-import { ICancelRecurringSlot } from '../../../domain/useCaseInterface/slot/ICancelRecurringSlot';
+import {ISlotRepository} from '../../../domain/repository/SlotRepository';
+import { ICancelSlot } from '../../../domain/useCaseInterface/slot/ICancelSlot';
 
 
-export class CancelRecurringSlot implements ICancelRecurringSlot{
+export class CancelSlot implements ICancelSlot{
 
-  constructor(private slotrepository: slotRepository) {}
-  async cancelSlots(id:string): Promise<string> {
+  constructor(private slotrepository: ISlotRepository) {}
+  async cancelSlot(id:string): Promise<string> {
     try {
-      const slots= await this.slotrepository.cancelreccslots(id)
+      const slots= await this.slotrepository.deleteslot(id)
       return slots
     } catch (error) {
       if (error instanceof Error) {

@@ -1,5 +1,5 @@
-import {IOtp} from '../../../domain/entities/otp';
-import mongoose, { Schema, Document } from 'mongoose';
+import {IOtp} from '../../../domain/entities/Otp';
+import mongoose, { Schema} from 'mongoose';
 const otpSchema: Schema<IOtp> = new Schema({
   email: { type: String, required: true },
   otp: { type: String, required: true },

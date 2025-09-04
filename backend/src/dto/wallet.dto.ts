@@ -6,15 +6,14 @@ export interface WalletTransactionDto {
 }
 
 export interface AdminWalletTransactionDto{
-   _id?: string;
-  appointmentId?: string;
-  amount?: number;
-  date?: string; 
+   _id: string;
+  amount: number;
+  date: string; 
   doctorId?: string;
   from?: string;
   to?: string;
   toModel:'Platform'|'User'|'Doctor',
-  type?: 'credit' | 'debit';
+  type: 'credit' | 'debit'|'refund';
   paymentstatus?: boolean;
 }
 

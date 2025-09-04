@@ -3,7 +3,7 @@ import { IUserRegister } from "../../../domain/useCaseInterface/auth/IUserRegist
 import { IUserLogin } from "../../../domain/useCaseInterface/auth/IUserLogin";
 import { IGoogleAuth } from "../../../domain/useCaseInterface/auth/IGoogleAuth";
 import { HttpStatus } from '../../../common/httpStatus';
-import { Messages } from '../../../common/messages';
+import { HttpMessage } from '../../../common/httpessages';
 import {setCookies,clearCookies} from '../../../application/service/setCookies'
 
 export class AuthController {
@@ -18,7 +18,7 @@ export class AuthController {
       const { firstname, lastname, email, phone, password, gender } = req.body;
       await this.userRegister.signup({ firstname, lastname, email, phone, password, gender });
 
-      res.status(HttpStatus.CREATED).json({ message: Messages.REGISTRATION_SUCCESS });
+      res.status(HttpStatus.CREATED).json({ message:HttpMessage.REGISTRATION_SUCCESS });
     } catch (error) {
       next(error);
     }
@@ -31,12 +31,12 @@ export class AuthController {
       const result = await this.userLogin.login({ email, password });
        setCookies(res,result.refreshToken)
       res.status(HttpStatus.OK).json({
-        message: Messages.LOGIN_SUCCESS,
+        message: HttpMessage.LOGIN_SUCCESS,
         user: result.user,
         accessusertoken: result.accessToken
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : Messages.INTERNAL_SERVER_ERROR;
+      const errorMessage = error instanceof Error ? error.message : HttpMessage.INTERNAL_SERVER_ERROR;
       res.status(HttpStatus.BAD_REQUEST).json({ message: errorMessage });
     }
   }
@@ -48,12 +48,12 @@ export class AuthController {
       const result = await this.googleAuth.googleLogin(credential);
         setCookies(res,result.refreshToken)
       res.status(HttpStatus.OK).json({
-        message: Messages.LOGIN_SUCCESS,
+        message: HttpMessage.LOGIN_SUCCESS,
         user: result.user,
         accessusertoken: result.accessToken
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : Messages.GOOGLE_LOGIN_ERROR;
+      const errorMessage = error instanceof Error ? error.message : HttpMessage.GOOGLE_LOGIN_ERROR;
       res.status(HttpStatus.BAD_REQUEST).json({ message: errorMessage });
     }
   }
@@ -62,9 +62,9 @@ export class AuthController {
     try {
         clearCookies(res)
 
-      res.status(HttpStatus.OK).json({ message: Messages.LOGOUT_SUCCESS });
+      res.status(HttpStatus.OK).json({ message: HttpMessage.LOGOUT_SUCCESS });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : Messages.INTERNAL_SERVER_ERROR;
+      const errorMessage = error instanceof Error ? error.message : HttpMessage.INTERNAL_SERVER_ERROR;
       res.status(HttpStatus.BAD_REQUEST).json({ message: errorMessage });
     }
   }

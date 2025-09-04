@@ -1,4 +1,4 @@
-import { Message } from '../../../domain/entities/messages';
+import { Message } from '../../entities/Messages';
 
 
 export interface IGetAllMessages {

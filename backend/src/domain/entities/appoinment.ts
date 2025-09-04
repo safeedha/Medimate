@@ -1,6 +1,6 @@
-import {Iuser} from './user';
-import {Idoctor} from './doctor';
-import {IndividualSlot} from './slot';
+import {Iuser} from './User';
+import {Idoctor} from './Doctor';
+import {IndividualSlot} from './Sot';
 
 export interface Appointment {
   _id?: string; 
@@ -26,3 +26,9 @@ export interface Appointment {
   created_at?: Date;
   updated_at?: Date;
 }
+
+export type AppointmentCountByDate = {
+  _id: string;    
+  count: number;
+};
+

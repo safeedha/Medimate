@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import {IGetNotification}  from "../../../domain/useCaseInterface/notification/getUnreadnotifcation"
 import { HttpStatus } from '../../../common/httpStatus';
-import { Messages } from '../../../common/messages';
+import { HttpMessage } from '../../../common/httpessages';
 import {IReadNotification}  from "../../../domain/useCaseInterface/notification/readnotification"
 
 interface CustomRequest extends Request {
@@ -27,7 +27,7 @@ export class NotificationController {
        try {
          const {id}=req
          await this.readNotification.readnotification(id)
-         res.status(HttpStatus.OK).json({message: Messages.NOTIFICATION_READE});
+         res.status(HttpStatus.OK).json({message: HttpMessage .NOTIFICATION_READE});
        } catch (error) {
          next(error);
        }

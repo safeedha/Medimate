@@ -1,8 +1,8 @@
-import { ReportRepository } from '../../../domain/repository/report-rep';
+import { IReportRepository } from '../../../domain/repository/ReportRepository';
 import { IAddReport } from '../../../domain/useCaseInterface/report/IAddReport';
-import { IMedicine } from '../../../domain/entities/report';
+import { IMedicine } from '../../../domain/entities/Report';
 export class Addreport implements IAddReport{
-constructor(private repoeportRepository:ReportRepository)
+constructor(private repoeportRepository:IReportRepository)
 {
 
 }
@@ -13,6 +13,7 @@ try{
 }
 catch(error)
 {
+  console.log(error)
  throw new Error('Could not save report');
 }
 }

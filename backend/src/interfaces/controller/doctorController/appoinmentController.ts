@@ -5,7 +5,6 @@ import { IGetSingleAppointment } from '../../../domain/useCaseInterface/appoinme
 import { IRescheduleAppointment } from '../../../domain/useCaseInterface/appoinment/IRescheduleAppointment';
 import { IGetDoctorAppointmentCount } from '../../../domain/useCaseInterface/appoinment/IGetDoctorAppointmentCount';
 import { IGetFilterAppointments } from '../../../domain/useCaseInterface/appoinment/IGetFilterAppointments';
-import {IGetDepartmentSummary} from '../../../domain/useCaseInterface/appoinment/IGetdeaprtmentsummary'
 import { ICreateFollowUp } from '../../../domain/useCaseInterface/appoinment/ICreateFollowUp';
 import { IGetAppointmentPagination } from '../../../domain/useCaseInterface/appoinment/IGetAppointmentPagination';
 import { HttpStatus } from '../../../common/httpStatus';

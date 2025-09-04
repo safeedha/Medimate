@@ -1,4 +1,4 @@
-import { IMedicine } from '../../../domain/entities/report';
+import { IMedicine } from '../../entities/Report';
 export interface IAddReport {
   addReport(
     htmlcontent: string,

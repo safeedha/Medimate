@@ -1,4 +1,4 @@
-import { Idoctor } from '../../../domain/entities/doctor';
+
 import {DoctorDTO} from '../../../dto/doctor.dto'
 export interface IDoctorLogin {
   login(email: string, password: string): Promise<{

@@ -1,7 +1,6 @@
-export interface INotification {
+export interface NotificationDto {
   _id?: string;
-  userId?: string;              
-  senderId?: string;           
+  type: "consultation"|"cancellation" |"refund"|"reschedule"|"followup"            
   message: string;           
   createdAt?: string;           
 }

@@ -1,9 +1,9 @@
 
-import { slotRepository } from '../../../domain/repository/slot-repository';
+import { ISlotRepository } from '../../../domain/repository/SlotRepository';
 import { SlotLockDTO  } from '../../../dto/slot.dto'
 import {ICreateLockSlot } from '../../../domain/useCaseInterface/slot/ICreateLockSlot';
 export class CreateLockslot implements ICreateLockSlot{
-  constructor(private slotRepository:slotRepository) {}
+  constructor(private slotRepository:ISlotRepository) {}
 
   async createLock(slot:string,doctorId:string): Promise<string> {
     try {

@@ -1,17 +1,22 @@
+import { IConversationRepository } from '../../../domain/repository/ConversationRepository';
+import { MessageDto } from '../../../dto/message.dto';
 
-import {ConversationRepository} from '../../../domain/repository/conver-repo'
-import {Message} from '../../../domain/entities/messages'
+export class ReadMessageStatus {
+  constructor(private conversationrepository: IConversationRepository) {}
 
+  async readmessage(messageId: string): Promise<MessageDto> {
+    const result = await this.conversationrepository.changereadstatus(messageId);
 
-export class Messageread{
-  constructor(private conversationrepository:ConversationRepository)
-  {
-   
+    const messageDto: MessageDto = {
+      _id: result._id?.toString(),
+      senderId: result.senderId?.toString(),
+      recieverId: result.recieverId?.toString(),
+      message: result.message ?? undefined, // safely handle null
+      image: result.image ?? undefined,    
+      messageType: result.messageType,
+      read: result.read ?? false,           
+    };
+
+    return messageDto;
   }
-  async readmessage(messageId:string):Promise<Message>
-  {
-    const result=await this.conversationrepository.changereadstatus(messageId)
-    return result
-  }
-
 }

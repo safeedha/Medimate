@@ -5,7 +5,7 @@ import { IOtpVerifier } from "../../../domain/useCaseInterface/authRecovery/IOtp
 import { IPasswordReset } from "../../../domain/useCaseInterface/authRecovery/IPasswordReset";
 import { generateOtp } from '../../../application/service/otpservice';
 import { HttpStatus } from '../../../common/httpStatus';
-import { Messages } from '../../../common/messages';
+import { HttpMessage } from '../../../common/httpessages';
 
 export class AuthRecoveryController {
   constructor(
@@ -22,7 +22,7 @@ export class AuthRecoveryController {
       await this.otpCreation.createOtp(email, otp);
       await sendMail(email, otp, subject, undefined);
 
-      res.status(HttpStatus.OK).json({ message: Messages.OTP_SENT_SUCCESS });
+      res.status(HttpStatus.OK).json({ message:HttpMessage.OTP_SENT_SUCCESS });
     } catch (error) {
       next(error);
     }
@@ -33,7 +33,7 @@ export class AuthRecoveryController {
       const { email, otp } = req.body;
       await this.otpVerification.verifyOtp(email, otp);
 
-      res.status(HttpStatus.OK).json({ message: Messages.OTP_VERIFIED_SUCCESS });
+      res.status(HttpStatus.OK).json({ message: HttpMessage.OTP_VERIFIED_SUCCESS });
     } catch (error) {
       next(error);
     }
@@ -42,9 +42,10 @@ export class AuthRecoveryController {
   async resetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password } = req.body;
+      console.log(password)
       await this.passwordReset.passwordrest(email, password);
 
-      res.status(HttpStatus.OK).json({ message: Messages.PASSWORD_RESET_SUCCESS });
+      res.status(HttpStatus.OK).json({ message: HttpMessage.PASSWORD_RESET_SUCCESS });
     } catch (error) {
       next(error);
     }

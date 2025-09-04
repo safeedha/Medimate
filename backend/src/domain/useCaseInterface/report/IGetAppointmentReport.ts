@@ -1,4 +1,5 @@
-import {IReport} from '../../../domain/entities/report'
+
+import { ReportDto } from '../../../dto/report.dto';
 export interface IGetAppointmentReport {
-  getreport(appointmentId: string): Promise<IReport>;
+  getreport(appointmentId: string): Promise< ReportDto>;
 }

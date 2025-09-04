@@ -1,23 +1,27 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response,NextFunction  } from 'express';
 import errorLogger from '../logging/errorlogger';
 
 const errorHandler = (
-  err: any,
+  err: Error,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction 
 ): void => {
+   
   const errorMessage = err instanceof Error
     ? err.message
     : 'Internal Server Error';
 
-  errorLogger.error({
+     errorLogger.error({
     message: errorMessage,
+    stack: err instanceof Error ? err.stack : undefined,
+    path: req.originalUrl,
     method: req.method,
-    url: req.originalUrl,
-    stack: err.stack || '',
+    body: req.body,
+    query: req.query,
+    params: req.params,
   });
-  console.log("middleware")
+
   res.status(500).json({
     message: errorMessage,
     

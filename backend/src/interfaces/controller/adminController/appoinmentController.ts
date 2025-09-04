@@ -5,6 +5,7 @@ import{IGetCountOfAppointmentsForDoctor } from '../../../domain/useCaseInterface
 import{IGetFilteredAppointment } from '../../../domain/useCaseInterface/appoinment/IGetFilteredAppointment';
 import {IGetDepartmentSummary} from '../../../domain/useCaseInterface/appoinment/IGetdeaprtmentsummary'
 import { HttpStatus } from '../../../common/httpStatus';
+import {HttpMessage}  from '../../../common/httpessages';
 export class AppointmentController {
   constructor(
 
@@ -36,12 +37,10 @@ export class AppointmentController {
   async getAppointmentCountByStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { status } = req.query;
-
       if (typeof status !== 'string' || !['completed', 'pending', 'cancelled'].includes(status)) {
-        res.status(HttpStatus.BAD_REQUEST).json({ message: 'Invalid status value' });
+        res.status(HttpStatus.BAD_REQUEST).json({  message: HttpMessage.INVALID_STATUS });
         return;
       }
-
       const result = await this.getCountOfAppointmentsForDoctor.getcount(status as 'completed' | 'pending' | 'cancelled');
       res.status(HttpStatus.OK).json(result);
     } catch (error) {
@@ -54,7 +53,7 @@ export class AppointmentController {
       const { status, start, end } = req.query;
 
       if (!status || !start || !end) {
-        res.status(HttpStatus.BAD_REQUEST).json({ message: 'Missing status, start, or end date' });
+        res.status(HttpStatus.BAD_REQUEST).json({ message: HttpMessage.MISSING_FIELDS });
         return;
       }
 

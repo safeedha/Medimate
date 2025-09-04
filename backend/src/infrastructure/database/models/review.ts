@@ -1,4 +1,4 @@
-import {IDoctorReview } from '../../../domain/entities/review'
+import {IDoctorReview } from '../../../domain/entities/Review'
 
 import mongoose, { Schema, model } from 'mongoose';
 

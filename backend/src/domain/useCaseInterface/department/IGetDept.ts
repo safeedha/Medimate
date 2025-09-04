@@ -1,8 +1,7 @@
-import {Department} from '../../../domain/entities/departnment'
-
+import { DepartmentDTO } from '../../../dto/doctor.dto';
 export interface IGetDept {
   getAllDept(page?: number, limit?: number, search?: string): Promise<{
-    data: Department[],
+    data: DepartmentDTO[],
     total: number;
   }>;
 }

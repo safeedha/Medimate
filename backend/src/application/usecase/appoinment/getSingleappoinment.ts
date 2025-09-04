@@ -1,8 +1,8 @@
-import { appointmentRepository  } from '../../../domain/repository/appoinment-rep';
-import { Appointment } from '../../../domain/entities/appoinment';
+import {  IAppointmentRepository } from '../../../domain/repository/AppointmentRepository';
+import { Appointment } from '../../../domain/entities/Appoinment';
 import {IGetSingleAppointment} from '../../../domain/useCaseInterface/appoinment/IGetSingleAppointment';
 export class GetSingleappoinment implements IGetSingleAppointment{
-  constructor(private appointmentRepo: appointmentRepository,) {}
+  constructor(private appointmentRepo:  IAppointmentRepository) {}
    async getsingleappoinment(id:string):Promise<Appointment>{
        try{
           const result=await this.appointmentRepo.getsingleappoinment(id)

@@ -1,6 +1,6 @@
-import {Iuser} from './user';
-import {Idoctor} from './doctor';
-import {Appointment} from './appoinment';
+import {Iuser} from './User';
+import {Idoctor} from './Doctor';
+import {Appointment} from './Appoinment';
 
 export interface AdminWalletTransaction {
   _id?: string;
@@ -10,7 +10,7 @@ export interface AdminWalletTransaction {
   to: string | Idoctor; 
   toModel:'User'| 'Doctor'| 'Platform'
   doctorId:string|Idoctor          
-  appointmentId: string|Appointment; 
+  appointmentId?: string|Appointment; 
   paymentstatus:boolean
   date: Date;
 }

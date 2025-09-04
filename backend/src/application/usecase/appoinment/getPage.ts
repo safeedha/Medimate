@@ -1,9 +1,9 @@
-import { appointmentRepository } from '../../../domain/repository/appoinment-rep';
+import {  IAppointmentRepository } from '../../../domain/repository/AppointmentRepository';
 import {IGetAppointmentPagination} from '../../../domain/useCaseInterface/appoinment/IGetAppointmentPagination';
 
 
 export class GetPage implements IGetAppointmentPagination{
-  constructor(private appointmentRepo: appointmentRepository) {}
+  constructor(private appointmentRepo:  IAppointmentRepository) {}
 
   async getpageforappoinment( id:string,originalId:string,limit:number):Promise<number> {
     try {

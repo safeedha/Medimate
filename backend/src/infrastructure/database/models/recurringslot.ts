@@ -1,6 +1,6 @@
-import {IRecurring} from '../../../domain/entities/recurringslot';
+import {IRecurring} from '../../../domain/entities/Recurringslot';
 
-import mongoose, { Schema, model } from 'mongoose';
+import  { Schema, model } from 'mongoose';
 
 
 

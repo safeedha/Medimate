@@ -1,6 +1,6 @@
-import {IndividualSlot} from '../../../domain/entities/slot'
+import {IndividualSlot} from '../../../domain/entities/Sot'
 
-import mongoose, { Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 const individualSlotSchema = new Schema<IndividualSlot>({
   recurringSlotId: { type: Schema.Types.ObjectId, ref: 'Recurring', required: true },

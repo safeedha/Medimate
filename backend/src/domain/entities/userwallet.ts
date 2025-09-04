@@ -1,8 +1,7 @@
-import {Iuser} from './user';
-import {Idoctor} from './doctor';
-import {Appointment} from './appoinment';
+import {Iuser} from './User';
 
-export interface Transaction {
+
+export interface UserTransaction {
   type: 'credit' | 'debit';
   amount: number;
   date: Date;
@@ -11,6 +10,6 @@ export interface Transaction {
 export interface IUserWallet  {
   userId:string|Iuser;
   balance: number;
-  transactions: Transaction[];
+  transactions: UserTransaction[];
   lastUpdated: Date;
 }

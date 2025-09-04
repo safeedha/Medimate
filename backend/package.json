@@ -7,7 +7,9 @@
     "build": "tsc",
     "start": "node dist/server/index.js",
     "dev": "ts-node src/server/index.ts",
-    "prestart": "npm run build"
+    "prestart": "npm run build",
+    "lint": "eslint . --ext .ts,.js",
+    "lint:fix": "eslint . --ext .ts,.js --fix"
   },
   "keywords": [],
   "author": "",
@@ -36,6 +38,7 @@
     "winston-elasticsearch": "^0.19.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.34.0",
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
@@ -43,7 +46,12 @@
     "@types/node": "^22.15.14",
     "@types/nodemailer": "^6.4.17",
     "@types/otp-generator": "^4.0.2",
+    "@typescript-eslint/eslint-plugin": "^8.42.0",
+    "@typescript-eslint/parser": "^8.42.0",
+    "eslint": "^9.34.0",
+    "globals": "^16.3.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.42.0"
   }
 }

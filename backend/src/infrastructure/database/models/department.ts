@@ -1,7 +1,7 @@
 import{Schema, model} from 'mongoose';
-import {Department} from '../../../domain/entities/departnment';
+import {IDepartment} from '../../../domain/entities/Departnment';
 
-const departmentSchema = new Schema<Department>({
+const departmentSchema = new Schema<IDepartment>({
   deptname: {
     type: String,
     required: true,
@@ -18,5 +18,5 @@ const departmentSchema = new Schema<Department>({
   timestamps: true,
 });
 
-const DepartmentModel = model<Department>('Department', departmentSchema);
+const DepartmentModel = model<IDepartment>('Department', departmentSchema);
 export default DepartmentModel;

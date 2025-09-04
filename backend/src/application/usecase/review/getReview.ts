@@ -1,17 +1,25 @@
-import { IDoctorReview } from '../../../domain/entities/review';
-import { ReviewRepository } from '../../../domain/repository/reviewrepository';
-import {IGetDoctorReviews } from "../../../domain/useCaseInterface/review/IGetDoctorReviews";
+
+import { IReviewRepository } from '../../../domain/repository/ReviewRepository';
+import { IGetDoctorReviews } from "../../../domain/useCaseInterface/review/IGetDoctorReviews";
+import { RatingDto } from '../../../dto/review.dto';
+
 export class Getreview implements IGetDoctorReviews {
-  constructor(private reviewRepository: ReviewRepository) {}
+  constructor(private reviewRepository: IReviewRepository) {}
 
   async getreviews(
     doctorId: string,
     page: number,
     limit: number
-  ): Promise<{ reviews: IDoctorReview[]; total: number}> {
+  ): Promise<{ reviews: RatingDto[]; total: number }> {
     try {
       const result = await this.reviewRepository.getReview(doctorId, page, limit);
-      return result;
+
+      const reviews: RatingDto[] = result.reviews.map((data) => ({
+        rating: data.rating,
+        comment: data.comment,
+      }));
+
+      return { reviews, total: result.total };
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);

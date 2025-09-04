@@ -1,8 +1,8 @@
 import {IGetDepartmentSummary} from '../../../domain/useCaseInterface/appoinment/IGetdeaprtmentsummary'
 import {IDepartmentSummary} from '../../../dto/departmentsummary.dto'
-import { appointmentRepository  } from '../../../domain/repository/appoinment-rep';
+import { IAppointmentRepository  } from '../../../domain/repository/AppointmentRepository';
 export class GetdepartmentSummary implements IGetDepartmentSummary{
-  constructor(private appointmentRepo: appointmentRepository)
+  constructor(private appointmentRepo: IAppointmentRepository)
   {
 
   }

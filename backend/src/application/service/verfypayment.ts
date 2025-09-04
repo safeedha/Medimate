@@ -1,12 +1,15 @@
 import Razorpay from 'razorpay';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
+import {ServiceMessage} from '../../common/serviceMessages'
 dotenv.config();
 
 const razorpay = new Razorpay({
   key_id: process.env.KEYID as string,
   key_secret: process.env.KEYSECRET as string,
 });
+
+console.log(razorpay)
 
 export async function verifypayment( razorpay_order_id:string, razorpay_payment_id:string, razorpay_signature:string):Promise<{message:string}> {
     try{
@@ -16,15 +19,15 @@ export async function verifypayment( razorpay_order_id:string, razorpay_payment_
                             .digest('hex');
 
     if (razorpay_signature === expectedSign) {
-       return { message: "Payment verified successfully" };
+       return { message: ServiceMessage.VERIFIED_SUCCESS};
     }
     else {
-      throw new Error("Payment verification failed");
+      throw new Error(ServiceMessage.VERIFIED_FAILED);
     }
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(error.message);
     }
-    throw new Error("Payment verification failed");
+    throw new Error(ServiceMessage.VERIFIED_FAILED);
   }
 }

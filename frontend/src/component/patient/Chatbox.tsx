@@ -32,10 +32,12 @@ function Chatbox({ userid, name,setSort}: { userid: string; name: string,setSort
   const fetchMessages = async () => {
     if (!userid) return;
     const result = await geteverymessage(userid);
+    console.log(result)
     setMessages(result === 'No conversation found' ? [] : result);
   };
 
   useEffect(() => {
+    alert("hey")
     fetchMessages();
   }, [user?._id, userid, del]);
 

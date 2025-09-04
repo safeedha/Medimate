@@ -1,8 +1,8 @@
 
-import { WalletRepository } from '../../../domain/repository/wallet-repo';
+import { IWalletRepository } from '../../../domain/repository/WalletRepository';
 
 export class Getrefund {
-  constructor(private walletRepository: WalletRepository) {}
+  constructor(private walletRepository: IWalletRepository) {}
 
   async getrefundable(appoinmentId:string): Promise<string> {
     try {

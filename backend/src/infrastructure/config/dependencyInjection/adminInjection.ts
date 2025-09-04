@@ -6,32 +6,32 @@ import {AppointmentController} from '../../../interfaces/controller/adminControl
 import {WalletController}from '../../../interfaces/controller/adminController/walletController'
 
 
-import {Login} from '../../../application/usecase/reg/adminLogin'
-import {AddDept} from'../../../application/usecase/dept/addDept'
-import {GetDept} from'../../../application/usecase/dept/getDept'
-import {EditDept} from'../../../application/usecase/dept/editdept'
-import {BlockDept} from'../../../application/usecase/dept/blockdept'
-import {GetUnverified} from'../../../application/usecase/doctor/getunverifed'
-import {ChangeDocStatus} from'../../../application/usecase/doctor/changestatus'
-import{VerifyDoctor} from'../../../application/usecase/doctor/verify'
-import {FetchSingleDoctor }  from'../../../application/usecase/doctor/getSingledoc'
-import {GetAlldoctor} from'../../../application/usecase/doctor/getalldoctor'
-import {GetUser} from'../../../application/usecase/user/getUser'
-import {ChangeStatus}  from'../../../application/usecase/user/changestatus'
-import{GetsingleUser}  from'../../../application/usecase/user/getSingleUser'
-import {GetCountofappforeachDoc } from'../../../application/usecase/appoinment/gecountforeach'
-import {GetFilter}  from'../../../application/usecase/appoinment/getfilter'
-import {GetDashbordappoinment}  from'../../../application/usecase/appoinment/appoinmentdash'
-import {GetAdminWallet}  from'../../../application/usecase/wallet/geadminwallet'
-import {GetPayout}  from'../../../application/usecase/wallet/getpayout'
-import {Paytodoctor} from'../../../application/usecase/wallet/paytodoctor'
-import {GetdepartmentSummary}  from'../../../application/usecase/appoinment/getdepartmentsummary'
+import {Login} from '../../../application/usecase/registration/AdminLogin'
+import {AddDept} from'../../../application/usecase/department/AddDepartment'
+import {GetDept} from'../../../application/usecase/department/GetDepartment'
+import {EditDept} from'../../../application/usecase/department/EditDepartment'
+import {BlockDept} from'../../../application/usecase/department/BlockDepartment'
+import {GetUnverified} from'../../../application/usecase/doctor/GetUnverified'
+import {ChangeDocStatus} from'../../../application/usecase/doctor/ChangeDoctorStatus'
+import{VerifyDoctor} from'../../../application/usecase/doctor/VerifyDocto'
+import {FetchSingleDoctor }  from'../../../application/usecase/doctor/GetSingleDoctor'
+import {GetAlldoctor} from'../../../application/usecase/doctor/GetAllDoctor'
+import {GetUser} from'../../../application/usecase/user/GetUser'
+import {ChangeStatus}  from'../../../application/usecase/user/ChangeStatus'
+import{GetsingleUser}  from'../../../application/usecase/user/GetSingleUser'
+import {GetAppointmentsPerDoctor } from'../../../application/usecase/appoinment/GetAppointmentsPerDoctor'
+import {GetFilter}  from'../../../application/usecase/appoinment/GetFilteredAppointment'
+import {GetDashbordappoinment}  from'../../../application/usecase/appoinment/GetAppointmentDashboard'
+import {GetAdminWallet}  from'../../../application/usecase/wallet/GetAdminWallet'
+import {GetPayout}  from'../../../application/usecase/wallet/GetPayout'
+import {Paytodoctor} from'../../../application/usecase/wallet/PaytoDoctor'
+import {GetdepartmentSummary}  from'../../../application/usecase/appoinment/GetDepartmentSummary'
 
-import {MongoDeptRepository} from '../../repository/mongodeptRepository'
-import {MongoDocRepository} from '../../repository/mongodocRepository'
-import {MongoUserRepository } from '../../repository/mongouserRepository'
-import {MongoAppointmentRepository}  from '../../repository/mongoappRep'
-import {MongoWalletRepository} from '../../repository/mongowalletrep'
+import {MongoDeptRepository} from '../../repository/DepartmentRepositoryImpl'
+import {MongoDocRepository} from '../../repository/DoctorRepositoryImpl.ts'
+import {MongoUserRepository } from '../../repository/UserRepositoryImpl'
+import {MongoAppointmentRepository}  from '../../repository/AppointmentRepositoryImpl'
+import {MongoWalletRepository} from '../../repository/WalletRepositoryImpl'
 
 const mongoDeptRepository=new MongoDeptRepository()
 const mongodocRepository=new MongoDocRepository()
@@ -64,7 +64,7 @@ const getSingleUser = new GetsingleUser(mongoUserRepository);
 export const user=new UserController(getUser,changeStatus,getSingleUser)
 
 
-const getCountofappforeachDoc = new GetCountofappforeachDoc(mongoAppointmentRepository);
+const getCountofappforeachDoc = new GetAppointmentsPerDoctor(mongoAppointmentRepository);
 const getFilter = new GetFilter(mongoAppointmentRepository);
 const getDashbordappoinment = new GetDashbordappoinment(mongoAppointmentRepository);
 const getdepartmentSummary=new GetdepartmentSummary(mongoAppointmentRepository)

@@ -56,7 +56,7 @@ export class DoctorController {
          const {id}=req
           const {reciever}=req.params         
          const result=await this.updateMessagetime.update(id!,reciever)
-        res.status(201).json(result)
+        res.status(HttpStatus.CREATED).json(result)
       }
       catch(error)
       {

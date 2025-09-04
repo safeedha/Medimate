@@ -1,8 +1,7 @@
-import { appointmentRepository  } from '../../../domain/repository/appoinment-rep';
-import { slotRepository } from '../../../domain/repository/slot-repository';
-import { Appointment } from '../../../domain/entities/appoinment';
+import { IAppointmentRepository  } from '../../../domain/repository/AppointmentRepository';
+import { Appointment } from '../../../domain/entities/Appoinment';
 export class GetdoctorAppointmentByid {
-  constructor(private appointmentRepo: appointmentRepository) {}
+  constructor(private appointmentRepo: IAppointmentRepository ) {}
    async getallappoinment(doctorid:string):Promise<Appointment[]>{
        try{
           const result=await this.appointmentRepo.getallappinmentfordoctor(doctorid)

@@ -1,13 +1,19 @@
 import { IGetUserWallet } from '../../../domain/useCaseInterface/wallet/IGetUserWallet';
-import {WalletRepository} from '../../../domain/repository/wallet-repo';
+import {IWalletRepository} from '../../../domain/repository/WalletRepository';
 import {WalletTransactionDto} from '../../../dto/wallet.dto'
 export class GetUserallet implements IGetUserWallet  {
 
-  constructor(private walletRepository:WalletRepository) {}
+  constructor(private walletRepository:IWalletRepository) {}
   async getwallet(userid:string,page:number,limit:number): Promise<{ balance: number;  transactions: WalletTransactionDto[] ,total:number}> {
     try {
-      const wallet = await this.walletRepository.getuserwallet(userid,page,limit);
-      return wallet
+      const {balance,transaction,total} = await this.walletRepository.getuserwallet(userid,page,limit);
+        const paginatedTransactions: WalletTransactionDto[] = transaction.reverse()
+        .map((tx) => ({
+          type: tx.type,
+          amount: tx.amount,
+          date: tx.date,
+        }));
+      return {balance,transactions:paginatedTransactions,total}
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);

@@ -3,7 +3,7 @@ import { IGetAllMessages } from '../../../domain/useCaseInterface/conversation/I
 import { IGetUnreadCount } from '../../../domain/useCaseInterface/conversation/IGetUnreadCount';
 import { IDeleteMessage } from '../../../domain/useCaseInterface/conversation/IDeleteMessage';
 import { HttpStatus } from '../../../common/httpStatus';
-import { Messages } from '../../../common/messages';
+import { HttpMessage } from '../../../common/httpessages';
 
 interface CustomRequest extends Request {
   id: string;
@@ -20,15 +20,15 @@ export class ConversationController {
     try {
       const receiverId = req.query.sender;
       const senderId = req.id;
-
+       console.log("12345")
       if (!receiverId || typeof receiverId !== 'string') {
-        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.INVALID_RECEIVER });
+        res.status(HttpStatus.BAD_REQUEST).json({ message: HttpMessage.INVALID_RECEIVER });
         return;
       }
-
       const messages = await this.getAllMessagesService.getallmessage(receiverId, senderId);
       res.status(HttpStatus.OK).json(messages);
     } catch (error) {
+      console.log("error her",error)
       next(error);
     }
   }
@@ -40,7 +40,7 @@ export class ConversationController {
       const receiver = req.query.reciever;
 
       if (typeof sender !== 'string' || typeof receiver !== 'string') {
-        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.INVALID_SENDER_OR_RECEIVER });
+        res.status(HttpStatus.BAD_REQUEST).json({ message: HttpMessage.INVALID_SENDER_OR_RECEIVER });
         return;
       }
 

@@ -3,7 +3,7 @@ import { IGetAllMessages } from '../../../domain/useCaseInterface/conversation/I
 import { IDeleteMessage } from '../../../domain/useCaseInterface/conversation/IDeleteMessage';
 import { IGetUnreadCount } from '../../../domain/useCaseInterface/conversation/IGetUnreadCount';
 import { HttpStatus } from '../../../common/httpStatus';
-import { Messages } from '../../../common/messages';
+import { HttpMessage } from '../../../common/httpessages';
 
 interface CustomRequest extends Request {
   id: string;
@@ -39,7 +39,7 @@ export class MessageController {
       const { sender } = req.query;
 
       if (typeof sender !== 'string') {
-        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.INVALID_SENDER_OR_RECEIVER });
+        res.status(HttpStatus.BAD_REQUEST).json({ message:HttpMessage.INVALID_SENDER_OR_RECEIVER });
         return;
       }
 
@@ -56,7 +56,7 @@ export class MessageController {
       const { sender, reciever } = req.query;
 
       if (typeof sender !== 'string' || typeof reciever !== 'string') {
-        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.INVALID_SENDER_OR_RECEIVER });
+        res.status(HttpStatus.BAD_REQUEST).json({ message: HttpMessage.INVALID_SENDER_OR_RECEIVER });
         return;
       }
 

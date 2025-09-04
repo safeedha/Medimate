@@ -1,4 +1,4 @@
-import {Department} from './departnment'
+import {Department} from './Departnment'
 export interface IExperience {
   hospitalName: string;
   role: string;

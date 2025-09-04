@@ -4,7 +4,7 @@ import {IEditSlot} from '../../../domain/useCaseInterface/slot/IEditRecslot';
 import { IGetRecurringSlot } from '../../../domain/useCaseInterface/slot/IGetRecurringSlot';
 import { ICancelRecurringSlot } from '../../../domain/useCaseInterface/slot/ICancelRecurringSlot';
 import { ICancelSlot } from '../../../domain/useCaseInterface/slot/ICancelSlot';
-import { GetSlotByDate } from '../../../application/usecase/slot/getslotbydate';
+import { IGetSlotByDate} from '../../../domain/useCaseInterface/slot/IGetSlotByDate';
 import { HttpStatus } from '../../../common/httpStatus';
 
 interface CustomRequest extends Request {
@@ -17,7 +17,7 @@ export class DoctorSlotController {
     private getRecurringSlots: IGetRecurringSlot,
     private cancelRecurringSlot: ICancelRecurringSlot,
     private cancelSlot: ICancelSlot,
-    private getSlotByDate: GetSlotByDate,
+    private getSlotByDate:IGetSlotByDate,
     private editSlot:IEditSlot
   ) {}
 

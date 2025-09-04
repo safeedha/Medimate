@@ -1,8 +1,8 @@
-import {slotRepository} from '../../../domain/repository/slot-repository';
-import {IndividualSlot} from '../../../domain/entities/slot'
+import {ISlotRepository} from '../../../domain/repository/SlotRepository';
+import {IndividualSlot} from '../../../domain/entities/Sot'
 import { IGetSlotByDate } from '../../../domain/useCaseInterface/slot/IGetSlotByDate';
 export class GetSlotByDate implements IGetSlotByDate{
-  constructor(private slotrepository: slotRepository) {}
+  constructor(private slotrepository: ISlotRepository) {}
 
   async getSlotsByDate(id: string, date: Date): Promise<IndividualSlot[]> {
     try {

@@ -1,8 +1,9 @@
-import { IDoctorReview } from '../../../domain/entities/review';
+
+import {RatingDto} from '../../../dto/review.dto'
 export interface IGetDoctorReviews {
   getreviews(
     doctorId: string,
     page: number,
     limit: number
-  ): Promise<{ reviews: IDoctorReview[]; total: number}>;
+  ): Promise<{ reviews: RatingDto[]; total: number}>;
 }

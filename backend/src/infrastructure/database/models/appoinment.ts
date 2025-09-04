@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { Appointment } from '../../../domain/entities/appoinment';
+import { Appointment } from '../../../domain/entities/Appoinment';
 
 const AppointmentSchema = new Schema<Appointment>({
   user_id: {

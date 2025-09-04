@@ -1,6 +1,7 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema } from "mongoose";
+import {INotification}from '../../../domain/entities/Notification'
 
-const NotificationSchema: Schema = new Schema(
+const NotificationSchema: Schema = new Schema<INotification>(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -32,7 +33,7 @@ const NotificationSchema: Schema = new Schema(
 );
 
 
-export const Notification = mongoose.model("Notification", NotificationSchema);
+export const Notification = mongoose.model<INotification>("Notification", NotificationSchema);
 
 
 

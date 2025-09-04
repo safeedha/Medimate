@@ -1,8 +1,8 @@
 
-import { ReviewRepository } from '../../../domain/repository/reviewrepository';
+import { IReviewRepository } from '../../../domain/repository/ReviewRepository';
 import {IGetAverageRating } from "../../../domain/useCaseInterface/review/IGetAverageRating";
 export class GetAverage implements IGetAverageRating{
-  constructor(private reviewRepository: ReviewRepository) {}
+  constructor(private reviewRepository: IReviewRepository) {}
 
   async getaveragerating(doctorId: string): Promise<number> {
     try {

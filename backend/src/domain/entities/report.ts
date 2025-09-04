@@ -1,5 +1,5 @@
-import { Appointment } from '../../domain/entities/appoinment';
-import { Iuser } from '../../domain/entities/user';
+import { Appointment } from './Appoinment';
+import { Iuser } from './User';
 export interface IMedicine {
   name: string
   dosage: string

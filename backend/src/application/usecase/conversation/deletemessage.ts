@@ -1,10 +1,10 @@
-import {Conversation} from '../../../domain/entities/conversation'
-import {ConversationRepository} from '../../../domain/repository/conver-repo'
-import { Message } from '../../../domain/entities/messages';
+
+import {IConversationRepository} from '../../../domain/repository/ConversationRepository'
+
 import { IDeleteMessage} from '../../../domain/useCaseInterface/conversation/IDeleteMessage';
 
 export class Deletemessage implements IDeleteMessage{
-  constructor(private conversationrepository:ConversationRepository){
+  constructor(private conversationrepository:IConversationRepository){
 
   }
   async delete(messageId:string,sender:string,reciever:string):Promise<string>{

@@ -1,21 +1,24 @@
 import { Request, Response } from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+import { HttpStatus } from '../../common/httpStatus';
+import { HttpMessage } from '../../common/httpessages';
+import {Role} from '../../common/role';
 
 export const refreshTokenController = async (req: Request, res: Response): Promise<void> => {
   try {
     const refreshToken = req.cookies?.refreshtoken;
 
     if (!refreshToken) {
-    res.status(400).json({ message: "Refresh token is missing" });
+    res.status(HttpStatus.BAD_REQUEST).json({ message: HttpMessage.REFRESH_TOKEN_MISSING});
     return 
     }
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!);
      let newAccessToken
     
         if (typeof decoded !== 'object' ) {
-          throw new Error("Invalid refresh token payload");
+          throw new Error(HttpMessage.INVALID_REFRESH_TOKEN );
         }
-       if(decoded.role==='doctor'||decoded.role==='user')
+       if(decoded.role===Role.DOCTOR||decoded.role===Role.USER)
        {
               newAccessToken = jwt.sign(
             { id: decoded.id, role: decoded.role }, 
@@ -31,9 +34,12 @@ export const refreshTokenController = async (req: Request, res: Response): Promi
           );
        }
           
-    res.status(200).json({ token: newAccessToken });
-  } catch (error:any) {
-     res.status(400).json({ message: error.message || "Refresh token failed" });
+    res.status(HttpStatus.OK).json({ token: newAccessToken });
+  } catch (error) {
+    if(error instanceof Error)
+    {
+      res.status(HttpStatus.BAD_REQUEST).json({ message: error.message ||  HttpMessage.REFRESH_TOKEN_FAILED });
+    }
      return
   }
 };

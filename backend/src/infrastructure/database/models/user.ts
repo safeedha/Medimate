@@ -1,5 +1,5 @@
-import { Schema, model, connect } from 'mongoose';
-import {Iuser} from '../../../domain/entities/user'
+import { Schema, model } from 'mongoose';
+import {Iuser} from '../../../domain/entities/User'
 
 
 const UserSchema: Schema<Iuser> = new Schema(

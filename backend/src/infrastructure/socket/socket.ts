@@ -1,13 +1,13 @@
-import {SaveMessage} from  "../../application/usecase/conversation/saveMessage"
-import {MongoConversationRepo}  from '../../infrastructure/repository/mongoconverRep'
-import {MongoNotification} from  '../../infrastructure/repository/mongonotfictionRepo'
-import {Messageread} from  "../../application/usecase/conversation/changereadstatus"
-import {Addnotification} from  "../../application/usecase/notification/addnotification"
-import {MessageModel} from '../database/models/message'
+import {SaveMessage} from  "../../application/usecase/conversation/SaveMessage"
+import {MongoConversationRepo}  from '../repository/ConversationRepositoryImpl.ts'
+import {MongoNotification} from  '../repository/NotificationRepositoryImpl'
+import {ReadMessageStatus} from  "../../application/usecase/conversation/ChangeReadStatus"
+import {Addnotification} from  "../../application/usecase/notification/Addnotification"
+
 const mongoConversationRepo=new MongoConversationRepo()
 const mongoNotification=new MongoNotification()
 const savemessage=new SaveMessage(mongoConversationRepo)
-const messageread=new Messageread(mongoConversationRepo)
+const messageread=new ReadMessageStatus(mongoConversationRepo)
 const addnotification=new Addnotification(mongoNotification)
 
 import { Server } from 'socket.io'
@@ -17,7 +17,7 @@ const participant: Record<string, string[]> = {};
 export const registerSocketEvents = async(io: Server) => {
   io.on('connection', (socket) => {
     console.log('User connected:', socket.id)    
-     socket.on('register', (userId,role) => {  
+     socket.on('register', (userId) => {  
         if (users[userId]) {
         if (!users[userId].includes(socket.id)) {
           users[userId].push(socket.id);
@@ -104,7 +104,7 @@ socket.on('leaveParticipant', ({participantId}) => {
           });
         } 
         else{
-           messages=await messageread.readmessage(messages?._id!)
+           messages=await messageread.readmessage(messages!._id!)
         }
    
     io.to(roomId).emit('privateMessage', messages);

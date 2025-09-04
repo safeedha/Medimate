@@ -1,6 +1,6 @@
-import {Iuser} from './user';
-import {Idoctor} from './doctor';
-import {Appointment} from './appoinment';
+
+import {Idoctor} from './Doctor';
+import {Appointment} from './Appoinment';
 
 export interface Transaction {
   type: 'credit' | 'debit';

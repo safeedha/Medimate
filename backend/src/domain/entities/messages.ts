@@ -1,5 +1,5 @@
-import { Iuser } from './user';
-import { Idoctor } from './doctor';
+import { Iuser } from './User';
+import { Idoctor } from './Doctor';
 
 export interface Message {
   _id?:string;

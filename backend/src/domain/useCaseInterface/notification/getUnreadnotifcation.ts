@@ -1,5 +1,5 @@
-import {INotification}from '../../../dto/notification.dto'
+import {NotificationDto}from '../../../dto/notification.dto'
 
 export interface IGetNotification {
-  getnotification(id:string): Promise<INotification[]>;
+  getnotification(id:string): Promise<NotificationDto[]>;
 }

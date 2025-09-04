@@ -53,7 +53,3 @@ export interface AppointmentDTO  {
 }
 
 
-export type AppointmentCountByDate = {
-  _id: string;    
-  count: number;
-};

@@ -1,7 +1,7 @@
-import mongoose, { Schema,model} from 'mongoose';
-import{Transaction} from '../../../domain/entities/userwallet';
-import {IUserWallet} from '../../../domain/entities/userwallet';
-const TransactionSchema = new Schema<Transaction>(
+import { Schema,model} from 'mongoose';
+import{UserTransaction} from '../../../domain/entities/Userwallet';
+import {IUserWallet} from '../../../domain/entities/Userwallet';
+const TransactionSchema = new Schema<UserTransaction>(
   {
     type: { type: String, enum: ['credit', 'debit'], required: true },
     amount: { type: Number, required: true },

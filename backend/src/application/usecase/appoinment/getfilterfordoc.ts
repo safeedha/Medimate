@@ -1,9 +1,9 @@
-import { appointmentRepository } from '../../../domain/repository/appoinment-rep';
-import {AppointmentCountByDate} from '../../../dto/slot.dto'
+import { IAppointmentRepository } from '../../../domain/repository/AppointmentRepository';
+import {AppointmentCountByDate}  from  '../../../domain/entities/Appoinment';
 import {IGetFilterAppointments} from '../../../domain/useCaseInterface/appoinment/IGetFilterAppointments';
 
 export class GetFilterfordoc implements IGetFilterAppointments{
-  constructor(private appointmentRepo: appointmentRepository) {}
+  constructor(private appointmentRepo: IAppointmentRepository) {}
 
   async getappoinmentrange( status: 'completed' | 'cancelled' | 'pending',start: Date,end: Date,id:string):Promise<AppointmentCountByDate[]> {
     try {

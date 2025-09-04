@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { AdminWalletTransaction } from '../../../domain/entities/adminwallet';
+import { AdminWalletTransaction } from '../../../domain/entities/Adminwallet';
 
 const AdminWalletTransactionSchema = new Schema<AdminWalletTransaction>({
   type: {

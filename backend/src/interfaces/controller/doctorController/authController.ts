@@ -8,7 +8,7 @@ import { IOtpVerifier } from '../../../domain/useCaseInterface/authRecovery/IOtp
 import { sendMail } from '../../../application/service/emailservice';
 import { IPasswordReset } from '../../../domain/useCaseInterface/authRecovery/IPasswordReset';
 import { HttpStatus } from '../../../common/httpStatus';
-import {Messages} from '../../../common/messages';
+import {HttpMessage} from '../../../common/httpessages';
 import {setCookies,clearCookies} from '../../../application/service/setCookies'
 
 export class DoctorAuthController {
@@ -75,7 +75,7 @@ export class DoctorAuthController {
   async logoutDoctor(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       clearCookies(res)
-      res.status(HttpStatus.OK).json({ message: Messages.LOGOUT_SUCCESS });
+      res.status(HttpStatus.OK).json({ message: HttpMessage.LOGOUT_SUCCESS });
     } catch (error) {
       next(error);
     }
@@ -102,7 +102,7 @@ export class DoctorAuthController {
       await this.otpDocCreation.createOtp(email, otp);
       await sendMail(email, otp, subject, undefined);
 
-      res.status(HttpStatus.OK).json({ message: Messages.OTP_SENT_SUCCESS });
+      res.status(HttpStatus.OK).json({ message: HttpMessage.OTP_SENT_SUCCESS });
     } catch (error) {
       next(error);
     }
@@ -114,11 +114,11 @@ export class DoctorAuthController {
       const isValid = await this.otpDocVerify.verifyOtp(email, otp);
 
       if (!isValid) {
-        res.status(HttpStatus.BAD_REQUEST).json({ message: 'Invalid or expired OTP' });
+        res.status(HttpStatus.BAD_REQUEST).json({ message:HttpMessage.INVALID_OR_EXPIRED_OTP });
         return;
       }
 
-      res.status(HttpStatus.OK).json({ message:  Messages.OTP_VERIFIED_SUCCESS });
+      res.status(HttpStatus.OK).json({ message:  HttpMessage.OTP_VERIFIED_SUCCESS });
     } catch (error) {
       next(error);
     }

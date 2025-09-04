@@ -1,9 +1,8 @@
-import { WalletRepository } from '../../../domain/repository/wallet-repo';
-import{AdminWalletTransactionDto} from '../../../dto/wallet.dto'
+import { IWalletRepository } from '../../../domain/repository/WalletRepository';
 import { IPayToDoctor } from '../../../domain/useCaseInterface/wallet/IPayToDoctor';
 
 export class Paytodoctor implements IPayToDoctor{
-  constructor(private walletRepository: WalletRepository) {}
+  constructor(private walletRepository: IWalletRepository) {}
 
   async paymentToDoctor(transactionId: string, doctorId: string): Promise<{ message: string }> {
     try {

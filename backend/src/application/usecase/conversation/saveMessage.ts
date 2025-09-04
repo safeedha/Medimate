@@ -1,16 +1,32 @@
+import { IConversationRepository } from '../../../domain/repository/ConversationRepository';
+import { MessageDto } from '../../../dto/message.dto';
 
-import {ConversationRepository} from '../../../domain/repository/conver-repo'
-import { Message } from '../../../domain/entities/messages';
+export class SaveMessage {
+  constructor(private conversationrepository: IConversationRepository) {}
 
-export class SaveMessage{
-  constructor(private conversationrepository:ConversationRepository)
-  {
-   
+  async MessageSave(
+    senderId: string,
+    recieverId: string,
+    message?: string,
+    image?: string
+  ): Promise<MessageDto> {
+    const result = await this.conversationrepository.messageSave(
+      senderId,
+      recieverId,
+      message,
+      image
+    );
+
+    const messageDto: MessageDto = {
+      _id: result._id?.toString(),
+      senderId: result.senderId?.toString(),
+      recieverId: result.recieverId?.toString(),
+      message: result.message ?? undefined,
+      image: result.image ?? undefined,
+      messageType: result.messageType,
+      read: result.read ?? false,
+    };
+
+    return messageDto;
   }
-  async MessageSave(senderId:string,recieverId:string,message?:string,image?:string):Promise<Message>
-  {
-    const result=await this.conversationrepository.messageSave(senderId,recieverId,message,image)
-    return result
-  }
-
 }

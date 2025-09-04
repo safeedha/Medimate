@@ -1,13 +1,12 @@
-import {UserRepository} from '../../../domain/repository/user-repository';
-import {UserDTO} from '../../../dto/user.dto'
+import {IUserRepository} from '../../../domain/repository/UserRepository';
 import { IChangeStatus } from '../../../domain/useCaseInterface/user/IChangeStatus';
 export class ChangeStatus implements IChangeStatus {
 
-  constructor(private userRepository: UserRepository) {}
-  async changesatus(id:string): Promise<UserDTO[]> {
+  constructor(private userRepository: IUserRepository) {}
+  async changesatus(id:string): Promise<string> {
     try {
       const users = await this.userRepository.changeStatus(id);
-      return users;
+      return users
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);

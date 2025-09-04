@@ -1,4 +1,4 @@
-import { Iuser } from '../../../domain/entities/user';
+
 import {UserDTO} from '../../../dto/user.dto'
 
 export interface IUserLogin {

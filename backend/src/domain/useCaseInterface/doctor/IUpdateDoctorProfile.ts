@@ -1,4 +1,4 @@
-import {DoctorDTO,IExperience} from '../../../dto/doctor.dto'
+import {IExperience} from '../../../dto/doctor.dto'
 
 export interface IUpdateDoctorProfile {
   updateprofile(

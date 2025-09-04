@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { IUpdateDoctorProfile } from '../../../domain/useCaseInterface/doctor/IUpdateDoctorProfile';
 import { HttpStatus } from '../../../common/httpStatus';
-import { Messages } from '../../../common/messages';
+import { HttpMessage } from '../../../common/httpessages';
 import { IGetSingleDoctor } from "../../../domain/useCaseInterface/doctor/IGetSingleDoctor";
 
 interface CustomRequest extends Request {
@@ -50,7 +50,7 @@ export class DoctorProfileController {
     );
 
     res.status(HttpStatus.OK).json({
-      message: Messages.PROFILE_UPDATE_SUCCESS,
+      message: HttpMessage.PROFILE_UPDATE_SUCCESS,
       doctor: result,
     });
   } catch (error) {

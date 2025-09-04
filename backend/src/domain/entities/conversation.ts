@@ -1,10 +1,7 @@
-import { Iuser } from './user';
-import { Idoctor } from './doctor';
-import { Message } from './messages';
 
-type Participation = string | Iuser | Idoctor;
+import { Message } from './Messages';
 
 export interface Conversation {
-  participant: String[]; // plural would be better as `participants`
+  participant: string[]; // plural would be better as `participants`
   messages: Message[];
 }

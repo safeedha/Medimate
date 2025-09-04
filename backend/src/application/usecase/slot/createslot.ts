@@ -1,22 +1,23 @@
-import {slotRepository} from '../../../domain/repository/slot-repository';
-import {Weekdays} from '../../../domain/entities/recurringslot';
-import { SlotLockDTO,RecurringDTO} from '../../../dto/slot.dto';
-import { RRule, Weekday } from 'rrule';
+import {ISlotRepository} from '../../../domain/repository/SlotRepository';
+import {Weekdays} from '../../../domain/entities/Recurringslot';
+
+import { RRule } from 'rrule';
 import {convertTo12HourFormat} from '../../service/timeconvert'
-import {IndividualSlot} from '../../../domain/entities/slot'
+import {IndividualSlot} from '../../../domain/entities/Sot'
 import { ICreateSlot } from '../../../domain/useCaseInterface/slot/ICreateSlot';
-const dayMap: Record<string, Weekday> = {
-  MO: RRule.MO,
-  TU: RRule.TU,
-  WE: RRule.WE,
-  TH: RRule.TH,
-  FR: RRule.FR,
-  SA: RRule.SA,
-  SU: RRule.SU,
-};
+import {IRecurring } from '../../../domain/entities/Recurringslot'
+// const dayMap: Record<string, Weekday> = {
+//   MO: RRule.MO,
+//   TU: RRule.TU,
+//   WE: RRule.WE,
+//   TH: RRule.TH,
+//   FR: RRule.FR,
+//   SA: RRule.SA,
+//   SU: RRule.SU,
+// };
 export class CreateSlot implements ICreateSlot{
 
-  constructor(private slotrepository: slotRepository) {}
+  constructor(private slotrepository: ISlotRepository) {}
   async createSlots(id:string,startDate:string,endDate:string,selectedDays:Weekdays[],startTime:string,endTime:string,interval:number,frequency:"WEEKLY"|"DAILY"): Promise<{message:string}> {
     try {
   
@@ -28,7 +29,7 @@ export class CreateSlot implements ICreateSlot{
 
       const until = new Date(endDate);
       until.setHours(23, 59, 59, 999);
-     const selectedRRuleDays = selectedDays.map(day => dayMap[day]);
+    
 
     
       const rule = new RRule({
@@ -43,7 +44,7 @@ export class CreateSlot implements ICreateSlot{
      const et=convertTo12HourFormat(endTime)
       const allSlots = rule.all();
 
-      const data:RecurringDTO={
+      const data:IRecurring={
         doctorId:id,
         startDate:dtStart,
         endDate:until,
@@ -69,7 +70,7 @@ for (const item of allSlots) {
     status: "available"
   };
 
-  const result= await this.slotrepository.createSlot(slotData);
+     await this.slotrepository.createSlot(slotData);
   
  }
       

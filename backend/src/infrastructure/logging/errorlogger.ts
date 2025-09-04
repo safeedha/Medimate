@@ -28,12 +28,12 @@ import DailyRotateFile from 'winston-daily-rotate-file';
 
 const logDirectory = path.join(__dirname, '../../../logs');
 
-// ✅ Ensure log directory exists
+
 if (!fs.existsSync(logDirectory)) {
   fs.mkdirSync(logDirectory, { recursive: true });
 }
 
-// ✅ Create transport array
+
 const transports: winston.transport[] = [
   new DailyRotateFile({
     filename: 'error-%DATE%.log',

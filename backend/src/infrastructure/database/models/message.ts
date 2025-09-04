@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { Message } from '../../../domain/entities/messages';
+import { Message } from '../../../domain/entities/Messages';
 
 const messageSchema = new Schema<Message>(
   {

@@ -6,8 +6,10 @@ export const geteverymessage = async (sender: string) => {
     const response = await axiosInstance.get("/user/messages", {
       params: { sender }
     });
+
     return response.data;
   } catch (error) {
+    console.log("nn")
     if (axios.isAxiosError(error)) {
       return error.response?.data?.message || error.message;
     } else {

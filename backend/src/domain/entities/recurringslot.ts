@@ -1,5 +1,5 @@
 
-import {Idoctor} from './doctor'
+import {Idoctor} from './Doctor'
 export type  Weekdays= 'MO' | 'TU' | 'WE' | 'TH' | 'FR' | 'SA' | 'SU';
 
 export interface IRecurring {

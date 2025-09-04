@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { IGetUserWallet } from '../../../domain/useCaseInterface/wallet/IGetUserWallet';
 import {IAddUserWallet} from '../../../domain/useCaseInterface/wallet/IAdduserWallet';
 import { HttpStatus } from '../../../common/httpStatus';
-import { Messages } from '../../../common/messages';
+import { HttpMessage } from '../../../common/httpessages';
 interface CustomRequest extends Request {
   id: string;
 }
@@ -27,7 +27,7 @@ export class UserWalletController {
       const {amount}=req.body
       console.log(amount)
       await this.adduserwallet.addMoney(userId,Number(amount))
-      res.status(HttpStatus.CREATED).json({message:Messages.WALLET_ADDED_SUCCESS});
+      res.status(HttpStatus.CREATED).json({message:HttpMessage.WALLET_ADDED_SUCCESS});
     } catch (error) {
       next(error);
     }
