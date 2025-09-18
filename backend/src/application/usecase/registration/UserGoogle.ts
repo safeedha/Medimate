@@ -2,10 +2,11 @@ import { IRegistrationRepository  } from "../../../domain/repository/Registratio
 import {IGoogleAuth} from "../../../domain/useCaseInterface/auth/IGoogleAuth"
 import jwt from 'jsonwebtoken'
 import {UserDTO} from '../../../dto/user.dto'
+import {IUserRepository} from '../../../domain/repository/UserRepository';
 
 
  export class GoogleAuth implements IGoogleAuth{
- constructor(private regRepository: IRegistrationRepository) {}
+ constructor(private _userRepository: IUserRepository) {}
 
   async googleLogin(credential:string): Promise<{
     user: UserDTO,
@@ -13,7 +14,7 @@ import {UserDTO} from '../../../dto/user.dto'
     refreshToken: string
   }> {
     try {
-      const userloged=await this.regRepository.usergoogleLogin(credential);
+      const userloged=await this._userRepository.usergoogleLogin(credential);
        const user={
             _id:userloged._id,
             firstname: userloged.firstname,

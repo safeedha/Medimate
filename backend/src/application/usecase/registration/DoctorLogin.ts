@@ -2,14 +2,15 @@ import {IRegistrationRepository} from "../../../domain/repository/RegistrationRe
 import jwt from 'jsonwebtoken'
 import { IDoctorLogin } from '../../../domain/useCaseInterface/auth/IDoctorLogin';
 import {DoctorDTO} from '../../../dto/doctor.dto'
+import {IDoctorRepository} from '../../../domain/repository/DoctorRepository';
 
 export class DoctorLogin implements IDoctorLogin{
- constructor(private regRepository:IRegistrationRepository){}
+ constructor(private _docRepository:IDoctorRepository){}
 
 async login(email: string, password: string): Promise<{message:string, accessToken:string,refreshToken:string, doctor:DoctorDTO}> 
 {
   try{
-    const doctorloged = await this.regRepository.docLogin(email, password)
+    const doctorloged = await this._docRepository.docLogin(email, password)
     const doctor={
       _id:doctorloged._id,
       firstname: doctorloged.firstname,

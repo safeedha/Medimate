@@ -61,9 +61,9 @@ const mongoAppointmentRepository=new MongoAppointmentRepository()
 const mongoSlotRepostory=new MongoSlotRepostory()
 const mongodocRepository=new MongoDocRepository()
 
-const doctorregister=new DocRegister(mongoregrepository)
-const doclogin=new DoctorLogin(mongoregrepository)
-const docreapply=new DocReapply(mongoregrepository)
+const doctorregister=new DocRegister(mongodocRepository)
+const doclogin=new DoctorLogin(mongodocRepository)
+const docreapply=new DocReapply(mongodocRepository)
 const otpdocCreation=new OtpdocCretion(mongoregrepository)
 const doctorotpverify=new DoctorOtpVerify(mongoregrepository)
 const doctorpassreset=new DoctorPasswordRest(mongoregrepository)
@@ -92,10 +92,10 @@ export const user=new UserManagementController(getsortuser,meassgeupdation)
 const getDoctorAppointment = new GetdoctorAppointment(mongoAppointmentRepository);
 const changeStatusAppointment = new ChangestatusAppointment(mongoAppointmentRepository,mongoSlotRepostory,mongoWalletRepository);
 const getSingleAppointment = new GetSingleappoinment(mongoAppointmentRepository);
-const reschedule = new Reshedule(mongoAppointmentRepository,mongoSlotRepostory);
+const reschedule = new Reshedule(mongoAppointmentRepository,mongoAppointmentRepository,mongoSlotRepostory);
 const getDoctorAppointmentCount = new GetdoctorAppointmentCount(mongoAppointmentRepository);
 const getFilterForDoc = new GetFilterfordoc(mongoAppointmentRepository);
-const createFollowUp = new Createfollowup(mongoAppointmentRepository,mongoSlotRepostory);
+const createFollowUp = new Createfollowup(mongoAppointmentRepository,mongoAppointmentRepository,mongoSlotRepostory);
 const getPage = new GetPage(mongoAppointmentRepository);
 export const appointment = new DoctorAppointmentController(
   getDoctorAppointment,
@@ -109,12 +109,12 @@ export const appointment = new DoctorAppointmentController(
 );
 
 
-const createSlot = new CreateSlot(mongoSlotRepostory);
+const createSlot = new CreateSlot(mongoSlotRepostory,mongoSlotRepostory);
 const getRecurringSlot = new GetRecurringSlot(mongoSlotRepostory);
 const cancelRecurringSlot = new CancelRecurringSlot(mongoSlotRepostory);
-const cancelSlot = new CancelSlot(mongoSlotRepostory);
+const cancelSlot = new CancelSlot(mongoSlotRepostory,mongoSlotRepostory);
 const getSlotByDate = new GetSlotByDate(mongoSlotRepostory);
-const editrecslot=new EditSlot(mongoSlotRepostory);
+const editrecslot=new EditSlot(mongoSlotRepostory,mongoSlotRepostory);
 export const slot = new DoctorSlotController(
   createSlot,
   getRecurringSlot,

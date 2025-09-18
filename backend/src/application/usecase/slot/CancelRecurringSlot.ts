@@ -4,10 +4,10 @@ import { ICancelRecurringSlot } from '../../../domain/useCaseInterface/slot/ICan
 
 export class CancelRecurringSlot implements ICancelRecurringSlot{
 
-  constructor(private slotrepository: ISlotRepository) {}
+  constructor(private _slotrepository: ISlotRepository) {}
   async cancelSlots(id:string): Promise<string> {
     try {
-      const slots= await this.slotrepository.cancelreccslots(id)
+      const slots= await this._slotrepository.cancelreccslots(id)
       return slots
     } catch (error) {
       if (error instanceof Error) {

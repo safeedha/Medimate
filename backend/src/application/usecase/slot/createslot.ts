@@ -1,23 +1,15 @@
 import {ISlotRepository} from '../../../domain/repository/SlotRepository';
 import {Weekdays} from '../../../domain/entities/Recurringslot';
-
+import { IBaseRepository } from '../../../domain/repository/BaseRepository'
 import { RRule } from 'rrule';
 import {convertTo12HourFormat} from '../../service/timeconvert'
 import {IndividualSlot} from '../../../domain/entities/Sot'
 import { ICreateSlot } from '../../../domain/useCaseInterface/slot/ICreateSlot';
 import {IRecurring } from '../../../domain/entities/Recurringslot'
-// const dayMap: Record<string, Weekday> = {
-//   MO: RRule.MO,
-//   TU: RRule.TU,
-//   WE: RRule.WE,
-//   TH: RRule.TH,
-//   FR: RRule.FR,
-//   SA: RRule.SA,
-//   SU: RRule.SU,
-// };
+
 export class CreateSlot implements ICreateSlot{
 
-  constructor(private slotrepository: ISlotRepository) {}
+  constructor(private _baseRepository:IBaseRepository<IndividualSlot>,private _slotrepository: ISlotRepository) {}
   async createSlots(id:string,startDate:string,endDate:string,selectedDays:Weekdays[],startTime:string,endTime:string,interval:number,frequency:"WEEKLY"|"DAILY"): Promise<{message:string}> {
     try {
   
@@ -55,7 +47,7 @@ export class CreateSlot implements ICreateSlot{
         endttime:endTime
        }
 
-  const recurringslot = await this.slotrepository.createRecurringSlot(data);
+  const recurringslot = await this._slotrepository.createRecurringSlot(data);
 
 for (const item of allSlots) {
   const date = new Date(item);  
@@ -70,7 +62,7 @@ for (const item of allSlots) {
     status: "available"
   };
 
-     await this.slotrepository.createSlot(slotData);
+     await this._baseRepository.create(slotData);
   
  }
       

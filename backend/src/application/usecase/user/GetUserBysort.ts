@@ -4,10 +4,10 @@ import { IGetAllSortedUsers } from '../../../domain/useCaseInterface/user/IGetAl
 
 export class GetUserBysort implements IGetAllSortedUsers{
 
-  constructor(private userRepository: IUserRepository) {}
+  constructor(private _userRepository: IUserRepository) {}
   async getAllSortUser(search:string): Promise<{ users: UserDTO[]; total: number }> {
     try {
-      const {users} = await this.userRepository.getAlluserbysort(search);
+      const {users} = await this._userRepository.getAlluserbysort(search);
         const user: UserDTO[] = users.map(doc => ({
       _id: doc._id!.toString(),
       firstname: doc.firstname,

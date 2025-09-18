@@ -2,10 +2,10 @@ import { IGetUnverified } from '../../../domain/useCaseInterface/doctor/IGetUnve
 import {IDoctorRepository} from '../../../domain/repository/DoctorRepository';
 import {DoctorDTO} from '../../../dto/doctor.dto'
 export class GetUnverified implements IGetUnverified {
-  constructor(private doctorRepository: IDoctorRepository) {}
+  constructor(private _doctorRepository: IDoctorRepository) {}
   async getAllUnverifiedDoctors(page:number,limit:number): Promise<{ doctors: DoctorDTO[]; total: number }> {
     try {
-      const {doctors,total} = await this.doctorRepository.getAllunverified(page,limit);
+      const {doctors,total} = await this._doctorRepository.getAllunverified(page,limit);
       const mappedDoctors: DoctorDTO[] = doctors.map((doc) => {
          return {
         _id: doc._id!.toString(),

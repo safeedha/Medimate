@@ -6,8 +6,7 @@ export const walletInformation = async (page: number, limit: number) => {
     const response = await axiosInstance.get(`/doctor/wallet`, {
       params: { page, limit }
     });
-    console.log(response);
-    console.log(response.data);
+
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

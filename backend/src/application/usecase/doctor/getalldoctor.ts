@@ -1,14 +1,14 @@
 
-import {IDoctorRepository} from '../../../domain/repository/DoctorRepository';
 import {DoctorDTO} from '../../../dto/doctor.dto'
 import { IGetAllDoctor } from '../../../domain/useCaseInterface/doctor/IGetAllDoctor';
-
+import {IDoctor} from '../../../domain/entities/Doctor'
+import { IBaseRepository } from '../../../domain/repository/BaseRepository'
 export class GetAlldoctor implements IGetAllDoctor{
 
-  constructor(private doctorRepository: IDoctorRepository) {}
+  constructor(private _baseRepository: IBaseRepository<IDoctor>) {}
   async getAlldoctors(page:number,limit:number,search:string): Promise<{doctors:DoctorDTO[],total:number}> {
     try {
-      const {doctors,total} = await this.doctorRepository.getAlldoctor(page,limit,search);
+      const doctors = await this._baseRepository.findAll(page,limit,search);
        const maped: DoctorDTO[] = doctors.map((doc) => ({
       _id:doc._id,
       firstname: doc.firstname,
@@ -29,7 +29,7 @@ export class GetAlldoctor implements IGetAllDoctor{
       profilePicture: doc.profilePicture,
       medicalLicence: doc.medicalLicence,
     }))
-      return {doctors:maped,total}
+      return {doctors:maped,total:doctors.length}
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);

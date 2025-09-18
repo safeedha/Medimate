@@ -3,7 +3,7 @@ import { ISlotRepository } from '../../../domain/repository/SlotRepository';
 import { SlotLockDTO  } from '../../../dto/slot.dto'
 import {ICreateLockSlot } from '../../../domain/useCaseInterface/slot/ICreateLockSlot';
 export class CreateLockslot implements ICreateLockSlot{
-  constructor(private slotRepository:ISlotRepository) {}
+  constructor(private _slotRepository:ISlotRepository) {}
 
   async createLock(slot:string,doctorId:string): Promise<string> {
     try {
@@ -11,7 +11,7 @@ export class CreateLockslot implements ICreateLockSlot{
         doctorId: doctorId,
         slotId: slot,        
       }
-      const slotlock=await this.slotRepository.lockAvailableSlot(slotlocked)
+      const slotlock=await this._slotRepository.lockAvailableSlot(slotlocked)
       return slotlock
     } catch (error) {
      if(error instanceof Error)

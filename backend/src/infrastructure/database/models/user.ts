@@ -1,8 +1,8 @@
 import { Schema, model } from 'mongoose';
-import {Iuser} from '../../../domain/entities/User'
+import {IUser} from '../../../domain/entities/User'
 
 
-const UserSchema: Schema<Iuser> = new Schema(
+const UserSchema: Schema<IUser> = new Schema(
   {
     firstname: { type: String, required: true },
     lastname: { type: String},
@@ -26,4 +26,4 @@ const UserSchema: Schema<Iuser> = new Schema(
   }
 );
 
-export const User = model<Iuser>('User', UserSchema);
+export const User = model<IUser>('User', UserSchema);

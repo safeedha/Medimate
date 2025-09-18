@@ -4,10 +4,10 @@ import { NotificationDto } from '../../../dto/notification.dto'
 
 
 export class Getunreadnotification implements IGetNotification {
-  constructor(private notRepository: INotificationRepository) {}
+  constructor(private _notRepository: INotificationRepository) {}
 
   async getnotification(id: string): Promise<NotificationDto[]> {
-    const notifications = await this.notRepository.getUnreadnotification(id)
+    const notifications = await this._notRepository.getUnreadnotification(id)
 
     
     return notifications.map((n) => ({

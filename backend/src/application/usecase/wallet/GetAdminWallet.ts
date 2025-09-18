@@ -6,10 +6,10 @@ import { AdminWalletTransaction } from '../../../domain/entities/Adminwallet';
 
 export class GetAdminWallet implements IGetAdminWallet{
 
-  constructor(private walletRepository:IWalletRepository) {}
+  constructor(private _walletRepository:IWalletRepository) {}
   async getwallet(page:number,limit:number): Promise<{ transaction: AdminWalletTransactionDto[]; balance: number; total: number }> {
     try {
-      const wallet = await this.walletRepository.getdminwallet(page,limit);
+      const wallet = await this._walletRepository.getdminwallet(page,limit);
       const transaction= wallet.transaction.map((txn:AdminWalletTransaction) => ({
       _id: txn._id!,
       amount: txn.amount,

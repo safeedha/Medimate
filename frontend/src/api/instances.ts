@@ -53,7 +53,7 @@ const onResponseError = async (error: AxiosError): Promise<any> => {
       return axiosInstance(originalRequest);
     } catch (refreshError) {
       console.error('Refresh token failed', refreshError);
-      // localStorage.removeItem('authToken');
+      localStorage.removeItem('authToken');
       window.location.href = '/';
       return Promise.reject(refreshError);
     }

@@ -1,16 +1,17 @@
 import bcrypt from 'bcrypt';
-import {IRegistrationRepository } from "../../../domain/repository/RegistrationRepository";
-import { Idoctor } from "../../../domain/entities/Doctor";
+
+import { IDoctor } from "../../../domain/entities/Doctor";
 import { IDoctorRegister } from '../../../domain/useCaseInterface/auth/IDoctorRegister';
+import { IBaseRepository } from '../../../domain/repository/BaseRepository' 
 export class DocRegister implements IDoctorRegister{
 
- constructor(private regRepository:IRegistrationRepository){}
+ constructor(private _baseRepository: IBaseRepository<IDoctor>){}
   async signup(data:{firstname:string,lastname:string,email:string,phone:string,specialisation:string|null,experience:number,fee:number,password:string,additionalInfo?:string,profilePicture?:string,medicalLicence?:string}):Promise<{ message: string }> 
   {
      try{
           const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(data.password, saltRounds);
-        const newdata:Idoctor={
+        const newdata:IDoctor={
           firstname:data.firstname,
           lastname:data.lastname,
           email:data.email,
@@ -25,7 +26,7 @@ export class DocRegister implements IDoctorRegister{
           profilePicture:data.profilePicture,
           medicalLicence:data.medicalLicence
         }
-         await this.regRepository.docRegister(newdata);
+         await this._baseRepository.create(newdata);
           return { message: "Doctor registered successfully" };
      }
      catch(error){

@@ -3,10 +3,10 @@ import { ISlotRepository} from '../../../domain/repository/SlotRepository';
 import { IWalletRepository } from '../../../domain/repository/WalletRepository';
 import {IChangeAppointmentStatus } from '../../../domain/useCaseInterface/appoinment/IChangeAppointmentStatus';
 export class ChangestatusAppointment implements IChangeAppointmentStatus{
-  constructor(private appointmentRepo:IAppointmentRepository,private slotRepository:ISlotRepository,private walletRepository:  IWalletRepository ) {}
+  constructor(private _appointmentRepo:IAppointmentRepository,private slotRepository:ISlotRepository,private walletRepository:  IWalletRepository ) {}
    async changestus(appoinmentid:string,status: 'pending' |  'cancelled' | 'completed',reschedule=false):Promise<{message:string}>{
        try{
-           const result=await this.appointmentRepo.changestatus(appoinmentid,status)
+           const result=await this._appointmentRepo.changestatus(appoinmentid,status)
            if(status==='cancelled'){
           const slotId = result.schedule_id?.toString();
              await this.slotRepository.changeStatus(slotId);

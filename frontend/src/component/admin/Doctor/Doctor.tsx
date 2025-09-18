@@ -38,6 +38,7 @@ function Doctor() {
   const [itemsPerPage] = useState<number>(4);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [change,setChange]=useState(false)
   const subtitleRef = useRef<HTMLHeadingElement>(null);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -57,7 +58,7 @@ function Doctor() {
     return () => {
       if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
     };
-  }, [currentPage, itemsPerPage, searchTerm]);
+  }, [currentPage, itemsPerPage, searchTerm,change]);
 
   const openModal = (doctor: Idoctor) => {
     setSelectedDoctor(doctor);
@@ -85,9 +86,9 @@ function Doctor() {
     });
 
     if (result.isConfirmed) {
-      const updatedDoctors = await changeblockStatus(id);
-      setDoctors(updatedDoctors);
+       await changeblockStatus(id);
       toast.success('Status is updated');
+      setChange((prev)=>!prev)
     }
   };
 
@@ -145,7 +146,7 @@ function Doctor() {
       <div className="w-5/6 bg-gray-100 p-6 overflow-auto">
         <h1 className="text-2xl font-bold text-center mb-6">Doctors List</h1>
 
-        {/* Search Input */}
+      
         <div className="mb-4 flex justify-center">
           <input
             type="text"

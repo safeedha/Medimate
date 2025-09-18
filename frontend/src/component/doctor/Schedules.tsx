@@ -236,7 +236,7 @@ function Schedules() {
                   />
                 </Box>
 
-                {/* Days of the week */}
+           
                 <Typography variant="subtitle1">Days of the week:</Typography>
                 <Box display="flex" flexWrap="wrap" gap={1}>
                   {days.map((day) => (
@@ -255,7 +255,7 @@ function Schedules() {
                   ))}
                 </Box>
 
-                {/* Time inputs */}
+              
                 <Box display="flex" gap={2}>
                   <TextField
                     type="time"

@@ -2,7 +2,7 @@ import { IConversationRepository } from '../../../domain/repository/Conversation
 import { MessageDto } from '../../../dto/message.dto';
 
 export class SaveMessage {
-  constructor(private conversationrepository: IConversationRepository) {}
+  constructor(private _conversationrepository: IConversationRepository) {}
 
   async MessageSave(
     senderId: string,
@@ -10,7 +10,7 @@ export class SaveMessage {
     message?: string,
     image?: string
   ): Promise<MessageDto> {
-    const result = await this.conversationrepository.messageSave(
+    const result = await this._conversationrepository.messageSave(
       senderId,
       recieverId,
       message,

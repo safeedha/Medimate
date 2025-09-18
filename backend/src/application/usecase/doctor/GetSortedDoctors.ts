@@ -4,11 +4,11 @@ import {DoctorDTO} from '../../../dto/doctor.dto'
 import {IGetSortedDoctors} from "../../../domain/useCaseInterface/doctor/IGetSortedDoctors"
 
 export class FetchSortedDoctors implements IGetSortedDoctors {
-  constructor(private doctorRepository: IDoctorRepository) {}
+  constructor(private _doctorRepository: IDoctorRepository) {}
 
   async getAllDoctors(search: string): Promise<{ data: DoctorDTO[]; total: number }> {
     try {
-      const {data,total} = await this.doctorRepository.getAllverifiedbysort(search);
+      const {data,total} = await this._doctorRepository.getAllverifiedbysort(search);
        const mapeddata: DoctorDTO[] = data.map((doc) => ({
             _id: doc._id!.toString(),
             firstname: doc.firstname,

@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { HttpStatus } from '../../common/httpStatus';
-import { HttpMessage } from '../../common/httpessages';
-import {Role} from '../../common/role';
+import { HttpStatus } from '../../constant/httpStatus';
+import { HttpMessage } from '../../constant/httpessages';
+import {Role} from '../../constant/role';
 
 export const refreshTokenController = async (req: Request, res: Response): Promise<void> => {
   try {

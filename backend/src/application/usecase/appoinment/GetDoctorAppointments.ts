@@ -1,11 +1,11 @@
 import {IAppointmentRepository } from '../../../domain/repository/AppointmentRepository';
-import {AppointmentDTO} from '../../../dto/slot.dto'
+import {Appointment} from '../../../domain/entities/Appoinment';
 import {IGetDoctorAppointments} from '../../../domain/useCaseInterface/appoinment/IGetDoctorAppointments'; 
 export class GetdoctorAppointment implements IGetDoctorAppointments{
-  constructor(private appointmentRepo: IAppointmentRepository) {}
-   async getallappoinment(doctorid:string,page:number,limit:number):Promise<{ total: number; appointments: AppointmentDTO[] }>{
+  constructor(private _appointmentRepo: IAppointmentRepository) {}
+   async getallappoinment(doctorid:string,page:number,limit:number):Promise<{ total: number; appointments: Appointment[] }>{
        try{
-           const result=await this.appointmentRepo.getappinmentbydoctor(doctorid,page,limit)
+           const result=await this._appointmentRepo.getappinmentbydoctor(doctorid,page,limit)
           return result
        }
        catch(error)

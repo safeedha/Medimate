@@ -30,7 +30,7 @@ export const getCountforDoc = async (status: 'completed' | 'pending' | 'cancelle
     const response = await axiosInstance.get(`/admin/appoinment/count`, {
       params: { status },
     });
-    console.log(response);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     return handleError(error);
@@ -47,7 +47,7 @@ export const gettotalappoinment = async () => {
   }
 };
 
-// ✅ Get appointments with filter (status + date range)
+
 export const getAppointmentsFiltered = async (
   status: 'completed' | 'cancelled' | 'pending',
   start: Date,
@@ -61,7 +61,7 @@ export const getAppointmentsFiltered = async (
         end: end.toISOString(),
       },
     });
-    console.log(response.data);
+    console.log("reponse",response.data);
     return response.data;
   } catch (error) {
     return handleError(error);

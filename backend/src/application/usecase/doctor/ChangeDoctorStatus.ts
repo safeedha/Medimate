@@ -1,12 +1,13 @@
-import {IDoctorRepository} from '../../../domain/repository/DoctorRepository';
 
+import { IBaseRepository } from '../../../domain/repository/BaseRepository'
 import { IChangeDocStatus } from '../../../domain/useCaseInterface/doctor/IChangeDocStatus';
+import {IDoctor} from '../../../domain/entities/Doctor'
 export class ChangeDocStatus implements IChangeDocStatus{
 
-  constructor(private docRepository: IDoctorRepository) {}
+  constructor(private _baseRepository: IBaseRepository<IDoctor>) {}
   async changesatus(id:string): Promise<string> {
     try {
-      const users = await this.docRepository.changeStatus(id);
+      const users = await this._baseRepository.delete(id);
       return users;
     } catch (error) {
       if (error instanceof Error) {

@@ -3,7 +3,7 @@ import {IOtpCreator} from "../../../domain/useCaseInterface/authRecovery/IOtpCre
 
 
 export class OtpCretion implements IOtpCreator{
-constructor(private regRepository:IRegistrationRepository){}
+constructor(private _regRepository:IRegistrationRepository){}
 async createOtp(email:string,otp:string):Promise<{message:string}>{
     try{
         const otpData={
@@ -11,7 +11,7 @@ async createOtp(email:string,otp:string):Promise<{message:string}>{
             otp:otp,
             createdAt:new Date()
         }
-        await this.regRepository.craeteOtp(otpData)
+        await this._regRepository.craeteOtp(otpData)
         return {message:"otp created successfully"}
     }
     catch(error){

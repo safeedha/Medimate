@@ -1,11 +1,16 @@
 import { IAppointmentRepository } from '../../../domain/repository/AppointmentRepository';
+import { IBaseRepository } from '../../../domain/repository/BaseRepository'
 import { ISlotRepository } from '../../../domain/repository/SlotRepository';
 import { Appointment } from '../../../domain/entities/Appoinment';
 import { IRescheduleAppointment} from '../../../domain/useCaseInterface/appoinment/IRescheduleAppointment';
 export class Reshedule implements IRescheduleAppointment{
-constructor(private appointmentRepo:  IAppointmentRepository,private slotRepository:ISlotRepository) {}
+constructor(private  _baseRepository: IBaseRepository<Appointment>,private _appointmentRepo:  IAppointmentRepository,private _slotRepository:ISlotRepository) {}
    async createresedule(canceledappoinment:string,newslot:string):Promise<string>{
-     const existing=await this.appointmentRepo.getsingleappoinment(canceledappoinment)
+     const existing=await this. _baseRepository.findById(canceledappoinment)
+      if(!existing)
+          {
+              throw new Error("Failed to fetch single appointment");
+          }
      const data:Appointment={
         user_id: existing.user_id,
         doctor_id: existing.doctor_id,
@@ -18,9 +23,13 @@ constructor(private appointmentRepo:  IAppointmentRepository,private slotReposit
         status: 'pending',
         payment_status: 'paid',
      }
-      const appointment  = await this.appointmentRepo.createappoinment(data);
-      await this.appointmentRepo.rescheduleStatus(canceledappoinment,appointment._id!)
-      await this.slotRepository.changeStatus(newslot)
+      const appointment  = await this. _baseRepository.create(data);
+      
+         if (!appointment) {
+         throw new Error("Failed to create appointment");
+         }
+      await this._appointmentRepo.rescheduleStatus(canceledappoinment,appointment._id!)
+      await this._slotRepository.changeStatus(newslot)
 
       return 'Appoinment rescheduled'
    }

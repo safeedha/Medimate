@@ -1,11 +1,11 @@
-import {Iuser} from './User';
-import {Idoctor} from './Doctor';
+import {IUser} from './User';
+import {IDoctor} from './Doctor';
 import {IndividualSlot} from './Sot';
 
 export interface Appointment {
   _id?: string; 
-  user_id: string| Iuser; 
-  doctor_id: string| Idoctor; 
+  user_id: string| IUser; 
+  doctor_id: string| IDoctor; 
   schedule_id: string| IndividualSlot; 
   patient_name: string;
   patient_email: string;

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { createPayment } from '../../../application/service/createpayment';
 import { verifypayment } from '../../../application/service/verfypayment';
-import { HttpStatus } from '../../../common/httpStatus';
+import { HttpStatus } from '../../../constant/httpStatus';
 
 interface CustomRequest extends Request {
   id: string;

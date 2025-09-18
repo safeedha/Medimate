@@ -1,7 +1,7 @@
 import Razorpay from 'razorpay';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
-import {ServiceMessage} from '../../common/serviceMessages'
+import {ServiceMessage} from '../../constant/serviceMessages'
 dotenv.config();
 
 const razorpay = new Razorpay({
@@ -9,7 +9,7 @@ const razorpay = new Razorpay({
   key_secret: process.env.KEYSECRET as string,
 });
 
-console.log(razorpay)
+
 
 export async function verifypayment( razorpay_order_id:string, razorpay_payment_id:string, razorpay_signature:string):Promise<{message:string}> {
     try{

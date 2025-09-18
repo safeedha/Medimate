@@ -4,13 +4,13 @@ import {IConversationRepository} from '../../../domain/repository/ConversationRe
 import { IDeleteMessage} from '../../../domain/useCaseInterface/conversation/IDeleteMessage';
 
 export class Deletemessage implements IDeleteMessage{
-  constructor(private conversationrepository:IConversationRepository){
+  constructor(private _conversationrepository:IConversationRepository){
 
   }
   async delete(messageId:string,sender:string,reciever:string):Promise<string>{
     try{
       
-      const result=await this.conversationrepository.messagedelete(messageId,sender,reciever)
+      const result=await this._conversationrepository.messagedelete(messageId,sender,reciever)
       return result
     }
     catch(error)

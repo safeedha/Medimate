@@ -2,12 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import { IGetSlotByDate } from '../../../domain/useCaseInterface/slot/IGetSlotByDate';
 import { ICreateAppointment } from '../../../domain/useCaseInterface/appoinment/ICreateAppointment';
 import { IGetFutureAppointments } from '../../../domain/useCaseInterface/appoinment/IGetFutureAppointments';
-// import { GetpastAppointment } from '../../../application/usecase/appoinment/getpastappoi';
 import { IChangeAppointmentStatus } from '../../../domain/useCaseInterface/appoinment/IChangeAppointmentStatus';
 import { ICreateLockSlot } from '../../../domain/useCaseInterface/slot/ICreateLockSlot';
 import { IGetAppointmentPagination } from '../../../domain/useCaseInterface/appoinment/IGetAppointmentPagination';
 import { IGetAppointmentReport } from '../../../domain/useCaseInterface/report/IGetAppointmentReport';
-import { HttpStatus } from '../../../common/httpStatus';
+import { HttpStatus } from '../../../constant/httpStatus';
 
 interface CustomRequest extends Request {
   id: string;
@@ -15,20 +14,19 @@ interface CustomRequest extends Request {
 
 export class AppointmentUserController {
   constructor(
-    private getSlotByDate: IGetSlotByDate,
-    private createAppointment: ICreateAppointment,
-    private getFutureAppointments: IGetFutureAppointments,
-    // private getPastAppointments: GetpastAppointment,
-    private changeAppointmentStatus: IChangeAppointmentStatus,
-    private createLockSlot: ICreateLockSlot,
-    private getPaginationData: IGetAppointmentPagination,
-    private getReport: IGetAppointmentReport
+    private readonly _getSlotByDate: IGetSlotByDate,
+    private readonly _createAppointment: ICreateAppointment,
+    private readonly _getFutureAppointments: IGetFutureAppointments,
+    private readonly _changeAppointmentStatus: IChangeAppointmentStatus,
+    private readonly _createLockSlot: ICreateLockSlot,
+    private readonly _getPaginationData: IGetAppointmentPagination,
+    private readonly _getReport: IGetAppointmentReport
   ) {}
 
-  async createlockSlot(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
+  async createLockSlot(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { slotid, doctorid } = req.body;
-      const result = await this.createLockSlot.createLock(slotid, doctorid);
+      const result = await this._createLockSlot.createLock(slotid, doctorid);
       res.status(HttpStatus.CREATED).json({ message: result });
     } catch (error) {
       next(error);
@@ -45,7 +43,7 @@ export class AppointmentUserController {
         return;
       }
 
-      const result = await this.getSlotByDate.getSlotsByDate(id, new Date(date));
+      const result = await this._getSlotByDate.getSlotsByDate(id, new Date(date));
       res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);
@@ -56,7 +54,7 @@ export class AppointmentUserController {
     try {
       const userId = req.id;
       const { doctorId, slot, name, email, age, gender, reason, amount } = req.body;
-      const result = await this.createAppointment.createAppointment(
+      const result = await this._createAppointment.createAppointment(
         userId,
         doctorId,
         slot,
@@ -78,7 +76,7 @@ export class AppointmentUserController {
       const userId = req.id;
       const page = parseInt(req.query.page as string);
       const limit = parseInt(req.query.limit as string);
-      const result = await this.getFutureAppointments.getfutureappoinment(userId, page, limit);
+      const result = await this._getFutureAppointments.getfutureappoinment(userId, page, limit);
       res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);
@@ -90,28 +88,18 @@ export class AppointmentUserController {
       const userId = req.id;
       const originalId = req.query.originalId as string;
       const limit = parseInt(req.query.limit as string);
-      const result = await this.getPaginationData.getpageforappoinment(userId, originalId, limit);
+      const result = await this._getPaginationData.getpageforappoinment(userId, originalId, limit);
       res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);
     }
   }
 
-  // async fetchPastAppointments(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
-  //   try {
-  //     const userId = req.id;
-  //     const result = await this.getPastAppointments.getpastappoinment(userId);
-  //     res.status(HttpStatus.OK).json(result);
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
-
   async cancelAppointment(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { appoinmentid } = req.body;
       const status: 'pending' | 'cancelled' | 'completed' = 'cancelled';
-      const result = await this.changeAppointmentStatus.changestus(appoinmentid, status);
+      const result = await this._changeAppointmentStatus.changestus(appoinmentid, status);
       res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);
@@ -121,7 +109,7 @@ export class AppointmentUserController {
   async reportGet(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { appId } = req.params;
-      const result = await this.getReport.getreport(appId);
+      const result = await this._getReport.getreport(appId);
       res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);

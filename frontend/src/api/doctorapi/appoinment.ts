@@ -85,9 +85,9 @@ export const getOverviewofappoinment = async () => {
   }
 };
 
-export const getrecurring = async (id: string, page: number, limit: number) => {
+export const getrecurring = async (page: number, limit: number) => {
   try {
-    const response = await axiosInstance.get(`/doctor/slots/recurring/${id}`, { params: { page, limit } });
+    const response = await axiosInstance.get(`/doctor/slots/recurring`, { params: { page, limit } });
     console.log(response.data)
     return response.data
   } catch (error) {

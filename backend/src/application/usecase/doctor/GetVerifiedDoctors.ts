@@ -5,10 +5,10 @@ import {IGetVerifiedDoctors} from "../../../domain/useCaseInterface/doctor/IGetV
 
 export class FetchVerifiedDoctor implements IGetVerifiedDoctors{
 
-  constructor(private doctorRepository: IDoctorRepository) {}
+  constructor(private _doctorRepository: IDoctorRepository) {}
   async getAllVerifiedDoctors(page:number,limit:number,department?: string,search?:string,experience?:string): Promise<{ total: number; data: DoctorDTO[] }> {
     try {
-      const {data,total} = await this.doctorRepository.getAllverified(page,limit,department,search,experience);
+      const {data,total} = await this._doctorRepository.getAllverified(page,limit,department,search,experience);
      const doctors: DoctorDTO[] = data.map((doc) => ({
       _id: doc._id!.toString(),
       firstname: doc.firstname,

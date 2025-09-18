@@ -1,21 +1,21 @@
 import { Request, Response, NextFunction } from "express";
-import { IGetAdminWallet } from '../../../domain/useCaseInterface/wallet/IGetAdminWallet';
-import { IGetPayout } from '../../../domain/useCaseInterface/wallet/IGetPayout';
-import { IPayToDoctor } from '../../../domain/useCaseInterface/wallet/IPayToDoctor';
-import { HttpStatus } from '../../../common/httpStatus';
+import { IGetAdminWallet } from "../../../domain/useCaseInterface/wallet/IGetAdminWallet";
+import { IGetPayout } from "../../../domain/useCaseInterface/wallet/IGetPayout";
+import { IPayToDoctor } from "../../../domain/useCaseInterface/wallet/IPayToDoctor";
+import { HttpStatus } from "../../../constant/httpStatus";
 
 export class WalletController {
   constructor(
-    private getAdminWallet: IGetAdminWallet,
-    private getPayout: IGetPayout,
-    private payToDoctor: IPayToDoctor,
+    private readonly _getAdminWallet: IGetAdminWallet,
+    private readonly _getPayout: IGetPayout,
+    private readonly _payToDoctor: IPayToDoctor
   ) {}
 
-  async getWalletinformation(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getWalletInformation(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const page = parseInt(req.query.page as string);
-      const limit = parseInt(req.query.limit as string);
-      const result = await this.getAdminWallet.getwallet(page, limit);
+      const page = parseInt(req.query.page as string, 10);
+      const limit = parseInt(req.query.limit as string, 10);
+      const result = await this._getAdminWallet.getwallet(page, limit);
       res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);
@@ -24,7 +24,7 @@ export class WalletController {
 
   async getPayoutInfo(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await this.getPayout.getrpayoutInfor();
+      const result = await this._getPayout.getrpayoutInfor();
       res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);
@@ -34,11 +34,10 @@ export class WalletController {
   async processDoctorPayout(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { transactionId, doctorid } = req.body;
-      const result = await this.payToDoctor.paymentToDoctor(transactionId, doctorid);
+      const result = await this._payToDoctor.paymentToDoctor(transactionId, doctorid);
       res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);
     }
   }
 }
-

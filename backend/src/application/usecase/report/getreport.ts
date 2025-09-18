@@ -1,15 +1,18 @@
-import { IReportRepository } from '../../../domain/repository/ReportRepository';
+import { IBaseRepository } from '../../../domain/repository/BaseRepository'
 import { ReportDto, MedicineDto } from '../../../dto/report.dto';
 import { IGetAppointmentReport } from '../../../domain/useCaseInterface/report/IGetAppointmentReport';
 import { IReport } from '../../../domain/entities/Report';
 
 export class Getreport implements IGetAppointmentReport {
-  constructor(private repoeportRepository: IReportRepository) {}
+  constructor(private _baseRepository:IBaseRepository<IReport>) {}
 
   async getreport(appId: string): Promise<ReportDto> {
     try {
-      const report: IReport = await this.repoeportRepository.getReport(appId);
-
+      const report = await this._baseRepository.findById(appId);
+            if(!report)
+            {
+              throw new Error("error occured during fetching")
+            }
       const dto: ReportDto = {
         content: report.content,
         medicine: report.medicine.map((med): MedicineDto => ({

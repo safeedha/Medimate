@@ -1,37 +1,43 @@
-import { IReportRepository } from '../../domain/repository/ReportRepository';
+
 import { IReport } from '../../domain/entities/Report';
 import { Report } from "../database/models/report"
 import { AppointmentModel} from '../database/models/appoinment';
-import { IMedicine } from '../../domain/entities/Report';
+import { BaseRepository } from './BaseRepositoryImpl';
 import mongoose from 'mongoose';
-export class MongoreportRepository implements IReportRepository {
-  async addReport(htmlContent: string, appointmentId: string, userId: string,medicine:IMedicine[]): Promise<string> {
-    try {
-      const newReport: IReport = {
-      content: htmlContent,
-      appointmentId,
-      userId,
-      medicine: medicine, 
-      createdAt: new Date()
-    };
-      await Report.create(newReport);
-      const appoinment=await  AppointmentModel.findOne({_id:appointmentId})
-      if(!appoinment)
-      {
-        throw new Error('appoinment not exist')
-      }
-       appoinment.reportAdded=true
-       await  appoinment?.save()
 
-      return 'report added successfully'
-    } catch (error) {
-      console.error('Error adding report:', error);
-      throw new Error('Could not save report');
-    }
-  }
-  async getReport(appId: string): Promise<IReport> {
+export class MongoreportRepository  extends BaseRepository<IReport> {
+  async create(data: IReport): Promise<void> {
   try {
-      const objectId = new mongoose.Types.ObjectId(appId); // convert string to ObjectId
+   
+    const newReport = new Report({
+      content: data.content,
+      appointmentId: data.appointmentId,
+      userId: data.userId,
+      medicine: data.medicine,
+      createdAt: new Date(),
+    });
+
+    await newReport.save();
+
+   
+    const appointment = await AppointmentModel.findById(data.appointmentId);
+    if (!appointment) {
+      throw new Error('Appointment does not exist');
+    }
+
+    appointment.reportAdded = true;
+    await appointment.save();
+
+    
+  } catch (error) {
+    console.error('Error adding report:', error);
+    throw new Error('Could not save report');
+  }
+}
+
+  async findById(appId: string): Promise<IReport> {
+  try {
+      const objectId = new mongoose.Types.ObjectId(appId); 
 
     const savedReport = await Report.findOne({ appointmentId:objectId });
 

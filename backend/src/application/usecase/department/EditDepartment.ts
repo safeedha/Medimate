@@ -1,10 +1,10 @@
 
 import {IDepartment} from '../../../domain/entities/Departnment'
-import {IDepartmentRepository} from '../../../domain/repository/DepartmentRepository'
 import { IEditDept } from "../../../domain/useCaseInterface/department/IEditDept";
+import { IBaseRepository } from '../../../domain/repository/BaseRepository'
 
 export class EditDept implements IEditDept {
-  constructor(private deptRepository: IDepartmentRepository) {}
+  constructor(private _baseRepository: IBaseRepository<IDepartment>) {}
 
   async editDept(deptData: IDepartment): Promise<{ message: string }> {
     try {
@@ -14,12 +14,11 @@ export class EditDept implements IEditDept {
       
 
       const newDeptData = {
-        _id: deptData._id,
         deptname: mdeptname,
         description: description,
       };
 
-      await this.deptRepository.edit(newDeptData);
+      await this._baseRepository.update(deptData._id!,newDeptData);
       return { message: "Department edited successfully" };
     } catch (error) {
       if (error instanceof Error) {

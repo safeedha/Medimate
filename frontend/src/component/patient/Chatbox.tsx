@@ -37,7 +37,6 @@ function Chatbox({ userid, name,setSort}: { userid: string; name: string,setSort
   };
 
   useEffect(() => {
-    alert("hey")
     fetchMessages();
   }, [user?._id, userid, del]);
 
@@ -114,7 +113,7 @@ function Chatbox({ userid, name,setSort}: { userid: string; name: string,setSort
       setIsUploading(true);
       try {
         const res = await axios.post('https://api.cloudinary.com/v1_1/dwerqkqou/image/upload', formData);
-        uploadedUrl = res.data.secure_url;
+        uploadedUrl = res.data.secure_url.split('/upload/')[1];
       } catch (err) {
         console.error('Image upload error:', err);
         setIsUploading(false);

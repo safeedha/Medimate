@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { IGetAllMessages } from '../../../domain/useCaseInterface/conversation/IGetAllMessages';
 import { IGetUnreadCount } from '../../../domain/useCaseInterface/conversation/IGetUnreadCount';
 import { IDeleteMessage } from '../../../domain/useCaseInterface/conversation/IDeleteMessage';
-import { HttpStatus } from '../../../common/httpStatus';
-import { HttpMessage } from '../../../common/httpessages';
+import { HttpStatus } from '../../../constant/httpStatus';
+import { HttpMessage } from '../../../constant/httpessages';
 
 interface CustomRequest extends Request {
   id: string;
@@ -11,24 +11,24 @@ interface CustomRequest extends Request {
 
 export class ConversationController {
   constructor(
-    private getAllMessagesService: IGetAllMessages,
-    private getUnreadCountService: IGetUnreadCount,
-    private deleteMessageService: IDeleteMessage,
+    private readonly _getAllMessagesService: IGetAllMessages,
+    private readonly _getUnreadCountService: IGetUnreadCount,
+    private readonly _deleteMessageService: IDeleteMessage,
   ) {}
 
   async fetchMessages(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const receiverId = req.query.sender;
       const senderId = req.id;
-       console.log("12345")
+
       if (!receiverId || typeof receiverId !== 'string') {
         res.status(HttpStatus.BAD_REQUEST).json({ message: HttpMessage.INVALID_RECEIVER });
         return;
       }
-      const messages = await this.getAllMessagesService.getallmessage(receiverId, senderId);
+
+      const messages = await this._getAllMessagesService.getallmessage(receiverId, senderId);
       res.status(HttpStatus.OK).json(messages);
     } catch (error) {
-      console.log("error her",error)
       next(error);
     }
   }
@@ -44,7 +44,7 @@ export class ConversationController {
         return;
       }
 
-      const result = await this.deleteMessageService.delete(messageid, sender, receiver);
+      const result = await this._deleteMessageService.delete(messageid, sender, receiver);
       res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);
@@ -54,7 +54,7 @@ export class ConversationController {
   async fetchUnreadMessageCount(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.id;
-      const count = await this.getUnreadCountService.getcount(userId);
+      const count = await this._getUnreadCountService.getcount(userId);
       res.status(HttpStatus.OK).json({ unreadCount: count });
     } catch (error) {
       next(error);

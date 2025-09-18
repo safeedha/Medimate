@@ -4,7 +4,7 @@ import { IGetDoctorReviews } from "../../../domain/useCaseInterface/review/IGetD
 import { RatingDto } from '../../../dto/review.dto';
 
 export class Getreview implements IGetDoctorReviews {
-  constructor(private reviewRepository: IReviewRepository) {}
+  constructor(private _reviewRepository: IReviewRepository) {}
 
   async getreviews(
     doctorId: string,
@@ -12,7 +12,7 @@ export class Getreview implements IGetDoctorReviews {
     limit: number
   ): Promise<{ reviews: RatingDto[]; total: number }> {
     try {
-      const result = await this.reviewRepository.getReview(doctorId, page, limit);
+      const result = await this._reviewRepository.getReview(doctorId, page, limit);
 
       const reviews: RatingDto[] = result.reviews.map((data) => ({
         rating: data.rating,

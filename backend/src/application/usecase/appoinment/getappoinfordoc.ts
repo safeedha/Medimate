@@ -1,10 +1,10 @@
 import { IAppointmentRepository  } from '../../../domain/repository/AppointmentRepository';
 import { Appointment } from '../../../domain/entities/Appoinment';
 export class GetdoctorAppointmentByid {
-  constructor(private appointmentRepo: IAppointmentRepository ) {}
+  constructor(private _appointmentRepo: IAppointmentRepository ) {}
    async getallappoinment(doctorid:string):Promise<Appointment[]>{
        try{
-          const result=await this.appointmentRepo.getallappinmentfordoctor(doctorid)
+          const result=await this._appointmentRepo.getallappinmentfordoctor(doctorid)
           return result
        }
        catch(error)

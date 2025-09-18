@@ -3,10 +3,10 @@ import {IWalletRepository} from '../../../domain/repository/WalletRepository';
 import {WalletTransactionDto} from '../../../dto/wallet.dto'
 export class GetUserallet implements IGetUserWallet  {
 
-  constructor(private walletRepository:IWalletRepository) {}
+  constructor(private _walletRepository:IWalletRepository) {}
   async getwallet(userid:string,page:number,limit:number): Promise<{ balance: number;  transactions: WalletTransactionDto[] ,total:number}> {
     try {
-      const {balance,transaction,total} = await this.walletRepository.getuserwallet(userid,page,limit);
+      const {balance,transaction,total} = await this._walletRepository.getuserwallet(userid,page,limit);
         const paginatedTransactions: WalletTransactionDto[] = transaction.reverse()
         .map((tx) => ({
           type: tx.type,

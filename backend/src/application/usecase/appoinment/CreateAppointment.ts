@@ -1,10 +1,10 @@
-import { IAppointmentRepository  } from '../../../domain/repository/AppointmentRepository';
+import { IBaseRepository } from '../../../domain/repository/BaseRepository'
 import { ISlotRepository } from '../../../domain/repository/SlotRepository';
 import { Appointment } from '../../../domain/entities/Appoinment';
 import {ICreateAppointment } from '../../../domain/useCaseInterface/appoinment/ICreateAppointment';
 import {IWalletRepository} from '../../../domain/repository/WalletRepository';;
 export class CreateAppointment implements ICreateAppointment{
-  constructor(private appointmentRepo: IAppointmentRepository,private slotRepository:ISlotRepository,private walletRepository:IWalletRepository ) {}
+  constructor(private _baseRepository: IBaseRepository<Appointment>,private slotRepository:ISlotRepository,private walletRepository:IWalletRepository ) {}
 
   async createAppointment(id: string, doctorId: string, slot: string, name: string, email: string, age: number, gender: 'male' | 'female' | 'other', reason: string ,amount:number): Promise<{ message: string}> {
     try {
@@ -21,9 +21,12 @@ export class CreateAppointment implements ICreateAppointment{
         payment_status: 'paid',
      }
      
-      const appointment  = await this.appointmentRepo.createappoinment(data);
-          await this.slotRepository.changeStatus(slot);
-         await this.walletRepository.addmoneywallet(amount, id, doctorId,appointment._id!)
+           const appointment  = await this._baseRepository.create(data);
+           if (!appointment) {
+              throw new Error("Failed to create appointment");
+            }
+           await this.slotRepository.changeStatus(slot);
+          await this.walletRepository.addmoneywallet(amount, id, doctorId,appointment._id!)
   
       return { message: 'Appointment created successfully' };
     } catch (error) {

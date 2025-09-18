@@ -1,6 +1,6 @@
 import Razorpay from 'razorpay';
 import dotenv from 'dotenv';
-import {ServiceMessage} from '../../common/serviceMessages'
+import {ServiceMessage} from '../../constant/serviceMessages'
 dotenv.config();
 
 const razorpay = new Razorpay({

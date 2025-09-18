@@ -16,7 +16,7 @@ function Slotlist({ render, setRender, setrecSlot, setEdit }: { render?: boolean
   useEffect(() => {
     async function getAllRecurringslot() {
       try {
-        const result = await getrecurring(doctor?._id as string, currentpage, limit);
+        const result = await getrecurring( currentpage, limit);
         setSlot(result.data);
         setTotal(result.total);
       } catch (error) {
@@ -64,7 +64,7 @@ function Slotlist({ render, setRender, setrecSlot, setEdit }: { render?: boolean
     return end >= now ? 'Active' : 'Inactive';
   };
 
-  // Table columns (placed here so handleCancel/handleEdit are in scope)
+
   const columns = [
     {
       header: "Start Date",
@@ -129,8 +129,12 @@ function Slotlist({ render, setRender, setrecSlot, setEdit }: { render?: boolean
               Cancel
             </button>
             <button
-              className="px-2 py-0.5 rounded text-xs text-white bg-blue-500 hover:bg-blue-600"
+              className={`px-2 py-0.5 rounded text-xs text-white 
+                ${status === 'Inactive' 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'}`}
               onClick={() => handleEdit(s)}
+              disabled={status === 'Inactive'}
             >
               Edit
             </button>

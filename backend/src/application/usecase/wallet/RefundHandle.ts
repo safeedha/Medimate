@@ -1,11 +1,11 @@
 import { IWalletRepository } from '../../../domain/repository/WalletRepository';
 
 export class Refundhandle {
-  constructor(private walletRepository: IWalletRepository) {}
+  constructor(private _walletRepository: IWalletRepository) {}
 
   async refundhandler(transactionId: string): Promise<{ message: string }> {
     try {
-      await this.walletRepository.addrefund(transactionId);
+      await this._walletRepository.addrefund(transactionId);
       return { message: 'Payment updated' };
     } catch (error) {
       if (error instanceof Error) {

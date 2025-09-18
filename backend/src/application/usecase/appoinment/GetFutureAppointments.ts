@@ -2,10 +2,10 @@ import { IAppointmentRepository  } from '../../../domain/repository/AppointmentR
 import {IGetFutureAppointments } from '../../../domain/useCaseInterface/appoinment/IGetFutureAppointments';
 import { Appointment } from '../../../domain/entities/Appoinment';
 export class GetfutureAppointment implements IGetFutureAppointments{
-  constructor(private appointmentRepo: IAppointmentRepository) {}
+  constructor(private _appointmentRepo: IAppointmentRepository) {}
    async getfutureappoinment(userid:string,page:number,limit:number):Promise<{total:number,appoi:Appointment[]}>{
        try{
-           const result=await this.appointmentRepo.getfutureappoinment(userid,page,limit)
+           const result=await this._appointmentRepo.getfutureappoinment(userid,page,limit)
           return result
        }
        catch(error)

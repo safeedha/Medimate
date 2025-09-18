@@ -2,10 +2,10 @@ import { IAppointmentRepository } from '../../../domain/repository/AppointmentRe
 import{IGetDashboardAppointment} from '../../../domain/useCaseInterface/appoinment/IGetDashboardAppointment';
 
 export class GetDashbordappoinment implements IGetDashboardAppointment{
-  constructor(private appointmentRepo: IAppointmentRepository) {}
+  constructor(private _appointmentRepo: IAppointmentRepository) {}
   async getoverview(): Promise<{ total: number; pending: number; completed: number; cancelled: number }> {
     try {
-      const result = await this.appointmentRepo.getdetails();
+      const result = await this._appointmentRepo.getdetails();
       return result;
     } catch (error) {
       if (error instanceof Error) {

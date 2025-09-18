@@ -20,11 +20,13 @@ function Docwallet() {
     const fetchWallet = async () => {
       try {
         const response = await walletInformation(currentpage, limit);
+        console.log("here data")
+        console.log(response)
         if (response === 'No matching wallet or transactions found') {
           setMessage(response);
         } else {
           setBalance(response.balance);
-          setWalletData(response.transaction);
+          setWalletData(response.transactions);
           setTotal(response.total);
           setMessage('');
         }
@@ -55,7 +57,7 @@ function Docwallet() {
     }
   };
 
-  // --- Table columns for wallet info ---
+
   const columns = [
     {
       header: "Type",

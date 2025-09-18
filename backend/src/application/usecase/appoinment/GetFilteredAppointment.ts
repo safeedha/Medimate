@@ -3,11 +3,13 @@ import {AppointmentCountByDate} from '../../../domain/entities/Appoinment';
 import{IGetFilteredAppointment } from '../../../domain/useCaseInterface/appoinment/IGetFilteredAppointment';
 
 export class GetFilter implements IGetFilteredAppointment{
-  constructor(private appointmentRepo: IAppointmentRepository) {}
+  constructor(private _appointmentRepo: IAppointmentRepository) {}
 
   async getappoinmentrange( status: 'completed' | 'cancelled' | 'pending',start: Date,end: Date):Promise<AppointmentCountByDate[]> {
     try {
-      const result = await this.appointmentRepo.getfilteredapooinment(status,start,end);
+      console.log(status,start)
+      const result = await this._appointmentRepo.getfilteredapooinment(status,start,end);
+
       return result;
     } catch (error) {
       if (error instanceof Error) {

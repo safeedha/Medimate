@@ -1,10 +1,10 @@
 import { IAppointmentRepository  } from '../../../domain/repository/AppointmentRepository';
 import { IGetDoctorAppointmentCount} from '../../../domain/useCaseInterface/appoinment/IGetDoctorAppointmentCount';
 export class GetdoctorAppointmentCount implements IGetDoctorAppointmentCount{
-  constructor(private appointmentRepo:IAppointmentRepository) {}
+  constructor(private _appointmentRepo:IAppointmentRepository) {}
    async getcountofappoinment(doctorid:string):Promise<Record<string, number>>{
        try{
-          const result=await this.appointmentRepo.getcountofappoinmentofdoctor(doctorid)
+          const result=await this._appointmentRepo.getcountofappoinmentofdoctor(doctorid)
           return result
        }
        catch(error)

@@ -1,14 +1,18 @@
-import { IDoctorRepository } from '../../../domain/repository/DoctorRepository';
-import { DoctorDTO } from '../../../dto/doctor.dto';
-import { IGetSingleDoctor } from "../../../domain/useCaseInterface/doctor/IGetSingleDoctor";
 
+import { DoctorDTO } from '../../../dto/doctor.dto';
+import { IGetSingleDoctor} from '../../../domain/useCaseInterface/doctor/IGetSingleDoctor'
+import {IDoctor} from '../../../domain/entities/Doctor'
+import { IBaseRepository } from '../../../domain/repository/BaseRepository'
 export class FetchSingleDoctor implements IGetSingleDoctor {
-  constructor(private doctorRepository: IDoctorRepository) {}
+  constructor(private _baseRepository: IBaseRepository<IDoctor>) {}
 
   async getsingledoc(id: string): Promise<DoctorDTO> {
     try {
-      const doctor = await this.doctorRepository.getSingleDoctor(id);
-
+      const doctor = await this._baseRepository.findById(id);
+     if(!doctor)
+     {
+      throw new Error("cannot fetch single doctor")
+     }
       const doctorDto: DoctorDTO = {
         _id: doctor._id,
         firstname: doctor.firstname,

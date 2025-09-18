@@ -2,10 +2,10 @@ import {  IAppointmentRepository  } from '../../../domain/repository/Appointment
 
 import { Appointment } from '../../../domain/entities/Appoinment';
 export class GetpastAppointment {
-  constructor(private appointmentRepo:  IAppointmentRepository ) {}
+  constructor(private _appointmentRepo:  IAppointmentRepository ) {}
    async getpastappoinment(userid:string):Promise<Appointment[]>{
         try{
-          const result=await this.appointmentRepo.getpastappoinment(userid)
+          const result=await this._appointmentRepo.getpastappoinment(userid)
           return result
         }
          catch(error)

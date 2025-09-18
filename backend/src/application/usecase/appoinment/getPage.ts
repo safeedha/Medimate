@@ -3,11 +3,11 @@ import {IGetAppointmentPagination} from '../../../domain/useCaseInterface/appoin
 
 
 export class GetPage implements IGetAppointmentPagination{
-  constructor(private appointmentRepo:  IAppointmentRepository) {}
+  constructor(private _appointmentRepo:  IAppointmentRepository) {}
 
   async getpageforappoinment( id:string,originalId:string,limit:number):Promise<number> {
     try {
-      const result = await this.appointmentRepo.getpageforId(id,originalId,limit)
+      const result = await this._appointmentRepo.getpageforId(id,originalId,limit)
       return result;
     } catch (error) {
       if (error instanceof Error) {

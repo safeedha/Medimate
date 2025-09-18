@@ -1,12 +1,14 @@
-import {IUserRepository} from '../../../domain/repository/UserRepository';
+import {IUser} from '../../../domain/entities/User';
 import {UserDTO} from '../../../dto/user.dto'
 import { IGetUser } from '../../../domain/useCaseInterface/user/IGetUser';
+import { IBaseRepository } from '../../../domain/repository/BaseRepository'
 export class GetUser implements IGetUser{
 
-  constructor(private userRepository: IUserRepository) {}
+  constructor(private _baseRepository: IBaseRepository<IUser>) {}
   async getAllUser(page:number,limit:number,search:string): Promise<{ users: UserDTO[]; total: number }> {
     try {
-      const {users} = await this.userRepository.getAlluser(page,limit,search);
+      const users = await this._baseRepository.findAll(page,limit,search);
+
        const user: UserDTO[] = users.map(doc => ({
         _id: doc._id!.toString() ,
         firstname: doc.firstname,
@@ -29,3 +31,6 @@ export class GetUser implements IGetUser{
  
   }
 }
+
+
+

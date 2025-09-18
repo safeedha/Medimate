@@ -1,18 +1,18 @@
-import {Department} from './Departnment'
+import {IDepartment} from './Departnment'
 export interface IExperience {
   hospitalName: string;
   role: string;
   years: string;
 }
 
-export interface Idoctor{
+export interface IDoctor{
   _id?:string,
   firstname:string,
   lastname:string,
   email:string,
   password:string,
   phone:string,
-  specialisation:string|Department|null,
+  specialisation:string|IDepartment|null,
   experience:number,
   fee:number,
   status:"Approved"|"Rejected"|"Pending",

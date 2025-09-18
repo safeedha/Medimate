@@ -2,15 +2,20 @@ import { IReviewRepository } from '../../domain/repository/ReviewRepository';
 import { IDoctorReview } from '../../domain/entities/Review'; 
 import {Review} from '../database/models/review';
 import mongoose from 'mongoose';
+import { BaseRepository } from './BaseRepositoryImpl';
 
-export class MongoReviewRepository implements IReviewRepository {
-  constructor() {}
+export class MongoReviewRepository extends BaseRepository<IDoctorReview> implements IReviewRepository {
+  constructor(
+  
+  ) {
+    super()
+  }
 
-  async createReview(data: IDoctorReview): Promise<string> {
+  async create(data: IDoctorReview): Promise<void> {
     try {
       const review=new Review(data)
       await review.save()
-      return 'Review created successfully';
+  
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);
@@ -26,7 +31,6 @@ async getReview(
   try {
     const skip = (page - 1) * limit;
 
-    // Fetch paginated reviews
     const reviews = await Review.find({ doctorId })
       .populate('userId')
       .skip(skip)

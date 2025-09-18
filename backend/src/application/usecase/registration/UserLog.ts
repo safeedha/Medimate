@@ -1,12 +1,12 @@
-import { IRegistrationRepository } from "../../../domain/repository/RegistrationRepository"
 
+import {IUserRepository} from '../../../domain/repository/UserRepository';
 import {IUserLogin} from "../../../domain/useCaseInterface/auth/IUserLogin"
 import jwt from 'jsonwebtoken';
 import {UserDTO} from '../../../dto/user.dto'
 
 
 export class UserLogin implements IUserLogin {
-  constructor(private regRepository: IRegistrationRepository) {}
+  constructor(private _userRepository: IUserRepository) {}
 
   async login(data: { email: string, password: string }): Promise<{
     user: UserDTO,
@@ -16,7 +16,7 @@ export class UserLogin implements IUserLogin {
     try {
       const { email, password } = data;
       
-      const userloged = await this.regRepository.userLogin(email, password);
+      const userloged = await this._userRepository.userLogin(email, password);
         const user={
             _id:userloged._id,
             firstname: userloged.firstname,

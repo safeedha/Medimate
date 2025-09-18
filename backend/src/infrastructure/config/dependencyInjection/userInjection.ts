@@ -66,9 +66,9 @@ const mongoWalletRepository=new MongoWalletRepository()
 const mongoreportRepository=new MongoreportRepository()
 const mongoNotification=new MongoNotification()
 
-const userRegistration = new UserRegistration(mongoregRepository);
-const userLogin = new UserLogin(mongoregRepository);
-const googleAuth = new GoogleAuth(mongoregRepository);
+const userRegistration = new UserRegistration(mongoUserRepository);
+const userLogin = new UserLogin(mongoUserRepository );
+const googleAuth = new GoogleAuth(mongoUserRepository );
 export const auth = new AuthController(userRegistration, userLogin, googleAuth)
 
 const otpcreation=new OtpCretion(mongoregRepository)

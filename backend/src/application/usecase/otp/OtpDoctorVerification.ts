@@ -2,11 +2,11 @@ import {IRegistrationRepository} from "../../../domain/repository/RegistrationRe
 import {IOtpVerifier} from "../../../domain/useCaseInterface/authRecovery/IOtpVerifier"
 
 export class DoctorOtpVerify implements IOtpVerifier{
-  constructor(private regRepository: IRegistrationRepository) {}
+  constructor(private _regRepository: IRegistrationRepository) {}
 
   async verifyOtp(otp: string, email: string): Promise<{ message: string }> {
     try {
-      await this.regRepository.verifydocOtp(otp, email);
+      await this._regRepository.verifydocOtp(otp, email);
 
       return { message: "OTP verified successfully" };
     } catch (error) {

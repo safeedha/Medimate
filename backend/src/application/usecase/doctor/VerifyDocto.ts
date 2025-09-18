@@ -2,15 +2,16 @@ import { IDoctorRepository } from '../../../domain/repository/DoctorRepository';
 import { sendMail } from '../../service/emailservice';
 import { DoctorDTO } from '../../../dto/doctor.dto';
 import { IVerifyDoctor } from '../../../domain/useCaseInterface/doctor/IVerifyDoctor';
-
+import { IBaseRepository } from '../../../domain/repository/BaseRepository' 
+import {IDoctor} from '../../../domain/entities/Doctor'
 export class VerifyDoctor implements IVerifyDoctor {
-  constructor(private docRepository: IDoctorRepository) {}
+  constructor(private _baseRepository: IBaseRepository<IDoctor>,private _docRepository: IDoctorRepository) {}
 
   async verifyStatus(id: string, status: 'Approved' | 'Rejected', reason?: string): Promise<DoctorDTO[]> {
     try {
       
       if (reason) {
-        const doctor = await this.docRepository.getSingleDoctor(id);
+        const doctor = await this._baseRepository.findById(id);
         if (!doctor) {
           throw new Error("Doctor not found");
         }
@@ -23,7 +24,7 @@ export class VerifyDoctor implements IVerifyDoctor {
         );
       }
 
-      const users = await this.docRepository.verification(id, status);
+      const users = await this._docRepository.verification(id, status);
 
     
       return users.map((doc): DoctorDTO => ({

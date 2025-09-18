@@ -1,36 +1,23 @@
 import { INotificationRepository } from "../../domain/repository/NotificationRepository";
-import {Notification } from '../database/models/notificatio';
-import {INotification}from '../../domain/entities/Notification'
+import { Notification } from "../database/models/notificatio";
+import { INotification } from "../../domain/entities/Notification";
+import { BaseRepository } from "./BaseRepositoryImpl";
 
-export class MongoNotification implements INotificationRepository {
-  async addnotification(
-    user: string,
-    doctor: string,
-    message: string,
-    type: "consultation" | "cancellation" | "refund" | "schedule"|"followup",
-  ): Promise<void> {
-    try {
-      const newNotification = new Notification({
-        userId: user,
-        senderId: doctor || null,
-        type,
-        message,
-      });
+export class MongoNotification 
+  extends BaseRepository<INotification> 
+  implements INotificationRepository {
 
-       await newNotification.save();
-    } catch (error) {
-      console.error("Error creating notification:", error);
-      throw new Error("Failed to create notification");
-    }
+  async create(data: INotification): Promise<void> {
+    const newNotification = new Notification({ ...data });
+    await newNotification.save();
   }
 
-  async readNotification(id: string):Promise<void>
-  {
- await Notification.updateMany({userId: id},{$set:{isRead: true}})
+  async readNotification(id: string): Promise<void> {
+    await Notification.updateMany({ userId: id }, { $set: { isRead: true } });
   }
 
-async getUnreadnotification(id: string): Promise<INotification[]> {
-  const notifications = await Notification.find({ userId: id, isRead: false }).sort({ createdAt: 1 })
-  return notifications
-}
+  async getUnreadnotification(id: string): Promise<INotification[]> {
+    return Notification.find({ userId: id, isRead: false })
+                       .sort({ createdAt: 1 });
+  }
 }

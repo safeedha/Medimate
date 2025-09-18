@@ -1,37 +1,28 @@
 import {IDepartmentRepository} from '../../domain/repository/DepartmentRepository';
 import {IDepartment} from '../../domain/entities/Departnment';
 import DepartmentModel from '../database/models/department';
+import { BaseRepository } from './BaseRepositoryImpl';
 
-
-export class MongoDeptRepository implements IDepartmentRepository {
-   async add(deptData: IDepartment): Promise<IDepartment> {
-    const newDept = new DepartmentModel(deptData);
-    return await newDept.save();
+export class MongoDeptRepository extends BaseRepository<IDepartment> implements IDepartmentRepository {
+   async create(data: IDepartment): Promise<void> {
+     const newDept = new DepartmentModel(data);
+     await newDept.save();
    }
-    async getAll(
-  page?: number,
-  limit?: number,
-  search?: string
-): Promise<{ data: IDepartment[]; total: number }> {
+    async findAll(
+    page: number,
+    limit: number,
+   search: string
+): Promise< IDepartment[]> {
   const filter = search
     ? { deptname: { $regex: search, $options: 'i' } }
     : {};
-  if (typeof page === 'undefined' || typeof limit === 'undefined') {
-    const [data, total] = await Promise.all([
-      DepartmentModel.find(filter),
-      DepartmentModel.countDocuments(filter),
-    ]);
-    return { data, total };
-  }
-
+ 
   const skip = (page - 1) * limit;
 
-  const [data, total] = await Promise.all([
-    DepartmentModel.find(filter).skip(skip).limit(limit),
-    DepartmentModel.countDocuments(filter),
-  ]);
+  const data  = await DepartmentModel.find(filter).skip(skip).limit(limit)
+  
 
-  return { data, total };
+  return data;
 }
     async getAllunblocked():Promise<IDepartment[]>
     {
@@ -44,38 +35,41 @@ export class MongoDeptRepository implements IDepartmentRepository {
     return await DepartmentModel.findOne({ deptname: name });
     }
 
-    async getById(id: string): Promise<IDepartment | null> {
+    async findById(id: string): Promise<IDepartment | null> {
         return await DepartmentModel.findById(id);
     }
-    async update(id: string, deptData: Partial<IDepartment>): Promise<IDepartment | null> {
-        return await DepartmentModel.findByIdAndUpdate(id, deptData, { new: true });
-    }
-    async delete(id: string): Promise<IDepartment | null> {
-        return await DepartmentModel.findByIdAndDelete(id);
-    }
-    async edit(deptData: IDepartment): Promise<IDepartment> {
+
+  
+  
+    async update(id:string,data: IDepartment): Promise<string> {
     
-        const { _id, deptname, description } = deptData;
-        console.log(_id)
-        const existingDept = await DepartmentModel.findOne({deptname:deptname, _id: {$ne: _id}});
+        const existingDept = await DepartmentModel.findOne({deptname:data.deptname, _id: {$ne: id}});
         if (existingDept) {
             throw new Error('Department name already exists');
         }
-        const updatedDept = await DepartmentModel.findByIdAndUpdate(_id, { deptname, description }, { new: true });
+        const updatedDept = await DepartmentModel.findByIdAndUpdate(
+          id,
+          { 
+            deptname: data.deptname,
+            description: data.description
+          },
+          { new: true }
+        );
+
         if (!updatedDept) {
             throw new Error('Department not found');
         }
-        return updatedDept;
+        return "successfully updated";
     }
 
-    async blockstatus(id: string): Promise<IDepartment | null> {
+    async delete(id: string): Promise<string> {
         const dept = await DepartmentModel.findById(id);
         if (!dept) {
             throw new Error('Department not found');
         }
         dept.isblocked = !dept.isblocked;
         await dept.save();
-        return dept;
+        return "deleted successfully";
     }
     
 }

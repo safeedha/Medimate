@@ -1,9 +1,11 @@
-import { IRegistrationRepository } from "../../../domain/repository/RegistrationRepository"
+
 import {IUserRegister} from "../../../domain/useCaseInterface/auth/IUserRegister"
+import {IUser} from '../../../domain/entities/User';
 import bcrypt from 'bcrypt';
+import { IBaseRepository } from '../../../domain/repository/BaseRepository' 
 
 export class UserRegistration implements IUserRegister {
-  constructor(private regRepository: IRegistrationRepository) {}
+  constructor(private _baseRepository: IBaseRepository<IUser>) {}
 
   async signup(data: { firstname: string; lastname: string; email: string; phone: string; password: string,gender:'male' | 'female' | 'other'}): Promise<{ message: string }> {
     try {
@@ -19,7 +21,7 @@ export class UserRegistration implements IUserRegister {
         googleVerified: false,
         gender:data.gender,
       };
-      await this.regRepository.userRegister(newdata);
+      await this. _baseRepository.create(newdata);
       return { message: "User registered successfully" };
     } catch (error) {
       if (error instanceof Error) {

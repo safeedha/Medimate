@@ -4,10 +4,10 @@ import { IGetRecurringSlot } from '../../../domain/useCaseInterface/slot/IGetRec
 
 export class GetRecurringSlot implements IGetRecurringSlot{
 
-  constructor(private slotrepository: ISlotRepository) {}
+  constructor(private _slotrepository: ISlotRepository) {}
   async getSlots(id:string,page:number,limit:number): Promise<{ data: RecurringDTO[]; total: number }> {
     try {
-      const slots= await this.slotrepository.getAllreccslots(id,page,limit)
+      const slots= await this._slotrepository.getAllreccslots(id,page,limit)
        const mapped: RecurringDTO[] = slots.data.map((slot) => ({
             _id: slot._id!.toString(),
             doctorId:

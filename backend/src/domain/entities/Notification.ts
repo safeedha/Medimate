@@ -5,5 +5,5 @@ export interface INotification {
   senderId?: string;           
   message: string;           
   createdAt?: string;  
-  isRead:boolean     
+  isRead?:boolean     
 }

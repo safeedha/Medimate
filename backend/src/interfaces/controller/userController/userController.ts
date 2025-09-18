@@ -1,24 +1,25 @@
 import { Request, Response, NextFunction } from 'express';
 import { IGetSingleUser } from '../../../domain/useCaseInterface/user/IGetSingleUser';
 import { IUpdateUser } from '../../../domain/useCaseInterface/user/IUpdateUser';
-import { HttpStatus } from '../../../common/httpStatus';
-import { HttpMessage } from '../../../common/httpessages';
+import { HttpStatus } from '../../../constant/httpStatus';
+import { HttpMessage } from '../../../constant/httpessages';
+
 interface CustomRequest extends Request {
   id: string;
 }
 
 export class UserProfileController {
   constructor(
-    private getSingleUserService: IGetSingleUser ,
-    private updateUserService: IUpdateUser
+    private readonly _getSingleUserService: IGetSingleUser,
+    private readonly _updateUserService: IUpdateUser
   ) {}
 
   async fetchUserDetails(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      console.log("reuest hit")
+      console.log("request hit");
       const userId = req.id;
-      const user = await this.getSingleUserService.getsingleUser(userId);
-      console.log(user)
+      const user = await this._getSingleUserService.getsingleUser(userId);
+      console.log(user);
       res.status(HttpStatus.OK).json({ message: HttpMessage.USER_FETCH_SUCCESS, user });
     } catch (error) {
       next(error);
@@ -29,8 +30,8 @@ export class UserProfileController {
     try {
       const userId = req.id;
       const { firstname, lastname, phone, age, gender } = req.body;
-      await this.updateUserService.updatesingleUser(userId, firstname, lastname, phone, age, gender);
-      res.status(HttpStatus.OK).json({ message:  HttpMessage.USER_UPDATE_SUCCESS });
+      await this._updateUserService.updatesingleUser(userId, firstname, lastname, phone, age, gender);
+      res.status(HttpStatus.OK).json({ message: HttpMessage.USER_UPDATE_SUCCESS });
     } catch (error) {
       next(error);
     }

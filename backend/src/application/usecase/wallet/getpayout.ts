@@ -3,11 +3,11 @@ import {IWalletRepository } from '../../../domain/repository/WalletRepository';
 import{AdminWalletTransactionDto} from '../../../dto/wallet.dto'
 
 export class GetPayout implements IGetPayout{
-  constructor(private walletRepository: IWalletRepository) {}
+  constructor(private _walletRepository: IWalletRepository) {}
 
   async getrpayoutInfor(): Promise<AdminWalletTransactionDto[]> {
     try {
-      const refunds = await this.walletRepository.getPayoutinfor();
+      const refunds = await this._walletRepository.getPayoutinfor();
        const allrefunds: AdminWalletTransactionDto[] =refunds
         .filter((txn) => txn.appointmentId !== null && txn.paymentstatus === false)
         .map((txn) => ({

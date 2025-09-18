@@ -1,14 +1,13 @@
 import {Appointment,AppointmentCountByDate} from  '../entities/Appoinment';
-import {AppointmentDTO} from '../../dto/slot.dto'
+
 import {IDepartmentSummary} from '../../dto/departmentsummary.dto'
  export interface IAppointmentRepository {
-  createappoinment(data:Appointment):Promise<Appointment>;
+
    getfutureappoinment(userid:string,page:number,limt:number):Promise<{total:number,appoi:Appointment[]}>
    getpastappoinment(userid:string):Promise<Appointment[]>
    changestatus(id:string,status:'pending' |  'cancelled' | 'completed'):Promise<Appointment>
-   getappinmentbydoctor(doctorid:string,page:number,limit:number):Promise<{ total: number; appointments: AppointmentDTO[] }>
+   getappinmentbydoctor(doctorid:string,page:number,limit:number):Promise<{ total: number; appointments: Appointment[] }>
    getallappinmentfordoctor(doctorid:string):Promise<Appointment[]>
-   getsingleappoinment(id:string):Promise<Appointment>
    rescheduleStatus(id:string,resheduleid:string):Promise<Appointment>
    getdetails():Promise<{total:number,pending:number,completed:number,cancelled:number}>
    getcountofappoinmentforeacdoc(status:'completed'|'pending'|'cancelled'):Promise<Record<string, number>>

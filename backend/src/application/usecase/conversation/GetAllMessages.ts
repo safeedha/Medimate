@@ -3,12 +3,12 @@ import { IGetAllMessages } from '../../../domain/useCaseInterface/conversation/I
 import { MessageDto } from '../../../dto/message.dto';
 
 export class GetAllMessages implements IGetAllMessages {
-  constructor(private conversationRepository: IConversationRepository) {}
+  constructor(private _conversationRepository: IConversationRepository) {}
 
   async getallmessage(receiverId: string, senderId: string): Promise<MessageDto[]> {
     try {
   
-      const result = await this.conversationRepository.getAllmessage(senderId, receiverId);
+      const result = await this._conversationRepository.getAllmessage(senderId, receiverId);
 
       const messages: MessageDto[] = result.map((msg) => ({
         _id: msg._id?.toString(),

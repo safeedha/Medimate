@@ -4,13 +4,13 @@ import {IUpdateMessagetime} from '../../../domain/useCaseInterface/conversation/
 
 
 export class MessageTimeUpdation implements IUpdateMessagetime{
-  constructor(private conversationrepository:IConversationRepository){
+  constructor(private _conversationrepository:IConversationRepository){
 
   }
   async update(sender:string,reciever:string):Promise<string>{
     try{
       
-      const result=await this.conversationrepository.messagetimeaddfromuser(sender,reciever)
+      const result=await this._conversationrepository.messagetimeaddfromuser(sender,reciever)
       return result
     }
     catch(error)

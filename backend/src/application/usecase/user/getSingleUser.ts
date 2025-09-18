@@ -1,12 +1,17 @@
-import {IUserRepository} from '../../../domain/repository/UserRepository';
+import {IUser} from '../../../domain/entities/User';
 import {UserDTO} from '../../../dto/user.dto'
 import { IGetSingleUser } from '../../../domain/useCaseInterface/user/IGetSingleUser';
+import { IBaseRepository } from '../../../domain/repository/BaseRepository'
 export class GetsingleUser implements IGetSingleUser{
 
-  constructor(private userRepository: IUserRepository) {}
+  constructor(private _baseRepository: IBaseRepository<IUser>) {}
   async getsingleUser(id:string): Promise<UserDTO> {
     try {
-      const user = await this.userRepository.getsingleuser(id);
+      const user = await this._baseRepository.findById(id);
+      if(!user)
+      {
+        throw new Error("error during fetching single user")
+      }
        const userDTO: UserDTO = {
             id: user._id!.toString(),
             firstname: user.firstname,

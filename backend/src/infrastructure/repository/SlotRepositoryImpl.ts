@@ -1,17 +1,17 @@
 
- import {IndividualSlot} from '../../domain/entities/Sot'
+ import {IndividualSlot,ISlotLock} from '../../domain/entities/Sot'
 import {ISlotRepository} from '../../domain/repository/SlotRepository'
 import {Recurring} from '../database/models/recurringslot'
 import {Slot}  from '../database/models/scedule'
 import { SlotLock}  from '../database/models/slotlock'
-import { SlotLockDTO} from '../../dto/slot.dto';
 import {IRecurring } from '../../domain/entities/Recurringslot'
 import { FilterQuery } from 'mongoose';
+import { BaseRepository } from './BaseRepositoryImpl';
 
 
-export class MongoSlotRepostory implements ISlotRepository{
+export class MongoSlotRepostory extends  BaseRepository<IndividualSlot> implements ISlotRepository{
     
-async  lockAvailableSlot(data: SlotLockDTO): Promise<string> {
+async  lockAvailableSlot(data: ISlotLock): Promise<string> {
   try {
     const existingLock = await SlotLock.findOne({
       doctorId: data.doctorId,
@@ -136,11 +136,11 @@ async editRecurringSlot(data:IRecurring): Promise<IRecurring> {
 
 
 
-   async createSlot(data:IndividualSlot):Promise<IndividualSlot>
+   async create(data:IndividualSlot):Promise<void>
    {
      const slot=new Slot(data)
      await slot.save()
-     return slot
+     
    }
  
 
@@ -152,7 +152,7 @@ async editRecurringSlot(data:IRecurring): Promise<IRecurring> {
   try {
     const skip = (page - 1) * limit;
     const recurring = await Recurring.find({ doctorId: id })
-      .sort({ createdAt: 1 })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
     const total = await Recurring.countDocuments({ doctorId: id });
@@ -276,7 +276,7 @@ async editRecurringSlot(data:IRecurring): Promise<IRecurring> {
 }
 
 
- async deleteslot(id:string):Promise<string>{
+ async delete(id:string):Promise<string>{
   try{
      await Slot.deleteOne({ _id: id });
      return "slot cancelled successfully";
@@ -293,25 +293,4 @@ async editRecurringSlot(data:IRecurring): Promise<IRecurring> {
 
 
 }
-// async getSlotsByDate(id: string, date: Date): Promise<IndividualSlot[]> {
-//   try {
-//     const startOfDay = new Date(date);
-//     startOfDay.setUTCHours(0, 0, 0, 0); // 00:00:00.000 UTC
 
-//     const endOfDay = new Date(date);
-//     endOfDay.setUTCHours(23, 59, 59, 999); // 23:59:59.999 UTC
-
-//     const slots = await Slot.find({
-//       doctorId: id,
-//       date: { $gte: startOfDay, $lte: endOfDay }
-//     }).sort({ startingTime: 1 });
-
-//     return slots;
-//   } catch (error) {
-//     if (error instanceof Error) {
-//       throw new Error(error.message);
-//     } else {
-//       throw new Error("An unknown error occurred");
-//     }
-//   }
-// }

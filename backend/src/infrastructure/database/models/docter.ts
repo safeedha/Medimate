@@ -1,8 +1,8 @@
 import { Schema, model } from 'mongoose';
-import {Idoctor} from '../../../domain/entities/Doctor'
+import {IDoctor} from '../../../domain/entities/Doctor'
 
 
-const DoctorSchema: Schema<Idoctor> = new Schema(
+const DoctorSchema: Schema<IDoctor> = new Schema(
   {
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
@@ -41,4 +41,4 @@ const DoctorSchema: Schema<Idoctor> = new Schema(
     timestamps: true,
   }
 );
-export const Doctor = model<Idoctor>('Doctor', DoctorSchema);
+export const Doctor = model<IDoctor>('Doctor', DoctorSchema);

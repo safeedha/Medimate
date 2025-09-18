@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { IGetAllMessages } from '../../../domain/useCaseInterface/conversation/IGetAllMessages';
 import { IDeleteMessage } from '../../../domain/useCaseInterface/conversation/IDeleteMessage';
 import { IGetUnreadCount } from '../../../domain/useCaseInterface/conversation/IGetUnreadCount';
-import { HttpStatus } from '../../../common/httpStatus';
-import { HttpMessage } from '../../../common/httpessages';
+import { HttpStatus } from '../../../constant/httpStatus';
+import { HttpMessage } from '../../../constant/httpessages';
 
 interface CustomRequest extends Request {
   id: string;
@@ -11,27 +11,10 @@ interface CustomRequest extends Request {
 
 export class MessageController {
   constructor(
-    private getAllMessagesUseCase: IGetAllMessages,
-    private deleteMessageUseCase: IDeleteMessage,
-    private getUnreadCountUseCase: IGetUnreadCount
+    private readonly _getAllMessagesUseCase: IGetAllMessages,
+    private readonly _deleteMessageUseCase: IDeleteMessage,
+    private readonly _getUnreadCountUseCase: IGetUnreadCount
   ) {}
-
-  // async updateMessageTime(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
-  //   try {
-  //     const { id } = req;
-  //     const { reciever } = req.params;
-
-  //     if (typeof reciever !== 'string') {
-  //       res.status(HttpStatus.BAD_REQUEST).json({ message:  Messages.INVALID_RECEIVER});
-  //       return;
-  //     }
-
-  //     const result = await this.getAllMessagesUseCase.update(id, reciever);
-  //     res.status(HttpStatus.OK).json(result);
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
 
   async fetchMessages(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -39,11 +22,11 @@ export class MessageController {
       const { sender } = req.query;
 
       if (typeof sender !== 'string') {
-        res.status(HttpStatus.BAD_REQUEST).json({ message:HttpMessage.INVALID_SENDER_OR_RECEIVER });
+        res.status(HttpStatus.BAD_REQUEST).json({ message: HttpMessage.INVALID_SENDER_OR_RECEIVER });
         return;
       }
 
-      const result = await this.getAllMessagesUseCase.getallmessage(sender, userId);
+      const result = await this._getAllMessagesUseCase.getallmessage(sender, userId);
       res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);
@@ -60,7 +43,7 @@ export class MessageController {
         return;
       }
 
-      const result = await this.deleteMessageUseCase.delete(messageid, sender, reciever);
+      const result = await this._deleteMessageUseCase.delete(messageid, sender, reciever);
       res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);
@@ -70,7 +53,7 @@ export class MessageController {
   async fetchUnreadCount(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.id;
-      const count = await this.getUnreadCountUseCase.getcount(userId);
+      const count = await this._getUnreadCountUseCase.getcount(userId);
       res.status(HttpStatus.OK).json(count);
     } catch (error) {
       next(error);

@@ -2,10 +2,10 @@ import { IConversationRepository } from '../../../domain/repository/Conversation
 import { MessageDto } from '../../../dto/message.dto';
 
 export class ReadMessageStatus {
-  constructor(private conversationrepository: IConversationRepository) {}
+  constructor(private _conversationrepository: IConversationRepository) {}
 
   async readmessage(messageId: string): Promise<MessageDto> {
-    const result = await this.conversationrepository.changereadstatus(messageId);
+    const result = await this._conversationrepository.changereadstatus(messageId);
 
     const messageDto: MessageDto = {
       _id: result._id?.toString(),

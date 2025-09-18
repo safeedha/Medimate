@@ -4,8 +4,8 @@ import {IReadNotification}  from "../../../domain/useCaseInterface/notification/
 
 
 export class Readnotification implements IReadNotification {
-  constructor(private notRepository:  INotificationRepository) {}
+  constructor(private _notRepository:  INotificationRepository) {}
    async readnotification(id:string): Promise<void>{
-      await this.notRepository.readNotification(id)
+      await this._notRepository.readNotification(id)
    }
 }

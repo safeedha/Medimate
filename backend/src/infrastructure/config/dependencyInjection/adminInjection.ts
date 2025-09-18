@@ -43,7 +43,7 @@ const login=new Login()
 export const auth=new AuthController(login)
 
 
-const addDept = new AddDept(mongoDeptRepository);
+const addDept = new AddDept(mongoDeptRepository,mongoDeptRepository);
 const getDept = new GetDept(mongoDeptRepository);
 const editDept = new EditDept(mongoDeptRepository);
 const blockDept = new BlockDept(mongoDeptRepository);
@@ -52,7 +52,7 @@ export const department=new DepartmentController(addDept,getDept,editDept,blockD
 
 const getUnverified = new GetUnverified(mongodocRepository);
 const changeDocStatus = new ChangeDocStatus(mongodocRepository);
-const verifyDoctor = new VerifyDoctor(mongodocRepository);
+const verifyDoctor = new VerifyDoctor(mongodocRepository,mongodocRepository);
 const fetchSingleDoctor = new FetchSingleDoctor(mongodocRepository);
 const getAllDoctor = new GetAlldoctor(mongodocRepository);
 export const doctor=new DoctorController(getUnverified,changeDocStatus,verifyDoctor,fetchSingleDoctor,getAllDoctor)

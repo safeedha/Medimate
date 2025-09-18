@@ -1,19 +1,19 @@
 import { IAppointmentRepository } from '../../domain/repository/AppointmentRepository';
 import { Appointment,AppointmentCountByDate} from '../../domain/entities/Appoinment';
 import { AppointmentModel} from '../database/models/appoinment';
-import {AppointmentDTO} from '../../dto/slot.dto'
-import {IDepartmentSummary} from '../../dto/departmentsummary.dto'
+import {IDepartmentSummary}  from '../../domain/entities/Departnment'
 import { SlotLock}  from '../database/models/slotlock'
 import mongoose from "mongoose";
+import { BaseRepository } from './BaseRepositoryImpl';
 
 
-export class MongoAppointmentRepository implements IAppointmentRepository {
-  async createappoinment(data: Appointment): Promise<Appointment> {
+export class MongoAppointmentRepository extends BaseRepository<Appointment> implements IAppointmentRepository {
+  async create(data: Appointment): Promise<Appointment|void> {
     try{    
       const appointment = new AppointmentModel(data);
       await appointment.save();
-      return appointment;
-    } catch (error) {
+      return appointment
+       } catch (error) {
       throw new Error('Failed to create appointment');
     }
   }
@@ -22,7 +22,7 @@ export class MongoAppointmentRepository implements IAppointmentRepository {
   let _pending = 0;
   let _completed = 0;
   let _cancelled = 0;
-  const _total=0
+
   const result = await AppointmentModel.find({ doctor_id: id });
 
   result.forEach((appointment) => {
@@ -50,6 +50,7 @@ export class MongoAppointmentRepository implements IAppointmentRepository {
   end: Date
 ): Promise<AppointmentCountByDate[]> {
   try {
+    console.log(start,end)
     const result = await AppointmentModel.aggregate([
       {
         $match: { status }
@@ -359,7 +360,7 @@ async  getappinmentbydoctor(
   doctorid: string,
   page: number,
   limit: number
-): Promise<{ total: number; appointments: AppointmentDTO[] }> {
+): Promise<{ total: number; appointments: Appointment[]}> {
   try {
     const doctorObjectId = new mongoose.Types.ObjectId(doctorid);
     const countResult = await AppointmentModel.countDocuments({
@@ -393,39 +394,11 @@ async  getappinmentbydoctor(
     $limit: limit,
   },
 ]);
-
-   const mappedAppointments: AppointmentDTO[] = appointments.map((item: any) => ({
-      _id: item._id.toString(),
-      user_id: item.user_id?.toString(),
-      doctor_id: item.doctor_id?.toString(),
-      schedule_id: item.schedule_id?.toString(),
-      patient_name: item.patient_name,
-      patient_email: item.patient_email,
-      patient_age: item.patient_age,
-      patient_gender: item.patient_gender,
-      reason: item.reason,
-      status: item.status,
-      payment_status: item.payment_status,
-      reportAdded: item.reportAdded || false,
-      schedule: {
-        _id: item.schedule._id.toString(),
-        recurringSlotId: item.schedule.recurringSlotId?.toString(),
-        doctorId: item.schedule.doctorId?.toString(),
-        date: item.schedule.date,
-        startingTime: item.schedule.startingTime,
-        endTime: item.schedule.endTime,
-        status: item.schedule.status,
-      },
-      followup_id:item.followup_id?.toString(),
-      followup_status:item.followup_status,
-      rescheduled_to: item.rescheduled_to?.toString(),
-      isRescheduled:item?.isRescheduled
-    }));
-
     return {
       total: countResult,
-      appointments: mappedAppointments,
+      appointments: appointments,
     };
+   
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(error.message);
@@ -497,7 +470,7 @@ async getallappinmentfordoctor(doctorid:string):Promise<Appointment[]>{
   }
 }
 
-  async getsingleappoinment(id:string):Promise<Appointment>{
+  async findById(id:string):Promise<Appointment>{
       try{
           const appointment = await AppointmentModel.findById(id).populate(  {path: 'schedule_id',});
           if(!appointment)
