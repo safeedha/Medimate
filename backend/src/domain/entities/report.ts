@@ -1,5 +1,5 @@
 import { Appointment } from './Appoinment';
-import { Iuser } from './User';
+import { IUser } from './User';
 export interface IMedicine {
   name: string
   dosage: string
@@ -10,7 +10,7 @@ export interface IMedicine {
 export interface IReport {
   content: string;
   appointmentId: string|Appointment;
-  userId: string|Iuser;
+  userId: string|IUser;
   createdAt?: Date; 
   medicine:IMedicine[]
 }

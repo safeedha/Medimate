@@ -1,5 +1,5 @@
 
-import {Idoctor} from './Doctor';
+import {IDoctor} from './Doctor';
 import {Appointment} from './Appoinment';
 
 export interface Transaction {
@@ -11,7 +11,7 @@ export interface Transaction {
 }
 
 export interface IDoctorWallet  {
-  doctorId:string|Idoctor;
+  doctorId:string|IDoctor;
   balance: number;
   transactions: Transaction[];
   lastUpdated: Date;

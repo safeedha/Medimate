@@ -1,4 +1,4 @@
-import {Department} from '../../entities/Departnment'
+import {IDepartment} from '../../entities/Departnment'
 export interface IAddDept {
-  addDept(data: Department): Promise<{ message: string }>;
+  addDept(data: IDepartment): Promise<{ message: string }>;
 }

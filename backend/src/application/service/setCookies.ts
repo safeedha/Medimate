@@ -3,6 +3,8 @@
 
 
 import { Response } from "express";
+import dotenv from "dotenv";
+dotenv.config();
 const COOKIE_MAX_AGE = Number(process.env.COOKIE_MAX_AGE) || 7 * 24 * 60 * 60 * 1000;
 
 export const setCookies = (res: Response, token: string): void => {
@@ -10,7 +12,7 @@ export const setCookies = (res: Response, token: string): void => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
-    maxAge: 7 * 24 * 60 * 60 * 1000, 
+    maxAge:COOKIE_MAX_AGE
   });
 };
 

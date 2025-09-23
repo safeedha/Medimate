@@ -1,10 +1,10 @@
-import { Iuser } from './User';
-import { Idoctor } from './Doctor';
+import { IUser } from './User';
+import { IDoctor } from './Doctor';
 
 export interface Message {
   _id?:string;
-  senderId: string | Iuser | Idoctor;
-  recieverId: string | Idoctor | Iuser;
+  senderId: string | IUser | IDoctor;
+  recieverId: string | IDoctor | IUser;
   message?: string;
   image?:string;
   messageType:'text'|'image'

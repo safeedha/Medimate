@@ -1,4 +1,4 @@
-import {Iuser} from './User';
+import {IUser} from './User';
 
 
 export interface UserTransaction {
@@ -8,7 +8,7 @@ export interface UserTransaction {
 }
 
 export interface IUserWallet  {
-  userId:string|Iuser;
+  userId:string|IUser;
   balance: number;
   transactions: UserTransaction[];
   lastUpdated: Date;

@@ -7,7 +7,7 @@ export class GetFilter implements IGetFilteredAppointment{
 
   async getappoinmentrange( status: 'completed' | 'cancelled' | 'pending',start: Date,end: Date):Promise<AppointmentCountByDate[]> {
     try {
-      console.log(status,start)
+    
       const result = await this._appointmentRepo.getfilteredapooinment(status,start,end);
 
       return result;
