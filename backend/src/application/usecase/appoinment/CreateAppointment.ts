@@ -1,6 +1,6 @@
 import { IBaseRepository } from '../../../domain/repository/BaseRepository'
 import { ISlotRepository } from '../../../domain/repository/SlotRepository';
-import { Appointment } from '../../../domain/entities/Appoinment';
+import type{ Appointment } from '../../../domain/entities/Appoinment';
 import {ICreateAppointment } from '../../../domain/useCaseInterface/appoinment/ICreateAppointment';
 import {IWalletRepository} from '../../../domain/repository/WalletRepository';;
 export class CreateAppointment implements ICreateAppointment{

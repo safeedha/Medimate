@@ -1,6 +1,6 @@
 import { IAppointmentRepository  } from '../../../domain/repository/AppointmentRepository';
 import { ISlotRepository } from '../../../domain/repository/SlotRepository';
-import { Appointment } from '../../../domain/entities/Appoinment';
+import type{ Appointment } from '../../../domain/entities/Appoinment';
 import {ICreateFollowUp} from '../../../domain/useCaseInterface/appoinment/ICreateFollowUp';
 import { IBaseRepository } from '../../../domain/repository/BaseRepository'
 

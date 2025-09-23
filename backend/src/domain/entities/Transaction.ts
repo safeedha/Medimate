@@ -1,6 +1,6 @@
-import {IUser} from './User';
-import {IDoctor} from './Doctor';
-import {Appointment} from './Appoinment';
+import type{IUser} from './User';
+import type{IDoctor} from './Doctor';
+import type{Appointment} from './Appoinment';
 
 export interface Transaction {
   _id: string;
