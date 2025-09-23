@@ -19,7 +19,7 @@ const io = new Server(server, {
 
 registerSocketEvents(io);
 
-const port = process.env.SERVERPORT 
+const port = process.env.PORT ||3000
 console.log(port)
 
 connectToDatabase();
