@@ -35,8 +35,8 @@ function Login() {
       setReaply(true)
     }
     else {
-       toast.error("Your account is rejected by admin,Please check Your mail to know Reason")
-      setReaply(true)
+       toast.error(result)
+     
     }
   };
 

@@ -232,7 +232,7 @@ export class MongoDocRepository
     async docLogin(email: string, password: string): Promise<IDoctor> {
     try {
       const doctor = await Doctor.findOne({ email });
-  
+    
       if (!doctor) {
         throw new Error("This email is not registered");
       }
@@ -261,6 +261,7 @@ export class MongoDocRepository
       return doctor
     } catch (error) {
       if (error instanceof Error) {
+        console.log(error.message)
         throw new Error(error.message);
       }
       throw new Error("Unexpected error occurred during doctor login");
