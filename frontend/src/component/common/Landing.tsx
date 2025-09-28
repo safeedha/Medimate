@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import bann from "../../assets/bann.jpg";
 
 function Landing() {
+  console.log(import.meta.env.VITE_BACKEND_URL);
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-green-50 flex flex-col justify-between">
       <nav className="bg-gradient-to-r from-blue-500 to-green-400 p-4 shadow-lg flex justify-between items-center">

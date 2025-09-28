@@ -12,7 +12,10 @@ const server = createServer(appInstances.app);
 
 const io = new Server(server, {
   cors: {
-    origin:'https://www.medi-mate.safeedha.site',
+    origin:[
+      'https://www.medi-mate.safeedha.site',
+      'http://localhost:5173'
+    ],
     credentials: true
   }
 });
