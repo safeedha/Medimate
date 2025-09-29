@@ -69,7 +69,7 @@ const Prescription = () => {
           userId,
           medicines // send as array
         )
-        if (result === 'report added successfully') {
+        if (result === 'report created') {
           toast.success('Report & prescription added')
           setTimeout(() => navigate('/doctor/home'), 2000)
         } else {
