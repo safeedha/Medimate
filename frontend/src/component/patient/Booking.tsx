@@ -212,40 +212,46 @@ function Booking() {
           </Link>
         ) : null;
 
-      if (appointment.status === 'completed') {
-        if (appointment.reportAdded) {
+     if (appointment.status === 'completed') {
           return (
             <div className="flex flex-col gap-1 min-w-[120px]">
-              <button
-                onClick={() => {
-                  if (
-                    typeof appointment.doctor_id === 'object' &&
-                    appointment.doctor_id !== null
-                  ) {
-                    handleViewReport(
-                      appointment._id!,
-                      appointment.doctor_id.firstname!
-                    );
-                  }
-                }}
-                className="px-3 py-1.5 rounded-md text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
-              >
-                View Report
-              </button>
-              {chatButton}
-            </div>
-          );
-        } else {
-          return (
-            <div className="flex flex-col gap-1 min-w-[120px]">
-              <span className="px-3 py-1.5 rounded-md text-sm font-medium text-yellow-600 bg-yellow-100">
-                Report Pending
-              </span>
+              {appointment.reportAdded ? (
+                <button
+                  onClick={() => {
+                    if (
+                      typeof appointment.doctor_id === 'object' &&
+                      appointment.doctor_id !== null
+                    ) {
+                      handleViewReport(
+                        appointment._id!,
+                        appointment.doctor_id.firstname!
+                      );
+                    }
+                  }}
+                  className="px-3 py-1.5 rounded-md text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 transition duration-200"
+                >
+                  View Report
+                </button>
+              ) : (
+                <span className="px-3 py-1.5 rounded-md text-sm font-medium text-yellow-600 bg-yellow-100">
+                  Report Pending
+                </span>
+              )}
+
+              {appointment.followup_status && (
+                <button
+                  className="min-w-[120px] px-3 mt-1 py-1.5 inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-lime-400 text-white hover:bg-lime-700"
+                  onClick={() => scrollToFollowUp(appointment.followup_id as string)}
+                >
+                  Follow-up Added
+                </button>
+              )}
+
               {chatButton}
             </div>
           );
         }
-      } else if (appointment.status === 'pending') {
+    else if (appointment.status === 'pending') {
         return (
           <div className="flex flex-col gap-1 min-w-[120px]">
             <button
@@ -295,20 +301,24 @@ function Booking() {
           </div>
         );
       }
+    
+      
+
+
     },
   },
-  {
-    header: '',
-    accessor: (appointment: Appointment) =>
-      appointment.status === 'completed' && appointment.followup_status ? (
-        <button
-          className="min-w-[120px] px-3 mt-1 py-1.5 inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-lime-400 text-white hover:bg-lime-700"
-          onClick={() => scrollToFollowUp(appointment.followup_id as string)}
-        >
-          Follow-up Added
-        </button>
-      ) : null,
-  },
+  // {
+  //   header: '',
+  //   accessor: (appointment: Appointment) =>
+  //     appointment.status === 'completed' && appointment.followup_status ? (
+  //       <button
+  //         className="min-w-[120px] px-3 mt-1 py-1.5 inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-lime-400 text-white hover:bg-lime-700"
+  //         onClick={() => scrollToFollowUp(appointment.followup_id as string)}
+  //       >
+  //         Follow-up Added
+  //       </button>
+  //     ) : null,
+  // },
 ];
 
 
