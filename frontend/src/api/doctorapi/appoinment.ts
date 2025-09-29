@@ -105,7 +105,7 @@ export const getallappoinment = async (page: number, limit: number) => {
   try {
     const response = await axiosInstance.get('/doctor/appoinment', { params: { page, limit } });
     console.log(response)
-    return response.data.appoi;
+    return response.data.appointments;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       return error.response?.data?.message || error.message;
