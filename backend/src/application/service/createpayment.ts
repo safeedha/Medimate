@@ -8,6 +8,7 @@ const razorpay = new Razorpay({
   key_secret: process.env.KEYSECRET as string
 });
 
+console.log(process.env.KEYID,process.env.KEYSECRET)
 export async function createPayment(amount: number) {
   try {
     const options = {
