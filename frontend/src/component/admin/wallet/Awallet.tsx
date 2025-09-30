@@ -30,7 +30,7 @@ function Awallet() {
     const getWallet = async () => {
       try {
         const wallet = await walletInformation(currentpage, limit)
-        if (wallet === 'no wallet available') {
+        if (wallet === 'Admin wallet not found') {
           setMessage(wallet)
         } else {
           setBalance(wallet.balance)
@@ -146,9 +146,10 @@ function Awallet() {
       </div>
 
       <div className="w-5/6 p-6 flex flex-col gap-6 overflow-y-auto">
-        {message && <div>No Transaction occurred through your account</div>}
-
-        <h2 className="text-2xl font-bold text-gray-800">Wallet Overview</h2>
+        {message==='Admin wallet not found'? <div>No Transaction occurred through your account</div>
+        :
+        <>
+           <h2 className="text-2xl font-bold text-gray-800">Wallet Overview</h2>
 
         <div className="bg-white rounded-2xl shadow p-6">
           <p className="text-lg text-gray-500">Current Balance</p>
@@ -269,6 +270,13 @@ function Awallet() {
             </div>
           )}
         </div>
+        
+        </>
+        
+      
+      }
+
+       
       </div>
     </div>
   )

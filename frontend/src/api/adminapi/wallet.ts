@@ -4,11 +4,11 @@ import axiosInstance from "../instances";
 export const walletInformation = async (page: number, limit: number) => {
   try {
     const response = await axiosInstance.get(`/admin/wallet`, { params: { page, limit } });
-    console.log(response.data)
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.log(error.response?.data?.message);
+
+      console.log("this is error",error.response?.data?.message);
       return error.response?.data?.message || error.message;
     }
   }
