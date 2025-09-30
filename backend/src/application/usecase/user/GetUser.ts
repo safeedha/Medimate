@@ -8,7 +8,7 @@ export class GetUser implements IGetUser{
   async getAllUser(page:number,limit:number,search:string): Promise<{ users: UserDTO[]; total: number }> {
     try {
       const users = await this._baseRepository.findAll(page,limit,search);
-
+       const total=await this._baseRepository.findcount( page,limit,search)
        const user: UserDTO[] = users.map(doc => ({
         _id: doc._id!.toString() ,
         firstname: doc.firstname,
@@ -19,7 +19,7 @@ export class GetUser implements IGetUser{
         gender: doc.gender,
         age: doc.age,
       }));
-      return {users:user,total:user.length}
+      return {users:user,total:total.data}
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);

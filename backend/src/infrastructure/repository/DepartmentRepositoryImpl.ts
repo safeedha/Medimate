@@ -24,6 +24,21 @@ export class MongoDeptRepository extends BaseRepository<IDepartment> implements 
 
   return data;
 }
+
+  async findcount(
+  page: number,
+  limit: number,
+  search: string
+): Promise<{ data: number }> {
+  const filter = search
+    ? { deptname: { $regex: search, $options: 'i' } }
+    : {};
+
+  const count = await DepartmentModel.countDocuments(filter);
+
+  return { data: count };
+}
+
     async getAllunblocked():Promise<IDepartment[]>
     {
 

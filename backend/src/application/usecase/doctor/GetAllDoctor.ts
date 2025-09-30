@@ -9,6 +9,7 @@ export class GetAlldoctor implements IGetAllDoctor{
   async getAlldoctors(page:number,limit:number,search:string): Promise<{doctors:DoctorDTO[],total:number}> {
     try {
       const doctors = await this._baseRepository.findAll(page,limit,search);
+      const total=await this._baseRepository.findcount( page,limit,search)
        const maped: DoctorDTO[] = doctors.map((doc) => ({
       _id:doc._id,
       firstname: doc.firstname,
@@ -29,7 +30,7 @@ export class GetAlldoctor implements IGetAllDoctor{
       profilePicture: doc.profilePicture,
       medicalLicence: doc.medicalLicence,
     }))
-      return {doctors:maped,total:doctors.length}
+      return {doctors:maped,total:total.data}
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);

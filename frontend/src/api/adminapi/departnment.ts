@@ -7,6 +7,7 @@ export const getDepartment = async (page: number, limit: number, search: string)
     const response = await axiosInstance.get("/admin/department", {
       params: { page, limit, search },
     });
+    console.log(response.data)
     return { item: response.data.data, total: response.data.total };
   } catch (error) {
     console.log(error);

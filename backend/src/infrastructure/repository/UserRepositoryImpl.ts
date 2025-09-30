@@ -84,7 +84,24 @@ export class MongoUserRepository extends BaseRepository<IUser> implements IUserR
         throw new Error("Unexpected error occurred during user login");
       }
     }
+    
+     async findcount(
+        page: number,
+        limit: number,
+        search: string
+      ): Promise<{ data: number }> {
+        const baseFilter: FilterQuery<IUser> = {};
 
+      if (search && search.trim() !== '') {
+        baseFilter.$or = [
+          { firstname: { $regex: search, $options: 'i' } },
+          { lastname: { $regex: search, $options: 'i' } },
+          { email: { $regex: search, $options: 'i' } },
+        ];
+      }
+      const count= await User.countDocuments(baseFilter);
+        return { data: count };
+      }
 
     async userLogin(email: string, password: string): Promise<IUser> {
       try {

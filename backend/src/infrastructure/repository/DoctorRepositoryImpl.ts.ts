@@ -31,6 +31,25 @@ export class MongoDocRepository
       throw new Error('Database error');
     }
   }
+  async findcount(
+    page: number,
+    limit: number,
+    search: string
+  ): Promise<{ data: number }> {
+     const baseFilter: FilterQuery<IDoctor> = { status: 'Approved' };
+
+      if (search && search.trim() !== '') {
+        baseFilter.$or = [
+          { firstname: { $regex: search, $options: 'i' } },
+          { lastname: { $regex: search, $options: 'i' } },
+          { email: { $regex: search, $options: 'i' } },
+        ];
+      }
+
+      const count = await Doctor.countDocuments(baseFilter)
+  
+    return { data: count };
+  }
 
   async getAllverified(
     page: number,

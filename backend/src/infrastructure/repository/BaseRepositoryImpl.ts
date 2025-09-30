@@ -7,6 +7,7 @@ export abstract class BaseRepository<T> implements IBaseRepository<T> {
     throw new Error("findAll not implemented");
   }
 
+
   async findById(id: string): Promise<T | null> {
     throw new Error("findById not implemented");
   }
@@ -22,4 +23,13 @@ export abstract class BaseRepository<T> implements IBaseRepository<T> {
   async delete(id: string): Promise<string> {
     throw new Error("delete not implemented");
   }
+    async findcount(
+  page: number,
+  limit: number,
+  search?: string
+): Promise<{ data: number }>
+{
+ throw new Error("count not implemented");
+}
+
 }

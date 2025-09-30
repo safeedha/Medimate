@@ -4,4 +4,9 @@ export interface IBaseRepository<T> {
   create(data: T): Promise<T|void>;
   update(id: string, data: Partial<T>): Promise<string>;
   delete(id: string): Promise<string>;
+   findcount(
+  page: number,
+  limit: number,
+  search?: string
+): Promise<{ data: number }>
 }

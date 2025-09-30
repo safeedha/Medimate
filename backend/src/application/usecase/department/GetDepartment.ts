@@ -15,7 +15,9 @@ export class GetDept implements IGetDept {
         description: dept.description,
         isblocked: dept.isblocked,
       }));
-      return { data: departmentDtos, total:data.length}
+      const total=await this._baseRepository.findcount(page,limit,search);
+      console.log(total)
+      return { data: departmentDtos, total:total.data}
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);
